@@ -1,0 +1,252 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FormationController;
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\LocationReservationController;
+use App\Http\Controllers\ConciergerieController;
+use App\Http\Controllers\FormationInternationaleController;
+use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\ProfileController;
+
+/*
+|--------------------------------------------------------------------------
+| Public Web Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/', fn() => view('welcome'))->name('home');
+
+Route::get('/about', fn() => view('about'))->name('about');
+
+// Formations
+Route::get('/formation', [FormationController::class, 'index'])->name('formation');
+Route::get('/formation/{slug}', [FormationController::class, 'show'])->name('formation.show');
+
+// Location
+Route::get('/location', [LocationController::class, 'index'])->name('location');
+Route::get('/vehicule/{id}', [LocationController::class, 'showVehicleDetails'])->name('vehicle.details');
+
+// Pages statiques
+Route::get('/vtc-transport', fn() => view('vtc-transport'))->name('vtc-transport');
+Route::get('/conciergerie', fn() => view('conciergerie'))->name('conciergerie');
+Route::get('/formation-international', fn() => view('formation-international'))->name('formation.international');
+
+// Blog
+Route::get('/blog', [BlogController::class, 'index'])->name('blog');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::get('/blog/categorie/{category}', [BlogController::class, 'category'])->name('blog.category');
+
+// Pages d'information
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::get('/espaceclient', fn() => view('espaceclient'))->name('espaceclient');
+Route::get('/performance', fn() => view('performance'))->name('performance');
+Route::get('/reclamation', fn() => view('reclamation'))->name('reclamation');
+
+// Formulaires publics
+Route::post('/formation-internationale', [FormationInternationaleController::class, 'store'])
+    ->name('formation-internationale.store');
+
+Route::post('/conciergerie', [ConciergerieController::class, 'store'])->name('conciergerie.store');
+Route::get('/conciergerie/suivi/{reference}', [ConciergerieController::class, 'suivi'])->name('conciergerie.suivi');
+
+// Réservations publiques
+Route::get('/reservation', [ReservationController::class, 'index'])->name('reservation');
+Route::post('/reservation', [ReservationController::class, 'submit'])->name('reservation.submit');
+
+// Réservations location
+Route::get('/reservation-location', [LocationReservationController::class, 'create'])
+    ->name('location.reservation.create');
+Route::post('/reservation-location', [LocationReservationController::class, 'store'])
+    ->name('location.reservation.store');
+Route::get('/reservation-location/confirmation/{reference}', [LocationReservationController::class, 'confirmation'])
+    ->name('location.reservation.confirmation');
+Route::post('/reservation-location/check-availability', [LocationReservationController::class, 'checkAvailability'])
+    ->name('location.reservation.check.availability');
+
+// Newsletter
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
+    ->name('newsletter.subscribe');
+Route::get('/newsletter/unsubscribe/{token}', [NewsletterController::class, 'unsubscribe'])
+    ->name('newsletter.unsubscribe');
+Route::get('/newsletter/confirm/{token}', [NewsletterController::class, 'confirm'])
+    ->name('newsletter.confirm');
+
+// Tracking newsletter
+Route::get('/newsletter/track/open/{campaign}/{subscription}/{token}', function ($campaignId, $subscriptionId, $token) {
+    $campaign = \App\Models\NewsletterCampaign::find($campaignId);
+    $subscription = \App\Models\NewsletterSubscription::find($subscriptionId);
+
+    if ($campaign && $subscription && md5($subscription->email . $campaignId) === $token) {
+        $campaign->increment('opened_count');
+        \App\Models\NewsletterLog::create([
+            'campaign_id' => $campaign->id,
+            'subscription_id' => $subscription->id,
+            'email' => $subscription->email,
+            'action' => 'opened',
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
+    }
+
+    $image = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
+    return response($image)->header('Content-Type', 'image/png');
+})->name('newsletter.track.open');
+
+Route::get('/newsletter/track/click/{campaign}/{subscription}/{token}', function ($campaignId, $subscriptionId, $token) {
+    $campaign = \App\Models\NewsletterCampaign::find($campaignId);
+    $subscription = \App\Models\NewsletterSubscription::find($subscriptionId);
+    $url = request()->query('url');
+
+    if ($campaign && $subscription && md5($subscription->email . $campaignId) === $token && $url) {
+        $campaign->increment('clicked_count');
+        \App\Models\NewsletterLog::create([
+            'campaign_id' => $campaign->id,
+            'subscription_id' => $subscription->id,
+            'email' => $subscription->email,
+            'action' => 'clicked',
+            'data' => ['url' => $url],
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
+        return redirect($url);
+    }
+    abort(404);
+})->name('newsletter.track.click');
+
+// Contact
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+// Pages légales
+Route::get('/cgv', fn() => view('cgv'))->name('cgv');
+Route::get('/cgu', fn() => view('cgu'))->name('cgu');
+Route::get('/rgpd', fn() => view('rgpd'))->name('rgpd');
+Route::get('/mentions-legales', fn() => view('mentions-legales'))->name('mentions-legales');
+
+// Dans routes/web.php, ajoutez cette route
+Route::get('/conciergerie/suivi/{reference}', [\App\Http\Controllers\Client\ConciergerieController::class, 'suivi'])
+    ->name('conciergerie.suivi');
+
+// ==============================================
+// REDIRECTION POUR ANCIENS LIENS /mes-formations
+// ==============================================
+Route::get('/mes-formations', function () {
+    if (auth()->check()) {
+        // Rediriger vers l'espace client
+        return redirect()->route('client.formations.index');
+    }
+    // Si non connecté, rediriger vers la page de login
+    return redirect()->route('login');
+})->name('formations.mes-formations-redirect');
+
+// ==============================================
+// FORMATIONS UTILISATEUR (authentification requise)
+// ==============================================
+Route::middleware(['auth'])->group(function () {
+    // Routes d'achat/inscription seulement
+    Route::get('/formation/{id}/inscrire-presentiel', [FormationController::class, 'inscrirePresentiel'])
+        ->name('formation.inscrire.presentiel');
+    Route::post('/formation/{id}/inscrire-presentiel', [FormationController::class, 'storeInscriptionPresentiel'])
+        ->name('formation.inscrire.presentiel.store');
+    Route::get('/formation/{id}/acheter-elearning', [FormationController::class, 'acheterElearning'])
+        ->name('formation.acheter.elearning');
+    Route::post('/formation/{id}/create-payment-session', [FormationController::class, 'createPaymentSession'])
+        ->name('formation.create.payment.session');
+    Route::get('/formation/payment/success', [FormationController::class, 'paymentSuccess'])
+        ->name('formation.payment.success');
+    Route::get('/formation/payment/cancel', [FormationController::class, 'paymentCancel'])
+        ->name('formation.payment.cancel');
+});
+
+// ==============================================
+// GESTION DES SLUGS (admin uniquement)
+// ==============================================
+Route::middleware(['auth'])->group(function () {
+    Route::get('/formations/{formation}/fix-slug', [FormationController::class, 'fixSlug'])
+        ->name('formations.fix-slug');
+    Route::post('/formations/fix-all-slugs', [FormationController::class, 'fixAllSlugs'])
+        ->name('formations.fix-all-slugs');
+    Route::get('/formations/check-slugs', [FormationController::class, 'checkSlugDuplicates'])
+        ->name('formations.check-slugs');
+});
+
+// ==============================================
+// WEBHOOK STRIPE (sans CSRF)
+// ==============================================
+Route::post('/stripe/webhook', [FormationController::class, 'webhook'])
+    ->name('stripe.webhook');
+
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes
+|--------------------------------------------------------------------------
+*/
+require __DIR__ . '/auth.php';
+
+/*
+|--------------------------------------------------------------------------
+| Routes authentifiées
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    // ==============================================
+    // DASHBOARD GÉNÉRAL - Redirection selon le rôle
+    // ==============================================
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+
+        // Vérifier si l'utilisateur vient d'un paiement réussi
+        if (session('success')) {
+            // Conserver le message de succès pour le dashboard client
+            session()->keep(['success']);
+        }
+
+        if ($user->hasRole('admin')) {
+            return redirect()->route('admin.dashboard');
+        } elseif ($user->hasRole('chauffeur')) {
+            return redirect()->route('chauffeur.dashboard');
+        } elseif ($user->hasRole('formateur')) {
+            return redirect()->route('formateur.dashboard');
+        } else {
+            // Par défaut, rediriger vers le dashboard client
+            return redirect()->route('client.dashboard');
+        }
+    })->name('dashboard');
+
+    // ==============================================
+    // PROFILE BREEZE
+    // ==============================================
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Routes des différents dashboards
+|--------------------------------------------------------------------------
+*/
+
+// Inclure les routes admin
+require __DIR__ . '/admin.php';
+
+// Inclure les routes client
+require __DIR__ . '/client.php';
+
+// Inclure les routes chauffeur
+require __DIR__ . '/chauffeur.php';
+
+// Inclure les routes formateur
+require __DIR__ . '/formateur.php';
+
+/*
+|--------------------------------------------------------------------------
+| Fallback Route
+|--------------------------------------------------------------------------
+*/
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
+});

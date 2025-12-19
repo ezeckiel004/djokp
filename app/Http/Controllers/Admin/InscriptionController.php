@@ -1,0 +1,265 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Inscription;
+use App\Models\User;
+use App\Models\Formation;
+use App\Models\Role;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+
+class InscriptionController extends Controller
+{
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('can:access-admin-dashboard');
+    }
+
+    public function index()
+    {
+        $inscriptions = Inscription::with(['user', 'formation'])
+            ->latest()
+            ->paginate(15);
+
+        return view('admin.inscriptions.index', compact('inscriptions'));
+    }
+
+    public function create()
+    {
+        // Récupérer les utilisateurs (clients et étudiants)
+        $clientRole = Role::where('slug', 'client')
+            ->orWhere('name', 'client')
+            ->first();
+
+        if (!$clientRole) {
+            $clientRole = Role::create([
+                'name' => 'Client',
+                'slug' => 'client',
+                'description' => 'Utilisateur client',
+                'permissions' => []
+            ]);
+        }
+
+        $users = User::where('role_id', $clientRole->id)
+            ->where('is_active', true)
+            ->get(['id', 'name', 'email']);
+
+        $formations = Formation::where('is_active', true)
+            ->get(['id', 'title', 'type', 'price']);
+
+        $statuses = [
+            'pending' => 'En attente',
+            'confirmed' => 'Confirmé',
+            'in_progress' => 'En cours',
+            'completed' => 'Terminé',
+            'cancelled' => 'Annulé'
+        ];
+
+        $paymentMethods = [
+            'cash' => 'Espèces',
+            'card' => 'Carte bancaire',
+            'bank_transfer' => 'Virement bancaire',
+            'cpf' => 'CPF',
+            'pôle_emploi' => 'Pôle Emploi',
+            'other' => 'Autre'
+        ];
+
+        return view('admin.inscriptions.create', compact('users', 'formations', 'statuses', 'paymentMethods'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'formation_id' => 'required|exists:formations,id',
+            'status' => 'required|in:pending,confirmed,in_progress,completed,cancelled',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'amount_paid' => 'required|numeric|min:0',
+            'payment_method' => 'nullable|in:cash,card,bank_transfer,cpf,pôle_emploi,other',
+            'notes' => 'nullable|string',
+        ]);
+
+        // Vérifier si l'inscription existe déjà
+        $existingInscription = Inscription::where('user_id', $validated['user_id'])
+            ->where('formation_id', $validated['formation_id'])
+            ->exists();
+
+        if ($existingInscription) {
+            return back()->withErrors(['formation_id' => 'Cet utilisateur est déjà inscrit à cette formation.'])->withInput();
+        }
+
+        $inscription = Inscription::create($validated);
+
+        return redirect()->route('admin.inscriptions.show', $inscription)
+            ->with('success', 'Inscription créée avec succès.');
+    }
+
+    public function show(Inscription $inscription)
+    {
+        $inscription->load(['user', 'formation']);
+
+        // Récupérer les formations pour le transfert éventuel
+        $formations = Formation::where('is_active', true)
+            ->where('id', '!=', $inscription->formation_id)
+            ->get(['id', 'title', 'type', 'price']);
+
+        $statuses = [
+            'pending' => 'En attente',
+            'confirmed' => 'Confirmé',
+            'in_progress' => 'En cours',
+            'completed' => 'Terminé',
+            'cancelled' => 'Annulé'
+        ];
+
+        $paymentMethods = [
+            'cash' => 'Espèces',
+            'card' => 'Carte bancaire',
+            'bank_transfer' => 'Virement bancaire',
+            'cpf' => 'CPF',
+            'pôle_emploi' => 'Pôle Emploi',
+            'other' => 'Autre'
+        ];
+
+        return view('admin.inscriptions.show', compact('inscription', 'formations', 'statuses', 'paymentMethods'));
+    }
+
+    public function edit(Inscription $inscription)
+    {
+        // Récupérer les utilisateurs
+        $clientRole = Role::where('slug', 'client')
+            ->orWhere('name', 'client')
+            ->first();
+
+        if (!$clientRole) {
+            $clientRole = Role::create([
+                'name' => 'Client',
+                'slug' => 'client',
+                'description' => 'Utilisateur client',
+                'permissions' => []
+            ]);
+        }
+
+        $users = User::where('role_id', $clientRole->id)
+            ->where('is_active', true)
+            ->get(['id', 'name', 'email']);
+
+        $formations = Formation::where('is_active', true)
+            ->get(['id', 'title', 'type', 'price']);
+
+        $statuses = [
+            'pending' => 'En attente',
+            'confirmed' => 'Confirmé',
+            'in_progress' => 'En cours',
+            'completed' => 'Terminé',
+            'cancelled' => 'Annulé'
+        ];
+
+        $paymentMethods = [
+            'cash' => 'Espèces',
+            'card' => 'Carte bancaire',
+            'bank_transfer' => 'Virement bancaire',
+            'cpf' => 'CPF',
+            'pôle_emploi' => 'Pôle Emploi',
+            'other' => 'Autre'
+        ];
+
+        return view('admin.inscriptions.edit', compact('inscription', 'users', 'formations', 'statuses', 'paymentMethods'));
+    }
+
+    public function update(Request $request, Inscription $inscription)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'formation_id' => 'required|exists:formations,id',
+            'status' => 'required|in:pending,confirmed,in_progress,completed,cancelled',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date|after_or_equal:start_date',
+            'amount_paid' => 'required|numeric|min:0',
+            'payment_method' => 'nullable|in:cash,card,bank_transfer,cpf,pôle_emploi,other',
+            'notes' => 'nullable|string',
+        ]);
+
+        // Vérifier si l'inscription existe déjà pour un autre utilisateur
+        $existingInscription = Inscription::where('user_id', $validated['user_id'])
+            ->where('formation_id', $validated['formation_id'])
+            ->where('id', '!=', $inscription->id)
+            ->exists();
+
+        if ($existingInscription) {
+            return back()->withErrors(['formation_id' => 'Cet utilisateur est déjà inscrit à cette formation.'])->withInput();
+        }
+
+        $inscription->update($validated);
+
+        return redirect()->route('admin.inscriptions.show', $inscription)
+            ->with('success', 'Inscription mise à jour avec succès.');
+    }
+
+    public function destroy(Inscription $inscription)
+    {
+        $inscription->delete();
+        return redirect()->route('admin.inscriptions.index')
+            ->with('success', 'Inscription supprimée avec succès.');
+    }
+
+    // Action rapide pour changer le statut
+    public function updateStatus(Request $request, Inscription $inscription)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,confirmed,in_progress,completed,cancelled'
+        ]);
+
+        $inscription->update(['status' => $request->status]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Statut mis à jour',
+            'new_status' => $request->status,
+            'status_label' => $this->getStatusLabel($request->status)
+        ]);
+    }
+
+    // Action pour transférer vers une autre formation
+    public function transfer(Request $request, Inscription $inscription)
+    {
+        $request->validate([
+            'new_formation_id' => 'required|exists:formations,id'
+        ]);
+
+        // Vérifier si l'utilisateur est déjà inscrit à la nouvelle formation
+        $existingInscription = Inscription::where('user_id', $inscription->user_id)
+            ->where('formation_id', $request->new_formation_id)
+            ->exists();
+
+        if ($existingInscription) {
+            return back()->withErrors(['new_formation_id' => 'Cet utilisateur est déjà inscrit à cette formation.'])->withInput();
+        }
+
+        // Mettre à jour l'inscription
+        $inscription->update([
+            'formation_id' => $request->new_formation_id,
+            'status' => 'pending', // Réinitialiser le statut
+            'notes' => $inscription->notes . "\n\nTransfert de formation: " . date('d/m/Y')
+        ]);
+
+        return redirect()->route('admin.inscriptions.show', $inscription)
+            ->with('success', 'Inscription transférée avec succès.');
+    }
+
+    private function getStatusLabel($status)
+    {
+        $labels = [
+            'pending' => 'En attente',
+            'confirmed' => 'Confirmé',
+            'in_progress' => 'En cours',
+            'completed' => 'Terminé',
+            'cancelled' => 'Annulé'
+        ];
+
+        return $labels[$status] ?? $status;
+    }
+}

@@ -1,0 +1,629 @@
+@extends('layouts.admin')
+
+@section('title', 'Nouvelle formation')
+
+@section('page-title', 'Créer une nouvelle formation')
+
+@section('page-actions')
+<a href="{{ route('admin.formations.index') }}" class="btn-secondary">
+    <i class="fas fa-arrow-left mr-2"></i>Retour à la liste
+</a>
+@endsection
+
+@section('content')
+<div class="max-w-6xl mx-auto">
+    <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+        <form action="{{ route('admin.formations.store') }}" method="POST" id="formation-form"
+            enctype="multipart/form-data">
+            @csrf
+
+            <div class="px-4 py-5 sm:p-6 space-y-8">
+                <!-- Informations de base -->
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-info-circle text-djok-yellow mr-2"></i>
+                        Informations de base
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="title" class="block text-sm font-medium text-gray-700 mb-1">
+                                Titre de la formation *
+                            </label>
+                            <input type="text" name="title" id="title" required
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200"
+                                value="{{ old('title') }}" placeholder="Ex: Formation VTC Professionnelle">
+                            @error('title')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="slug" class="block text-sm font-medium text-gray-700 mb-1">
+                                Slug (URL) *
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500">/formations/</span>
+                                </div>
+                                <input type="text" name="slug" id="slug" required
+                                    class="w-full pl-28 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200"
+                                    value="{{ old('slug') }}" placeholder="formation-vtc-professionnelle">
+                            </div>
+                            @error('slug')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                            <p class="mt-1 text-xs text-gray-500">Ce slug sera utilisé dans l'URL de la formation</p>
+                        </div>
+
+                        <div>
+                            <label for="price" class="block text-sm font-medium text-gray-700 mb-1">
+                                Prix (€) *
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500">€</span>
+                                </div>
+                                <input type="number" step="0.01" name="price" id="price" required min="0"
+                                    class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200"
+                                    value="{{ old('price') }}" placeholder="0.00">
+                            </div>
+                            @error('price')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="duration_hours" class="block text-sm font-medium text-gray-700 mb-1">
+                                Durée (heures) *
+                            </label>
+                            <div class="relative">
+                                <input type="number" name="duration_hours" id="duration_hours" required min="1"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200"
+                                    value="{{ old('duration_hours') }}" placeholder="Ex: 40">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500">heures</span>
+                                </div>
+                            </div>
+                            @error('duration_hours')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="duree" class="block text-sm font-medium text-gray-700 mb-1">
+                                Durée (affichage)
+                            </label>
+                            <input type="text" name="duree" id="duree"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200"
+                                value="{{ old('duree') }}" placeholder="Ex: 40 heures (5 jours)">
+                            @error('duree')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="format_affichage" class="block text-sm font-medium text-gray-700 mb-1">
+                                Format d'affichage
+                            </label>
+                            <input type="text" name="format_affichage" id="format_affichage"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200"
+                                value="{{ old('format_affichage') }}" placeholder="Ex: Présentiel, E-learning, Mixte">
+                            @error('format_affichage')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Catégorisation -->
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-tags text-djok-yellow mr-2"></i>
+                        Catégorisation
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="format_type" class="block text-sm font-medium text-gray-700 mb-1">
+                                Format *
+                            </label>
+                            <select name="format_type" id="format_type" required
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200">
+                                <option value="">Sélectionnez un format</option>
+                                <option value="presentiel" {{ old('format_type')=='presentiel' ? 'selected' : '' }}>
+                                    Présentiel
+                                </option>
+                                <option value="en_ligne" {{ old('format_type')=='en_ligne' ? 'selected' : '' }}>
+                                    En ligne
+                                </option>
+                                <option value="mixte" {{ old('format_type')=='mixte' ? 'selected' : '' }}>
+                                    Mixte (Présentiel + En ligne)
+                                </option>
+                            </select>
+                            @error('format_type')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="type_formation" class="block text-sm font-medium text-gray-700 mb-1">
+                                Type de formation *
+                            </label>
+                            <select name="type_formation" id="type_formation" required
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200">
+                                <option value="">Sélectionnez un type</option>
+                                <option value="presentiel" {{ old('type_formation')=='presentiel' ? 'selected' : '' }}>
+                                    Présentiel
+                                </option>
+                                <option value="e_learning" {{ old('type_formation')=='e_learning' ? 'selected' : '' }}>
+                                    E-learning
+                                </option>
+                            </select>
+                            @error('type_formation')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="categorie" class="block text-sm font-medium text-gray-700 mb-1">
+                                Catégorie *
+                            </label>
+                            <select name="categorie" id="categorie" required
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200">
+                                <option value="">Sélectionnez une catégorie</option>
+                                <option value="vtc_theorique" {{ old('categorie')=='vtc_theorique' ? 'selected' : '' }}>
+                                    VTC - Formation théorique
+                                </option>
+                                <option value="vtc_pratique" {{ old('categorie')=='vtc_pratique' ? 'selected' : '' }}>
+                                    VTC - Formation pratique
+                                </option>
+                                <option value="e_learning" {{ old('categorie')=='e_learning' ? 'selected' : '' }}>
+                                    E-learning
+                                </option>
+                                <option value="renouvellement" {{ old('categorie')=='renouvellement' ? 'selected' : ''
+                                    }}>
+                                    Renouvellement de licence
+                                </option>
+                            </select>
+                            @error('categorie')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Options incluses -->
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-check-circle text-djok-yellow mr-2"></i>
+                        Options incluses
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="frais_examen" class="block text-sm font-medium text-gray-700 mb-1">
+                                Frais d'examen
+                            </label>
+                            <select name="frais_examen" id="frais_examen"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200">
+                                <option value="">Sélectionnez une option</option>
+                                <option value="Inclus" {{ old('frais_examen')=='Inclus' ? 'selected' : '' }}>Inclus
+                                </option>
+                                <option value="Non inclus" {{ old('frais_examen')=='Non inclus' ? 'selected' : '' }}>Non
+                                    inclus</option>
+                                <option value="À préciser" {{ old('frais_examen')=='À préciser' ? 'selected' : '' }}>À
+                                    préciser</option>
+                            </select>
+                            @error('frais_examen')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label for="location_vehicule" class="block text-sm font-medium text-gray-700 mb-1">
+                                Location véhicule
+                            </label>
+                            <select name="location_vehicule" id="location_vehicule"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200">
+                                <option value="">Sélectionnez une option</option>
+                                <option value="Inclus" {{ old('location_vehicule')=='Inclus' ? 'selected' : '' }}>Inclus
+                                </option>
+                                <option value="Non inclus" {{ old('location_vehicule')=='Non inclus' ? 'selected' : ''
+                                    }}>Non inclus</option>
+                                <option value="Optionnel" {{ old('location_vehicule')=='Optionnel' ? 'selected' : '' }}>
+                                    Optionnel</option>
+                            </select>
+                            @error('location_vehicule')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                        Description de la formation *
+                    </label>
+                    <textarea name="description" id="description" rows="5" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200"
+                        placeholder="Décrivez en détail le contenu de la formation, ses objectifs et ce que les participants apprendront...">{{ old('description') }}</textarea>
+                    @error('description')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                    <p class="mt-2 text-xs text-gray-500">
+                        Cette description sera visible sur la page publique de la formation
+                    </p>
+                </div>
+
+                <!-- Options -->
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-cog text-djok-yellow mr-2"></i>
+                        Options de la formation
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="flex items-center p-4 bg-white rounded-lg border border-gray-200">
+                            <input type="checkbox" name="is_certified" id="is_certified" value="1" {{
+                                old('is_certified') ? 'checked' : '' }}
+                                class="h-5 w-5 text-djok-yellow focus:ring-djok-yellow border-gray-300 rounded">
+                            <label for="is_certified" class="ml-3 block text-sm text-gray-900">
+                                <span class="font-medium">Formation certifiée</span>
+                                <p class="text-xs text-gray-500 mt-1">Délivre un certificat reconnu</p>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center p-4 bg-white rounded-lg border border-gray-200">
+                            <input type="checkbox" name="is_financeable_cpf" id="is_financeable_cpf" value="1" {{
+                                old('is_financeable_cpf') ? 'checked' : '' }}
+                                class="h-5 w-5 text-djok-yellow focus:ring-djok-yellow border-gray-300 rounded">
+                            <label for="is_financeable_cpf" class="ml-3 block text-sm text-gray-900">
+                                <span class="font-medium">Éligible CPF</span>
+                                <p class="text-xs text-gray-500 mt-1">Financement par Compte Personnel de Formation</p>
+                            </label>
+                        </div>
+
+                        <div class="flex items-center p-4 bg-white rounded-lg border border-gray-200">
+                            <input type="checkbox" name="is_active" id="is_active" value="1" {{ old('is_active', true)
+                                ? 'checked' : '' }}
+                                class="h-5 w-5 text-djok-yellow focus:ring-djok-yellow border-gray-300 rounded">
+                            <label for="is_active" class="ml-3 block text-sm text-gray-900">
+                                <span class="font-medium">Formation active</span>
+                                <p class="text-xs text-gray-500 mt-1">Visible et accessible aux utilisateurs</p>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Détails -->
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-list-alt text-djok-yellow mr-2"></i>
+                        Détails de la formation
+                    </h3>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label for="program" class="block text-sm font-medium text-gray-700 mb-2">
+                                Programme détaillé
+                            </label>
+                            <textarea name="program" id="program" rows="4"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200"
+                                placeholder="Entrez chaque module sur une nouvelle ligne :
+Module 1: Introduction au métier de VTC
+Module 2: Réglementation et législation
+Module 3: Gestion client et service clientèle
+...">{{ old('program') }}</textarea>
+                            <p class="mt-2 text-xs text-gray-500">
+                                Chaque ligne représente un module ou une partie du programme
+                            </p>
+                        </div>
+
+                        <div>
+                            <label for="requirements" class="block text-sm font-medium text-gray-700 mb-2">
+                                Prérequis
+                            </label>
+                            <textarea name="requirements" id="requirements" rows="3"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200"
+                                placeholder="Exemples :
+Permis B valide depuis au moins 3 ans
+Casier judiciaire vierge
+Niveau scolaire minimum : BAC
+...">{{ old('requirements') }}</textarea>
+                            <p class="mt-2 text-xs text-gray-500">
+                                Liste des conditions requises pour suivre la formation
+                            </p>
+                        </div>
+
+                        <div>
+                            <label for="included_services" class="block text-sm font-medium text-gray-700 mb-2">
+                                Services inclus
+                            </label>
+                            <textarea name="included_services" id="included_services" rows="3"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-djok-yellow focus:border-transparent transition-all duration-200"
+                                placeholder="Exemples :
+Manuel de formation complet
+Accès à la plateforme en ligne
+Support pédagogique personnalisé
+Certificat de fin de formation
+...">{{ old('included_services') }}</textarea>
+                            <p class="mt-2 text-xs text-gray-500">
+                                Ce qui est inclus dans le prix de la formation
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fichiers multimédias -->
+                <div class="bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-file-alt text-djok-yellow mr-2"></i>
+                        Fichiers multimédias
+                    </h3>
+                    <p class="text-sm text-gray-600 mb-6">
+                        Pour les formations en ligne ou mixtes, vous pouvez ajouter des fichiers PDF et des vidéos.
+                    </p>
+
+                    <!-- Fichiers PDF -->
+                    <div class="mb-8">
+                        <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-file-pdf text-red-500 mr-2"></i>
+                            Fichiers PDF
+                        </h4>
+                        <div id="pdf-files-container" class="space-y-4">
+                            <div class="pdf-file-group border border-gray-200 rounded-lg p-4 bg-white">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Fichier PDF</label>
+                                        <input type="file" name="pdf_files[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Titre</label>
+                                        <input type="text" name="pdf_titles[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                            placeholder="Ex: Manuel de formation">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                        <input type="text" name="pdf_descriptions[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                            placeholder="Ex: Manuel complet du cours">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addPdfField()"
+                            class="mt-4 inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 text-sm">
+                            <i class="fas fa-plus mr-2"></i>Ajouter un PDF
+                        </button>
+                    </div>
+
+                    <!-- Fichiers Vidéo -->
+                    <div>
+                        <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-video text-blue-500 mr-2"></i>
+                            Fichiers Vidéo
+                        </h4>
+                        <div id="video-files-container" class="space-y-4">
+                            <div class="video-file-group border border-gray-200 rounded-lg p-4 bg-white">
+                                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Fichier
+                                            Vidéo</label>
+                                        <input type="file" name="video_files[]" accept="video/*"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Titre</label>
+                                        <input type="text" name="video_titles[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                            placeholder="Ex: Introduction au VTC">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                        <input type="text" name="video_descriptions[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                            placeholder="Ex: Vidéo d'introduction">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Miniature</label>
+                                        <input type="file" name="video_thumbnails[]" accept="image/*"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gray-50 file:text-gray-700 hover:file:bg-gray-100">
+                                        <p class="text-xs text-gray-500 mt-1">Image JPG/PNG (optionnel)</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Durée</label>
+                                        <input type="text" name="video_durations[]"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                                            placeholder="Ex: 15:30">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" onclick="addVideoField()"
+                            class="mt-4 inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 text-sm">
+                            <i class="fas fa-plus mr-2"></i>Ajouter une vidéo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Boutons d'action -->
+            <div class="px-4 py-5 sm:p-6 border-t border-gray-200 bg-gray-50">
+                <div class="flex justify-end space-x-3">
+                    <a href="{{ route('admin.formations.index') }}"
+                        class="px-6 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                        Annuler
+                    </a>
+                    <button type="submit"
+                        class="px-6 py-2.5 bg-djok-yellow text-white rounded-lg text-sm font-medium hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-djok-yellow transition-colors duration-200 flex items-center">
+                        <i class="fas fa-save mr-2"></i>
+                        Créer la formation
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+    // Génération automatique du slug
+    document.addEventListener('DOMContentLoaded', function() {
+        const titleInput = document.getElementById('title');
+        const slugInput = document.getElementById('slug');
+        let slugManuallyEdited = false;
+
+        titleInput.addEventListener('input', function() {
+            if (!slugManuallyEdited && titleInput.value.trim() !== '') {
+                generateSlug();
+            }
+        });
+
+        slugInput.addEventListener('input', function() {
+            slugManuallyEdited = this.value !== '';
+        });
+
+        function generateSlug() {
+            let slug = titleInput.value
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim();
+
+            slugInput.value = slug;
+        }
+
+        // Ajout dynamique de champs PDF
+        window.addPdfField = function() {
+            const container = document.getElementById('pdf-files-container');
+            const newField = container.firstElementChild.cloneNode(true);
+            newField.querySelectorAll('input').forEach(input => input.value = '');
+            container.appendChild(newField);
+        }
+
+        // Ajout dynamique de champs vidéo
+        window.addVideoField = function() {
+            const container = document.getElementById('video-files-container');
+            const newField = container.firstElementChild.cloneNode(true);
+            newField.querySelectorAll('input').forEach(input => input.value = '');
+            container.appendChild(newField);
+        }
+
+        // Validation du formulaire
+        const form = document.getElementById('formation-form');
+        form.addEventListener('submit', function(e) {
+            let valid = true;
+            const requiredFields = form.querySelectorAll('[required]');
+
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('border-red-500');
+                    valid = false;
+                } else {
+                    field.classList.remove('border-red-500');
+                }
+            });
+
+            if (!valid) {
+                e.preventDefault();
+                alert('Veuillez remplir tous les champs obligatoires.');
+            }
+        });
+    });
+
+    // Vérification des limites de fichiers
+    function checkFileSize(fileInput, maxSizeGB = 2) {
+        const maxSize = maxSizeGB * 1024 * 1024 * 1024; // Convertir GB en bytes
+        let totalSize = 0;
+
+        for (let file of fileInput.files) {
+            totalSize += file.size;
+            if (file.size > maxSize) {
+                alert('Le fichier "' + file.name + '" dépasse ' + maxSizeGB + 'GB');
+                return false;
+            }
+        }
+
+        if (totalSize > maxSize) {
+            alert('La taille totale des fichiers dépasse ' + maxSizeGB + 'GB');
+            return false;
+        }
+
+        return true;
+    }
+
+    // Ajouter la vérification sur tous les inputs file
+    document.querySelectorAll('input[type="file"]').forEach(input => {
+        input.addEventListener('change', function() {
+            if (this.accept.includes('video')) {
+                if (!checkFileSize(this, 2)) { // 2GB pour les vidéos
+                    this.value = '';
+                }
+            } else if (this.accept.includes('image')) {
+                if (!checkFileSize(this, 0.002)) { // 2MB pour les images
+                    this.value = '';
+                }
+            } else if (this.name.includes('pdf')) {
+                if (!checkFileSize(this, 0.5)) { // 500MB pour les PDF
+                    this.value = '';
+                }
+            }
+        });
+    });
+
+    // Afficher la taille des fichiers sélectionnés
+    function updateFileInfo(fileInput, infoElementId) {
+        const infoElement = document.getElementById(infoElementId);
+        if (!infoElement) return;
+
+        if (fileInput.files.length === 0) {
+            infoElement.textContent = 'Aucun fichier sélectionné';
+            return;
+        }
+
+        let totalSize = 0;
+        let fileNames = [];
+
+        for (let file of fileInput.files) {
+            totalSize += file.size;
+            fileNames.push(file.name);
+        }
+
+        const sizeText = formatFileSize(totalSize);
+        infoElement.textContent = `${fileNames.length} fichier(s) - ${sizeText}`;
+        infoElement.title = fileNames.join('\n');
+    }
+
+    function formatFileSize(bytes) {
+        const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        let unitIndex = 0;
+
+        while (bytes >= 1024 && unitIndex < units.length - 1) { 
+            bytes /= 1024; 
+            unitIndex++; 
+        } 
+        return bytes.toFixed(2) + ' ' + units[unitIndex]; 
+    }
+    
+    // Initialiser pour tous les inputs file existants
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('input[type="file"]').forEach((input, index) => {
+            const infoId = 'file-info-' + index;
+            const infoElement = document.createElement('div');
+            infoElement.id = infoId;
+            infoElement.className = 'text-sm text-gray-600 mt-1';
+            input.parentNode.appendChild(infoElement);
+
+            input.addEventListener('change', function() {
+                updateFileInfo(this, infoId);
+            });
+
+            updateFileInfo(input, infoId);
+        });
+    });
+</script>
+@endpush
+@endsection

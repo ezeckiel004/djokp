@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Mail;
+
+use App\Models\LocationReservation;
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\SerializesModels;
+
+class LocationReservationStatusUpdated extends Mailable
+{
+    use Queueable, SerializesModels;
+
+    public $reservation;
+    public $nouveauStatut;
+    public $ancienStatut;
+    public $messagePersonnalise;
+    public $subject;
+
+    /**
+     * Create a new message instance.
+     */
+    public function __construct(LocationReservation $reservation, $nouveauStatut, $ancienStatut = null, $messagePersonnalise = null)
+    {
+        $this->reservation = $reservation;
+        $this->nouveauStatut = $nouveauStatut;
+        $this->ancienStatut = $ancienStatut;
+        $this->messagePersonnalise = $messagePersonnalise;
+
+        // Définir le sujet de l'email
+        $this->subject = "Mise à jour de votre réservation " . $reservation->reference . " - DJOK";
+    }
+
+    /**
+     * Get the message envelope.
+     */
+    public function envelope(): Envelope
+    {
+        return new Envelope(
+            subject: $this->subject,
+        );
+    }
+
+    /**
+     * Get the message content definition.
+     */
+    public function content(): Content
+    {
+        return new Content(
+            view: 'emails.location-reservation-status-updated',
+        );
+    }
+
+    /**
+     * Get the attachments for the message.
+     *
+     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     */
+    public function attachments(): array
+    {
+        return [];
+    }
+}
