@@ -5,10 +5,9 @@
     :class="scrolled ? 'bg-white shadow-lg py-4' : 'bg-transparent py-6'">
 
     <div class="flex items-center justify-between px-4 lg:px-6">
-        <!-- Logo -->
-        <div class="text-xl lg:text-2xl font-bold transition-colors duration-300"
-            :class="scrolled ? 'text-gray-900' : 'text-white'">
-            DJOK PRESTIGE
+        <!-- Logo agrandi -->
+        <div class="transition-colors duration-300">
+            <img src="{{ asset('DP.png') }}" alt="DJOK PRESTIGE" class="h-12 lg:h-16">
         </div>
 
         <!-- Desktop Menu (grands écrans) -->
@@ -20,7 +19,7 @@
             </a>
 
             <!-- Formation VTC -->
-            <a href="{{ route('formation') }}" class="font-semibold transition duration-300 hover:text-yellow-400"
+            <a href="{{ route('formation') }}" class="transition duration-300 hover:text-yellow-400"
                 :class="scrolled ? 'text-gray-900' : 'text-white'">
                 Formation VTC
             </a>
@@ -64,7 +63,7 @@
                 Accueil
             </a>
 
-            <a href="{{ route('formation') }}" class="font-semibold transition duration-300 hover:text-yellow-400"
+            <a href="{{ route('formation') }}" class="transition duration-300 hover:text-yellow-400"
                 :class="scrolled ? 'text-gray-900' : 'text-white'">
                 Formation VTC
             </a>
@@ -186,7 +185,7 @@
 
             <!-- Formation VTC Mobile -->
             <a href="{{ route('formation') }}" @click="mobileMenuOpen = false"
-                class="block py-4 font-semibold text-gray-900 transition duration-300 border-b border-gray-200 hover:text-yellow-600">
+                class="block py-4 text-gray-900 transition duration-300 border-b border-gray-200 hover:text-yellow-600">
                 Formation VTC
             </a>
 

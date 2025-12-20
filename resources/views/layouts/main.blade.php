@@ -104,10 +104,11 @@
             font-size: 24px;
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
             border: none;
-            cursor: not-allowed;
+            cursor: pointer;
             opacity: 0.9;
             transition: all 0.3s ease;
             color: white;
+            text-decoration: none;
         }
 
         .icon-btn:hover {
@@ -126,16 +127,16 @@
 
         /* Ajouter dans votre fichier CSS principal */
         .line-clamp-2 {
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .truncate {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         /* ===== RESPONSIVE MOBILE - POSITION PRESQUE AU CENTRE ===== */
@@ -398,10 +399,10 @@
                 <i class="fab fa-whatsapp"></i>
             </button>
 
-            <!-- Contact avec l'icône d'adresse/contact -->
-            <button class="icon-btn contact-btn" disabled title="Contactez-nous (Disponible prochainement)">
+            <!-- Contact avec lien vers la page de contact -->
+            <a href="{{ route('contact') }}" class="icon-btn contact-btn" title="Contactez-nous">
                 <i class="fas fa-address-book"></i>
-            </button>
+            </a>
         </div>
     </div>
 

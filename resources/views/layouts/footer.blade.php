@@ -15,8 +15,8 @@
                     <li><a href="{{ route('location') }}"
                             class="text-gray-400 transition duration-300 hover:text-yellow-400">Location de
                             véhicules</a></li>
-                    <li><a href="{{ route('vtc-transport') }}"
-                            class="text-gray-400 transition duration-300 hover:text-yellow-400">VTC & Transport</a></li>
+                    {{-- <li><a href="{{ route('vtc-transport') }}"
+                            class="text-gray-400 transition duration-300 hover:text-yellow-400">VTC & Transport</a></li> --}}
                     <li><a href="{{ route('conciergerie') }}"
                             class="text-gray-400 transition duration-300 hover:text-yellow-400">Conciergerie</a></li>
                     <li><a href="{{ route('formation.international') }}"
@@ -29,7 +29,7 @@
                     <li><a href="{{ route('espaceclient') }}"
                             class="text-gray-400 transition duration-300 hover:text-yellow-400">Espace Client</a></li>
                     <li><a href="{{ route('reservation') }}"
-                            class="text-gray-400 transition duration-300 hover:text-yellow-400">Réservation</a></li>
+                            class="text-gray-400 transition duration-300 hover:text-yellow-400">VTC & Transport</a></li>
                 </ul>
             </div>
 
