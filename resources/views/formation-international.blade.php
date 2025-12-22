@@ -52,7 +52,7 @@
 <!-- Hero Section - Style sobre -->
 <header class="relative min-h-screen flex items-center" style="background: #000;">
     <div class="absolute inset-0 bg-black">
-        <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+        <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&dpr=1"
             alt="Formation International" class="w-full h-full object-cover opacity-40">
         <div class="absolute inset-0" style="background: rgba(0, 0, 0, 0.7);"></div>
     </div>
