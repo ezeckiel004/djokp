@@ -3,117 +3,135 @@
 @section('title', 'Blog - DJOK PRESTIGE')
 
 @section('content')
-<!-- Header Hero Section -->
-<header class="flex flex-col min-h-screen hero-bg">
-    @include('layouts.navbar')
+<!-- Header Hero Section - Style sobre -->
+<header class="relative min-h-screen flex items-center" style="background: #000;">
+    <div class="absolute inset-0 bg-black">
+        <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2072&q=80"
+            alt="Blog DJOK PRESTIGE" class="w-full h-full object-cover opacity-40">
+        <div class="absolute inset-0" style="background: rgba(0, 0, 0, 0.7);"></div>
+    </div>
 
-    <div class="flex flex-col items-center justify-center flex-1 px-4 text-center text-white">
-        <h1 class="mb-6 text-5xl font-bold md:text-6xl animate-fade-in-up" style="animation-delay: 0.2s;">
-            Blog DJOK PRESTIGE
-        </h1>
-        <p class="max-w-3xl mb-8 text-xl md:text-2xl animate-fade-in-up" style="animation-delay: 0.4s;">
-            Actualités, conseils et expertise dans le transport, la formation et l'entrepreneuriat
-        </p>
-        <div class="flex flex-col gap-4 sm:flex-row animate-fade-in-up" style="animation-delay: 0.6s;">
-            <a href="#articles"
-                class="px-8 py-3 text-lg font-semibold text-white transition duration-300 transform bg-yellow-600 rounded-lg hover:bg-yellow-700 hover:scale-105 hover:shadow-xl">
-                Découvrir nos articles
-            </a>
+    <div class="container mx-auto px-4 md:px-6 py-20 relative z-10">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-8" style="color: var(--gold);">
+                Blog DJOK PRESTIGE
+            </h1>
+
+            <p class="text-lg md:text-xl text-gray-300 mb-12">
+                Actualités, conseils et expertise dans le transport, la formation et l'entrepreneuriat
+            </p>
+
+            <!-- Bouton - Style sobre -->
+            <div class="animate-fade-in-up" style="animation-delay: 0.6s;">
+                <a href="#articles"
+                    class="inline-flex items-center px-8 py-3 font-semibold text-center transition duration-300"
+                    style="background: var(--gold); color: black;">
+                    Découvrir nos articles
+                </a>
+            </div>
         </div>
     </div>
 
-    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <a href="#articles" class="text-white transition duration-300 hover:text-yellow-400">
-            <i class="text-2xl fas fa-chevron-down"></i>
+    <!-- Scroll Indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+        <a href="#articles" class="text-white transition duration-300 hover:text-var(--gold)">
+            <i class="text-xl fas fa-chevron-down"></i>
         </a>
     </div>
 </header>
 
-<!-- Search and Categories -->
-<div class="container mx-auto py-12 px-4">
+<!-- Search and Categories - Style sobre -->
+<div class="container mx-auto py-12 px-4 md:px-6" style="background: #000;">
     <div class="flex flex-col lg:flex-row justify-between items-center gap-6 mb-12">
-        <!-- Live Search (désactivé pour la démo) -->
+        <!-- Live Search -->
         <div class="w-full lg:w-1/2">
             <div class="relative">
                 <input type="text" disabled placeholder="Recherche bientôt disponible..."
-                    class="w-full p-4 pl-12 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 transition duration-300 transform bg-gray-100">
-                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    class="w-full p-4 pl-12 border rounded focus:outline-none transition duration-300"
+                    style="background: #111; border-color: #444; color: white;">
+                <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2"
+                    style="color: var(--gold);"></i>
             </div>
         </div>
 
-        <!-- Filtres services -->
+        <!-- Filtres services - Style sobre -->
         <div class="flex flex-wrap gap-3 justify-center lg:justify-end">
             <a href="{{ route('blog.category', 'location') }}"
-                class="px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium hover:bg-yellow-200 transition">
+                class="px-4 py-2 rounded-full text-sm font-medium transition"
+                style="background: rgba(var(--gold-rgb), 0.1); color: var(--gold); border: 1px solid rgba(var(--gold-rgb), 0.3);">
                 Location
             </a>
             <a href="{{ route('blog.category', 'vtc-transport') }}"
-                class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium hover:bg-blue-200 transition">
+                class="px-4 py-2 rounded-full text-sm font-medium transition"
+                style="background: rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3);">
                 VTC Transport
             </a>
             <a href="{{ route('blog.category', 'conciergerie') }}"
-                class="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium hover:bg-green-200 transition">
+                class="px-4 py-2 rounded-full text-sm font-medium transition"
+                style="background: rgba(34, 197, 94, 0.1); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.3);">
                 Conciergerie
             </a>
             <a href="{{ route('blog.category', 'formation') }}"
-                class="px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium hover:bg-purple-200 transition">
+                class="px-4 py-2 rounded-full text-sm font-medium transition"
+                style="background: rgba(147, 51, 234, 0.1); color: #c4b5fd; border: 1px solid rgba(147, 51, 234, 0.3);">
                 Formation
             </a>
         </div>
     </div>
 
-    <!-- Articles à la une -->
+    <!-- Articles à la une - Style sobre -->
     @if($featuredArticles->count() > 0)
     <section id="articles" class="mb-16">
-        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Articles à la Une</h2>
+        <h2 class="text-2xl md:text-3xl font-bold mb-8 text-center" style="color: var(--gold);">Articles à la Une</h2>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             @foreach($featuredArticles as $index => $article)
-            <div
-                class="bg-white rounded-2xl shadow-lg overflow-hidden group @if($index % 2 == 0) animate-slide-in-left @else animate-slide-in-right @endif">
-                <div
-                    class="h-64 flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-{{ $article->color_class }}-400 to-{{ $article->color_class }}-600">
+            <div class="overflow-hidden group @if($index % 2 == 0) animate-slide-in-left @else animate-slide-in-right @endif"
+                style="background: #111; border: 1px solid #333;">
+                <!-- En-tête de l'article -->
+                <div class="h-64 flex items-center justify-center relative overflow-hidden"
+                    style="background: linear-gradient(135deg, rgba(var(--gold-rgb), 0.8), rgba(var(--gold-rgb), 0.4));">
                     <div class="absolute inset-0 flex items-center justify-center">
                         <div class="relative">
-                            <div class="absolute inset-0 bg-white/20 blur-xl scale-150 animate-pulse"></div>
-                            <div
-                                class="relative bg-white/10 backdrop-blur-sm rounded-full p-8 shadow-2xl border border-white/20">
+                            <div class="absolute inset-0 bg-white/10 blur-xl scale-150 animate-pulse"></div>
+                            <div class="relative rounded-full p-8 backdrop-blur-sm border border-white/10"
+                                style="background: rgba(255, 255, 255, 0.05);">
                                 <i
                                     class="{{ $article->icon ?? 'fas fa-newspaper' }} text-white text-8xl opacity-90"></i>
                             </div>
                         </div>
                     </div>
-                    <div class="absolute inset-0 bg-black opacity-10"></div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                    <i class="{{ $article->icon ?? 'fas fa-newspaper' }} text-white text-7xl relative z-10"></i>
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
 
                     <div class="absolute bottom-4 left-6 right-6 text-left z-10">
-                        <div
-                            class="inline-flex items-center px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm">
+                        <div class="inline-flex items-center px-3 py-1 rounded-full text-sm"
+                            style="background: rgba(255, 255, 255, 0.1); color: white; backdrop-filter: blur(10px);">
                             <i class="fas fa-clock mr-1"></i>
                             {{ $article->reading_time }} min
                         </div>
                     </div>
                 </div>
 
-                <div class="p-8">
+                <!-- Contenu de l'article -->
+                <div class="p-6 md:p-8">
                     <div class="flex items-center gap-3 mb-4">
-                        <span
-                            class="px-3 py-1 bg-{{ $article->color_class }}-100 text-{{ $article->color_class }}-800 rounded-full text-xs font-medium">
+                        <span class="px-3 py-1 rounded-full text-xs font-medium"
+                            style="background: rgba(var(--gold-rgb), 0.1); color: var(--gold);">
                             {{ $article->category_label }}
                         </span>
-                        <span class="text-gray-500 text-sm">
+                        <span style="color: #aaa; font-size: 0.875rem;">
                             <i class="fas fa-calendar-alt mr-1"></i>
                             {{ $article->created_at->format('d M Y') }}
                         </span>
                     </div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                    <h3 class="text-xl md:text-2xl font-bold mb-4" style="color: white;">
                         {{ $article->title }}
                     </h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">
+                    <p class="mb-6 leading-relaxed" style="color: #ccc;">
                         {{ $article->excerpt }}
                     </p>
                     <a href="{{ route('blog.show', $article->slug) }}"
-                        class="inline-flex items-center font-semibold text-{{ $article->color_class }}-600 hover:text-{{ $article->color_class }}-700">
+                        class="inline-flex items-center font-semibold hover:opacity-80 transition duration-300"
+                        style="color: var(--gold);">
                         Lire l'article
                         <i class="fas fa-arrow-right ml-2"></i>
                     </a>
@@ -124,51 +142,56 @@
     </section>
     @endif
 
-    <!-- Tous les articles -->
+    <!-- Tous les articles - Style sobre -->
     @if($articles->count() > 0)
     <section class="mb-16">
-        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Tous nos Articles</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <h2 class="text-2xl md:text-3xl font-bold mb-8 text-center" style="color: var(--gold);">Tous nos Articles</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach($articles as $article)
-            <div class="bg-white rounded-xl shadow-md overflow-hidden group hover:shadow-lg transition duration-300">
+            <div class="overflow-hidden group transition duration-300 hover:border-opacity-50"
+                style="background: #111; border: 1px solid #333;">
+                <!-- Image ou placeholder -->
                 @if($article->image)
                 <div class="h-48 overflow-hidden">
                     <img src="{{ Storage::url($article->image) }}" alt="{{ $article->title }}"
                         class="w-full h-full object-cover transform group-hover:scale-105 transition duration-300">
                 </div>
                 @else
-                <div
-                    class="h-48 flex items-center justify-center relative overflow-hidden bg-gradient-to-r from-{{ $article->color_class }}-400 to-{{ $article->color_class }}-600">
+                <div class="h-48 flex items-center justify-center relative overflow-hidden"
+                    style="background: linear-gradient(135deg, rgba(var(--gold-rgb), 0.6), rgba(var(--gold-rgb), 0.3));">
                     <div class="absolute inset-0 flex items-center justify-center">
                         <div class="relative">
-                            <div class="absolute inset-0 bg-white/20 blur-xl scale-150 animate-pulse"></div>
-                            <div class="relative bg-white/10 backdrop-blur-sm rounded-full p-6 shadow-xl">
+                            <div class="absolute inset-0 bg-white/10 blur-xl scale-150 animate-pulse"></div>
+                            <div class="relative rounded-full p-6 backdrop-blur-sm"
+                                style="background: rgba(255, 255, 255, 0.05);">
                                 <i
                                     class="{{ $article->icon ?? 'fas fa-newspaper' }} text-white text-6xl opacity-90"></i>
                             </div>
                         </div>
                     </div>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-                    <i class="{{ $article->icon ?? 'fas fa-newspaper' }} text-white text-5xl relative z-10"></i>
                 </div>
                 @endif
 
+                <!-- Contenu -->
                 <div class="p-6">
                     <div class="flex items-center gap-2 mb-3">
-                        <span
-                            class="px-3 py-1 bg-{{ $article->color_class }}-100 text-{{ $article->color_class }}-800 rounded-full text-xs font-medium">
+                        <span class="px-3 py-1 rounded-full text-xs font-medium"
+                            style="background: rgba(var(--gold-rgb), 0.1); color: var(--gold);">
                             {{ $article->category_label }}
                         </span>
-                        <span class="text-gray-500 text-sm">{{ $article->created_at->format('d M Y') }}</span>
+                        <span style="color: #aaa; font-size: 0.875rem;">{{ $article->created_at->format('d M Y')
+                            }}</span>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-3 line-clamp-2">
+                    <h3 class="text-lg font-bold mb-3 line-clamp-2" style="color: white;">
                         {{ $article->title }}
                     </h3>
-                    <p class="text-gray-600 mb-4 text-sm line-clamp-3">
+                    <p class="mb-4 text-sm line-clamp-3" style="color: #ccc;">
                         {{ $article->excerpt }}
                     </p>
                     <a href="{{ route('blog.show', $article->slug) }}"
-                        class="inline-flex items-center font-medium text-sm text-{{ $article->color_class }}-600 hover:text-{{ $article->color_class }}-700">
+                        class="inline-flex items-center font-medium text-sm hover:opacity-80 transition duration-300"
+                        style="color: var(--gold);">
                         Lire plus
                         <i class="fas fa-arrow-right ml-1"></i>
                     </a>
@@ -177,29 +200,72 @@
             @endforeach
         </div>
 
-        <!-- Pagination -->
+        <!-- Pagination - Style sobre -->
         @if($articles->hasPages())
         <div class="mt-12">
-            {{ $articles->links() }}
+            <div class="flex items-center justify-center gap-2">
+                <!-- Previous Page Link -->
+                @if ($articles->onFirstPage())
+                <span class="px-3 py-2 rounded" style="background: #222; color: #666; border: 1px solid #333;">
+                    <i class="fas fa-chevron-left"></i>
+                </span>
+                @else
+                <a href="{{ $articles->previousPageUrl() }}"
+                    class="px-3 py-2 rounded hover:opacity-80 transition duration-300"
+                    style="background: rgba(var(--gold-rgb), 0.1); color: var(--gold); border: 1px solid rgba(var(--gold-rgb), 0.3);">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                @endif
+
+                <!-- Page Numbers -->
+                @foreach ($articles->getUrlRange(1, $articles->lastPage()) as $page => $url)
+                @if ($page == $articles->currentPage())
+                <span class="px-3 py-2 rounded font-semibold" style="background: var(--gold); color: black;">
+                    {{ $page }}
+                </span>
+                @else
+                <a href="{{ $url }}" class="px-3 py-2 rounded hover:opacity-80 transition duration-300"
+                    style="background: rgba(var(--gold-rgb), 0.1); color: var(--gold); border: 1px solid rgba(var(--gold-rgb), 0.3);">
+                    {{ $page }}
+                </a>
+                @endif
+                @endforeach
+
+                <!-- Next Page Link -->
+                @if ($articles->hasMorePages())
+                <a href="{{ $articles->nextPageUrl() }}"
+                    class="px-3 py-2 rounded hover:opacity-80 transition duration-300"
+                    style="background: rgba(var(--gold-rgb), 0.1); color: var(--gold); border: 1px solid rgba(var(--gold-rgb), 0.3);">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+                @else
+                <span class="px-3 py-2 rounded" style="background: #222; color: #666; border: 1px solid #333;">
+                    <i class="fas fa-chevron-right"></i>
+                </span>
+                @endif
+            </div>
         </div>
         @endif
     </section>
     @endif
 
-    <!-- Thématiques -->
+    <!-- Thématiques - Style sobre -->
     <section class="mb-16">
-        <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">Explorez nos Thématiques</h2>
+        <h2 class="text-2xl md:text-3xl font-bold mb-8 text-center" style="color: var(--gold);">Explorez nos Thématiques
+        </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Location -->
             <a href="{{ route('blog.category', 'location') }}"
                 class="block hover:transform hover:scale-105 transition duration-300">
-                <div class="bg-white p-8 rounded-2xl shadow-md text-center border border-gray-100">
-                    <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 bg-yellow-100">
-                        <i class="fas fa-car text-3xl text-yellow-600"></i>
+                <div class="p-6 md:p-8 rounded text-center" style="background: #111; border: 1px solid #333;">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6"
+                        style="background: rgba(var(--gold-rgb), 0.1);">
+                        <i class="fas fa-car text-2xl md:text-3xl" style="color: var(--gold);"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Location</h3>
-                    <p class="text-gray-600 mb-6">Véhicules premium</p>
-                    <span class="inline-block px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">
+                    <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3" style="color: white;">Location</h3>
+                    <p class="mb-4 md:mb-6" style="color: #aaa;">Véhicules premium</p>
+                    <span class="inline-block px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium"
+                        style="background: rgba(var(--gold-rgb), 0.1); color: var(--gold); border: 1px solid rgba(var(--gold-rgb), 0.3);">
                         {{ $categoryCounts['location'] }} article{{ $categoryCounts['location'] > 1 ? 's' : '' }}
                     </span>
                 </div>
@@ -208,13 +274,15 @@
             <!-- VTC Transport -->
             <a href="{{ route('blog.category', 'vtc-transport') }}"
                 class="block hover:transform hover:scale-105 transition duration-300">
-                <div class="bg-white p-8 rounded-2xl shadow-md text-center border border-gray-100">
-                    <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 bg-blue-100">
-                        <i class="fas fa-taxi text-3xl text-blue-600"></i>
+                <div class="p-6 md:p-8 rounded text-center" style="background: #111; border: 1px solid #333;">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6"
+                        style="background: rgba(59, 130, 246, 0.1);">
+                        <i class="fas fa-taxi text-2xl md:text-3xl" style="color: #60a5fa;"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">VTC Transport</h3>
-                    <p class="text-gray-600 mb-6">Transport haut de gamme</p>
-                    <span class="inline-block px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                    <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3" style="color: white;">VTC Transport</h3>
+                    <p class="mb-4 md:mb-6" style="color: #aaa;">Transport haut de gamme</p>
+                    <span class="inline-block px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium"
+                        style="background: rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3);">
                         {{ $categoryCounts['vtc-transport'] }} article{{ $categoryCounts['vtc-transport'] > 1 ? 's' : ''
                         }}
                     </span>
@@ -224,13 +292,15 @@
             <!-- Conciergerie -->
             <a href="{{ route('blog.category', 'conciergerie') }}"
                 class="block hover:transform hover:scale-105 transition duration-300">
-                <div class="bg-white p-8 rounded-2xl shadow-md text-center border border-gray-100">
-                    <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 bg-green-100">
-                        <i class="fas fa-bell text-3xl text-green-600"></i>
+                <div class="p-6 md:p-8 rounded text-center" style="background: #111; border: 1px solid #333;">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6"
+                        style="background: rgba(34, 197, 94, 0.1);">
+                        <i class="fas fa-bell text-2xl md:text-3xl" style="color: #86efac;"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Conciergerie</h3>
-                    <p class="text-gray-600 mb-6">Services sur mesure</p>
-                    <span class="inline-block px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+                    <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3" style="color: white;">Conciergerie</h3>
+                    <p class="mb-4 md:mb-6" style="color: #aaa;">Services sur mesure</p>
+                    <span class="inline-block px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium"
+                        style="background: rgba(34, 197, 94, 0.1); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.3);">
                         {{ $categoryCounts['conciergerie'] }} article{{ $categoryCounts['conciergerie'] > 1 ? 's' : ''
                         }}
                     </span>
@@ -240,13 +310,15 @@
             <!-- Formation -->
             <a href="{{ route('blog.category', 'formation') }}"
                 class="block hover:transform hover:scale-105 transition duration-300">
-                <div class="bg-white p-8 rounded-2xl shadow-md text-center border border-gray-100">
-                    <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 bg-purple-100">
-                        <i class="fas fa-graduation-cap text-3xl text-purple-600"></i>
+                <div class="p-6 md:p-8 rounded text-center" style="background: #111; border: 1px solid #333;">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6"
+                        style="background: rgba(147, 51, 234, 0.1);">
+                        <i class="fas fa-graduation-cap text-2xl md:text-3xl" style="color: #c4b5fd;"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-3">Formation</h3>
-                    <p class="text-gray-600 mb-6">Expertise certifiée</p>
-                    <span class="inline-block px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
+                    <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3" style="color: white;">Formation</h3>
+                    <p class="mb-4 md:mb-6" style="color: #aaa;">Expertise certifiée</p>
+                    <span class="inline-block px-3 py-1 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium"
+                        style="background: rgba(147, 51, 234, 0.1); color: #c4b5fd; border: 1px solid rgba(147, 51, 234, 0.3);">
                         {{ $categoryCounts['formation'] }} article{{ $categoryCounts['formation'] > 1 ? 's' : '' }}
                     </span>
                 </div>
@@ -335,6 +407,14 @@
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 3;
+    }
+
+    /* Styles généraux pour le style sobre */
+    :root {
+        --gold: #D4AF37;
+        /* Or classique */
+        --gold-rgb: 212, 175, 55;
+        /* Valeurs RGB pour utiliser avec rgba() */
     }
 </style>
 @endsection

@@ -1,65 +1,137 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'DJOK PRESTIGE')</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Font Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- AlpineJS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Styles de main.blade.php -->
     <style>
-        @keyframes fadeInUp {
+        :root {
+            --gold: #caa24d;
+            --gold-rgb: 202, 162, 77;
+            --black: #000;
+            --dark: #0d0d0d;
+            --gray: #bdbdbd;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Montserrat", sans-serif;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: "Montserrat", sans-serif;
+        }
+
+        /* Style sobre pour les sections */
+        .section-title {
+            text-align: center;
+            color: var(--gold);
+            margin: 60px 0 30px;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        /* Cards services */
+        .service-card {
+            background: #fff;
+            color: #000;
+            border-radius: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Buttons style body-djok */
+        .gold-button {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 12px 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .gold-button:hover {
+            opacity: 0.9;
+        }
+
+        /* Box estimation */
+        .estimation-box {
+            background: #fff;
+            color: #000;
+            max-width: 450px;
+            margin: 30px auto;
+            padding: 25px;
+        }
+
+        .estimation-box input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+        }
+
+        /* Reviews style */
+        .review-box {
+            background: #111;
+            padding: 20px;
+            width: 280px;
+            font-size: 0.9rem;
+        }
+
+        /* Animations minimalistes */
+        @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
             }
 
             to {
                 opacity: 1;
-                transform: translateY(0);
             }
         }
 
-        .animate-fade {
-            animation: fadeInUp 0.6s ease-out forwards;
-            opacity: 0;
+        .animate-fade-in {
+            animation: fadeIn 1s ease-out forwards;
         }
 
-        .input-focus {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .input-focus:focus {
-            box-shadow: 0 0 0 2px rgba(202, 138, 4, 0.5);
-            border-color: transparent;
-            outline: none;
-        }
-
-        /* Styles pour les boutons flottants */
+        /* Styles pour les boutons flottants - Style sobre */
         .floating-buttons-container {
             position: fixed;
-            bottom: 80px;
+            bottom: 30px;
             right: 30px;
             z-index: 999;
             display: flex;
             align-items: center;
             gap: 15px;
+            transition: all 0.3s ease;
         }
 
         .certification-btn {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-            color: white;
-            padding: 15px 25px;
+            background: rgba(var(--gold-rgb), 0.9);
+            color: black;
+            padding: 14px 24px;
             border-radius: 8px;
             font-weight: 600;
-            font-size: 15px;
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
-            border: none;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(var(--gold-rgb), 0.5);
             cursor: not-allowed;
             opacity: 0.9;
             transition: all 0.3s ease;
@@ -68,17 +140,18 @@
             align-items: center;
             justify-content: center;
             min-height: 55px;
+            backdrop-filter: blur(10px);
         }
 
         .certification-btn:hover {
             opacity: 1;
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.6);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
 
         .certification-btn i {
             margin-right: 10px;
-            font-size: 20px;
+            font-size: 18px;
         }
 
         .icon-buttons-container {
@@ -87,97 +160,69 @@
         }
 
         .icon-btn {
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
-            border: none;
+            font-size: 22px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             cursor: not-allowed;
             opacity: 0.9;
             transition: all 0.3s ease;
             color: white;
+            backdrop-filter: blur(10px);
         }
 
         .icon-btn:hover {
             opacity: 1;
-            transform: scale(1.15);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
         }
 
         .whatsapp-btn {
-            background: linear-gradient(135deg, #25D366, #128C7E);
+            background: rgba(37, 211, 102, 0.9);
         }
 
         .contact-btn {
-            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            background: rgba(var(--gold-rgb), 0.9);
         }
 
-        /* ===== RESPONSIVE MOBILE - POSITION PRESQUE AU CENTRE ===== */
-
-        /* Desktop & Tablette - Position normale */
-        @media (min-width: 769px) {
-            .floating-buttons-container {
-                bottom: 80px;
-                right: 30px;
-            }
-        }
-
-        /* Tablette portrait (768px et moins) */
+        /* Responsive pour les boutons flottants - CACHER SUR MOBILE */
         @media (max-width: 768px) {
             .floating-buttons-container {
-                /* POSITIONNÉ PLUS HAUT - PRESQUE AU CENTRE */
-                bottom: 40vh;
-                /* 40% depuis le bas = presque au centre */
-                right: 20px;
-                transform: translateY(50%);
-                /* Ajustement pour centrer verticalement */
-                gap: 12px;
-            }
-
-            .certification-btn {
-                padding: 13px 20px;
-                font-size: 14px;
-                min-height: 52px;
-            }
-
-            .certification-btn i {
-                font-size: 18px;
-            }
-
-            .icon-btn {
-                width: 55px;
-                height: 55px;
-                font-size: 22px;
+                display: none !important;
+                /* Cacher sur mobile */
             }
         }
 
-        /* Mobile paysage (640px et moins) */
-        @media (max-width: 640px) {
+        @media (min-width: 769px) {
             .floating-buttons-container {
-                bottom: 35vh;
-                /* Un peu plus haut */
+                display: flex !important;
+                /* Afficher sur desktop */
+            }
+        }
+
+        /* Anciens styles responsives pour référence */
+        /*
+        @media (max-width: 768px) {
+            .floating-buttons-container {
+                bottom: 20px;
                 right: 15px;
-                transform: translateY(50%);
                 gap: 10px;
             }
 
             .certification-btn {
                 padding: 12px 18px;
-                font-size: 13px;
+                font-size: 12px;
                 min-height: 50px;
-                white-space: normal;
-                line-height: 1.2;
-                text-align: center;
             }
 
             .certification-btn i {
+                font-size: 16px;
                 margin-right: 8px;
-                font-size: 17px;
-                flex-shrink: 0;
             }
 
             .icon-btn {
@@ -185,81 +230,59 @@
                 height: 50px;
                 font-size: 20px;
             }
+
+            .icon-buttons-container {
+                gap: 10px;
+            }
         }
 
-        /* Mobile portrait (480px et moins) */
-        @media (max-width: 480px) {
+        @media (max-width: 640px) {
             .floating-buttons-container {
-                /* SUR MOBILE PORTRAIT, ON REMONTE ENCORE PLUS */
-                bottom: 30vh;
-                /* 30% depuis le bas = bien au-dessus du bas */
-                right: 12px;
-                transform: translateY(50%);
-                gap: 8px;
-                flex-direction: row;
-                align-items: center;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 10px;
             }
 
             .certification-btn {
-                padding: 11px 16px;
-                font-size: 12px;
-                min-height: 48px;
-                border-radius: 6px;
+                padding: 10px 16px;
+                font-size: 11px;
+                min-height: 45px;
             }
 
             .certification-btn i {
+                font-size: 15px;
                 margin-right: 6px;
-                font-size: 16px;
-            }
-
-            .icon-btn {
-                width: 48px;
-                height: 48px;
-                font-size: 19px;
             }
 
             .icon-buttons-container {
-                gap: 8px;
+                width: 100%;
+                justify-content: flex-end;
+                gap: 10px;
             }
         }
 
-        /* Petit mobile (380px et moins) */
-        @media (max-width: 380px) {
+        @media (max-width: 480px) {
             .floating-buttons-container {
-                /* SUR TRÈS PETIT MOBILE, ON S'ADAPTE ENCORE */
-                bottom: 25vh;
-                /* 25% depuis le bas = bien visible */
+                bottom: 15px;
                 right: 10px;
-                transform: translateY(50%);
-                gap: 6px;
-                flex-direction: row;
-                align-items: center;
-                padding: 10px;
-                background: rgba(255, 255, 255, 0.1);
-                backdrop-filter: blur(5px);
-                border-radius: 12px;
-                border: 1px solid rgba(255, 255, 255, 0.2);
+                gap: 8px;
             }
 
             .certification-btn {
-                padding: 10px 14px;
-                font-size: 11px;
-                min-height: 45px;
-                flex-grow: 1;
-                white-space: normal;
-                line-height: 1.1;
+                padding: 8px 12px;
+                font-size: 10px;
+                min-height: 40px;
+                border-radius: 6px;
             }
 
             .certification-btn span {
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
+                white-space: normal;
+                line-height: 1.2;
             }
 
             .certification-btn i {
+                font-size: 14px;
                 margin-right: 5px;
-                font-size: 15px;
             }
 
             .icon-btn {
@@ -268,97 +291,47 @@
                 font-size: 18px;
             }
 
-            .icon-buttons-container {
-                gap: 6px;
-                flex-shrink: 0;
+            .section-title {
+                margin: 40px 0 20px;
+                font-size: 1.5rem;
             }
         }
+        */
 
-        /* Très petit mobile (320px et moins) */
-        @media (max-width: 320px) {
-            .floating-buttons-container {
-                bottom: 20vh;
-                /* 20% depuis le bas = assez haut */
-                right: 8px;
-                transform: translateY(50%);
-                flex-direction: row;
-                align-items: center;
-                gap: 5px;
-                padding: 8px;
-            }
-
-            .certification-btn {
-                padding: 9px 12px;
-                font-size: 10px;
-                min-height: 42px;
-                text-align: center;
-            }
-
-            .certification-btn i {
-                margin-right: 4px;
-                font-size: 14px;
-            }
-
-            .icon-btn {
-                width: 42px;
-                height: 42px;
-                font-size: 17px;
-            }
-
-            .icon-buttons-container {
-                gap: 5px;
-            }
-        }
-
-        /* Pour les écrans en mode paysage sur mobile */
-        @media (max-height: 500px) and (max-width: 900px) {
-            .floating-buttons-container {
-                bottom: 15vh;
-                /* Plus bas en paysage car l'écran est court */
-                right: 15px;
-                transform: translateY(50%);
-            }
-        }
-
-        /* Pour les tablettes en mode portrait (écran haut) */
-        @media (min-height: 1000px) and (max-width: 768px) {
-            .floating-buttons-container {
-                bottom: 25vh;
-                /* Plus bas sur les hautes résolutions */
-                right: 25px;
-                transform: translateY(50%);
-            }
-        }
-
-        /* Assurer que les boutons ne chevauchent pas le contenu */
+        /* Responsive général */
         @media (max-width: 768px) {
-            .min-h-screen {
-                padding-bottom: 100px;
+            .section-title {
+                margin: 40px 0 20px;
+                font-size: 1.5rem;
             }
         }
 
-        /* Pour éviter les problèmes sur les anciens navigateurs */
-        @supports not (backdrop-filter: blur(5px)) {
-            .floating-buttons-container {
-                background: rgba(255, 255, 255, 0.95);
-            }
+        /* Assurer que le contenu n'est pas caché par les boutons */
+        .min-h-screen {
+            padding-bottom: 100px;
         }
     </style>
+
+    <!-- Tailwind CSS pour le layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
     @stack('styles')
 </head>
 
-<body class="bg-gradient-to-b from-gray-50 to-white">
-    @include('layouts.header-black')
+<body class="bg-black text-white">
+    <!-- La navbar -->
+    @include('layouts.navbar')
 
     <!-- Contenu principal avec marge pour la navbar fixe -->
-    <div class="min-h-screen py-12 pt-32 bg-gradient-to-b from-gray-50 to-white">
+    <div class="min-h-screen py-12 pt-32">
         @yield('content')
     </div>
 
+    <!-- Newsletter et Footer -->
     @include('layouts.footer')
 
-    <!-- Boutons flottants en bas à droite - SUR LA MÊME LIGNE -->
-    <div class="floating-buttons-container">
+    <!-- Boutons flottants - Cachés sur mobile avec hidden md:flex -->
+    <div class="floating-buttons-container hidden md:flex">
         <!-- Bouton Certification -->
         <button class="certification-btn" disabled
             title="Téléchargez notre certification officielle (Disponible prochainement)">
@@ -373,7 +346,7 @@
                 <i class="fab fa-whatsapp"></i>
             </button>
 
-            <!-- Contact avec l'icône d'adresse/contact -->
+            <!-- Contact -->
             <button class="icon-btn contact-btn" disabled title="Contactez-nous (Disponible prochainement)">
                 <i class="fas fa-address-book"></i>
             </button>
@@ -381,7 +354,7 @@
     </div>
 
     <script>
-        // Optimisation pour mobile : ajustement dynamique de la position
+        // Scripts pour les boutons flottants - Même que main.blade.php
         document.addEventListener('DOMContentLoaded', function() {
             const floatingButtons = document.querySelector('.floating-buttons-container');
 
@@ -390,51 +363,79 @@
                 if (!floatingButtons) return;
 
                 const width = window.innerWidth;
-                const height = window.innerHeight;
                 const isMobile = width <= 768;
 
-                if (isMobile) {
-                    // Sur mobile, calculer une position presque centrale
-                    const mobileBottom = Math.max(20, height * 0.25); // 25% depuis le bas minimum 20px
-                    floatingButtons.style.bottom = mobileBottom + 'px';
+                // Si on est sur mobile, ne pas exécuter le reste
+                if (isMobile) return;
 
-                    // Ajuster la taille en fonction de la hauteur
-                    if (height < 600) {
-                        floatingButtons.style.transform = 'translateY(30%)';
-                    } else {
-                        floatingButtons.style.transform = 'translateY(50%)';
-                    }
+                // Sur desktop, ajustements selon la taille
+                if (width <= 1024) {
+                    floatingButtons.style.gap = '12px';
                 } else {
-                    // Sur desktop, position fixe
-                    floatingButtons.style.bottom = '80px';
-                    floatingButtons.style.transform = 'none';
-                }
-
-                // Cacher sur écrans trop courts
-                if (height < 400) {
-                    floatingButtons.style.display = 'none';
-                } else {
-                    floatingButtons.style.display = 'flex';
+                    floatingButtons.style.gap = '15px';
                 }
             }
 
-            // Ajuster au chargement
+            // Ajuster au chargement seulement sur desktop
             adjustButtonPosition();
 
-            // Ajuster lors des événements de redimensionnement
+            // Ajuster lors des événements de redimensionnement seulement sur desktop
             window.addEventListener('resize', adjustButtonPosition);
             window.addEventListener('orientationchange', function() {
                 setTimeout(adjustButtonPosition, 100);
             });
 
-            // Ajuster lors du défilement pour s'assurer que c'est visible
-            let scrollTimeout;
-            window.addEventListener('scroll', function() {
-                if (scrollTimeout) {
-                    clearTimeout(scrollTimeout);
+            // Animation pour les boutons flottants seulement sur desktop
+            setTimeout(() => {
+                if (floatingButtons && window.innerWidth > 768) {
+                    floatingButtons.style.opacity = '0';
+                    floatingButtons.style.transform = 'translateY(20px)';
+                    floatingButtons.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+
+                    setTimeout(() => {
+                        floatingButtons.style.opacity = '1';
+                        floatingButtons.style.transform = 'translateY(0)';
+                    }, 100);
                 }
-                scrollTimeout = setTimeout(adjustButtonPosition, 100);
-            });
+            }, 500);
+
+            // Gestion du slider avec style sobre (si présent)
+            const slides = document.querySelectorAll('.hero-slide');
+            const indicators = document.querySelectorAll('.slider-indicator');
+            let currentSlide = 0;
+
+            if (slides.length > 0) {
+                function showSlide(index) {
+                    slides.forEach(slide => slide.classList.remove('active'));
+                    indicators.forEach(indicator => indicator.classList.remove('active'));
+
+                    slides[index].classList.add('active');
+                    indicators[index].classList.add('active');
+                    currentSlide = index;
+                }
+
+                // Auto-slide
+                setInterval(() => {
+                    currentSlide = (currentSlide + 1) % slides.length;
+                    showSlide(currentSlide);
+                }, 5000);
+
+                // Événements pour les contrôles du slider
+                document.querySelector('.slider-prev')?.addEventListener('click', () => {
+                    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                    showSlide(currentSlide);
+                });
+
+                document.querySelector('.slider-next')?.addEventListener('click', () => {
+                    currentSlide = (currentSlide + 1) % slides.length;
+                    showSlide(currentSlide);
+                });
+
+                // Indicateurs
+                indicators.forEach((indicator, index) => {
+                    indicator.addEventListener('click', () => showSlide(index));
+                });
+            }
         });
     </script>
 

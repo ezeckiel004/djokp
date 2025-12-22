@@ -1,258 +1,590 @@
-<!-- Navigation -->
-<nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-transparent"
-    x-data="{ mobileMenuOpen: false, moreMenuOpen: false, scrolled: false }"
-    @scroll.window="scrolled = window.scrollY > 50"
-    :class="scrolled ? 'bg-white shadow-lg py-4' : 'bg-transparent py-6'">
-
-    <div class="flex items-center justify-between px-4 lg:px-6">
-        <!-- Logo agrandi -->
-        <div class="transition-colors duration-300">
-            <img src="{{ asset('DP.png') }}" alt="DJOK PRESTIGE" class="h-12 lg:h-16">
+<!-- resources/views/layouts/navbar.blade.php -->
+<header class="header">
+    <!-- Top -->
+    <div class="header-top">
+        <div class="phone">
+            <i class="fa-solid fa-phone"></i> 06.99.16.44.55
         </div>
+    </div>
 
-        <!-- Desktop Menu (grands écrans) -->
-        <div class="items-center hidden space-x-6 lg:flex">
-            <!-- Accueil -->
-            <a href="{{ url('/') }}" class="transition duration-300 hover:text-yellow-400"
-                :class="scrolled ? 'text-gray-900' : 'text-white'">
-                Accueil
-            </a>
-
-            <!-- Formation VTC -->
-            <a href="{{ route('formation') }}" class="transition duration-300 hover:text-yellow-400"
-                :class="scrolled ? 'text-gray-900' : 'text-white'">
-                Formation VTC
-            </a>
-
-            <!-- Formation à l'international -->
-            <a href="{{ route('formation.international') }}" class="transition duration-300 hover:text-yellow-400"
-                :class="scrolled ? 'text-gray-900' : 'text-white'">
-                Formation à l'international
-            </a>
-
-            <!-- VTC & Transport -->
-            <a href="{{ route('reservation') }}" class="transition duration-300 hover:text-yellow-400"
-                :class="scrolled ? 'text-gray-900' : 'text-white'">
-                VTC & Transport
-            </a>
-
-            <!-- Location de voitures -->
-            <a href="{{ route('location') }}" class="transition duration-300 hover:text-yellow-400"
-                :class="scrolled ? 'text-gray-900' : 'text-white'">
-                Location de voitures
-            </a>
-
-            <!-- Conciergerie -->
-            <a href="{{ route('conciergerie') }}" class="transition duration-300 hover:text-yellow-400"
-                :class="scrolled ? 'text-gray-900' : 'text-white'">
-                Conciergerie
-            </a>
-
-            <!-- Blog -->
-            <a href="{{ route('blog') }}" class="transition duration-300 hover:text-yellow-400"
-                :class="scrolled ? 'text-gray-900' : 'text-white'">
-                Blog
-            </a>
+    <!-- Logo -->
+    <div class="logo-container">
+        <div class="logo">
+            <img src="{{ asset('DP.png') }}" alt="DJOK PRESTIGE">
         </div>
+    </div>
 
-        <!-- Menu Moyen Écran (md - avec menu "Plus") -->
-        <div class="items-center hidden space-x-4 md:flex lg:hidden">
-            <!-- Liens principaux visibles sur écrans moyens -->
-            <a href="{{ url('/') }}" class="transition duration-300 hover:text-yellow-400"
-                :class="scrolled ? 'text-gray-900' : 'text-white'">
-                Accueil
+    <!-- Desktop Navigation -->
+    <nav class="nav hidden md:flex">
+        <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">ACCUEIL</a>
+        <a href="{{ route('about') }}" class="{{ request()->is('about') ? 'active' : '' }}">A PROPOS</a>
+
+        <!-- Formations Dropdown -->
+        <div x-data="{ open: false }" class="relative">
+            <a href="#" @click.prevent="open = !open"
+                :class="{ 'active': {{ request()->is('formation*') ? 'true' : 'false' }} }" class="flex items-center">
+                FORMATIONS <i class="fa-solid fa-chevron-down ml-1 transition-transform duration-300"
+                    :class="{ 'rotate-180': open }"></i>
             </a>
-
-            <a href="{{ route('formation') }}" class="transition duration-300 hover:text-yellow-400"
-                :class="scrolled ? 'text-gray-900' : 'text-white'">
-                Formation VTC
-            </a>
-
-            <a href="{{ route('reservation') }}" class="transition duration-300 hover:text-yellow-400"
-                :class="scrolled ? 'text-gray-900' : 'text-white'">
-                VTC & Transport
-            </a>
-
-            <!-- Menu déroulant "Plus" pour les autres liens -->
-            <div class="relative" x-data="{ moreOpen: false }">
-                <button @click="moreOpen = !moreOpen" @click.outside="moreOpen = false"
-                    class="flex items-center space-x-1 transition duration-300 hover:text-yellow-400 focus:outline-none"
-                    :class="scrolled ? 'text-gray-900' : 'text-white'">
-                    <span>Plus</span>
-                    <i class="text-xs transition-transform duration-200 fas fa-chevron-down"
-                        :class="{ 'transform rotate-180': moreOpen }"></i>
-                </button>
-
-                <!-- Dropdown Menu -->
-                <div x-show="moreOpen" x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 transform -translate-y-2"
-                    x-transition:enter-end="opacity-100 transform translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 transform translate-y-0"
-                    x-transition:leave-end="opacity-0 transform -translate-y-2"
-                    class="absolute right-0 z-50 w-48 mt-3 bg-white border border-gray-200 rounded-lg shadow-lg top-full"
-                    style="display: none;">
-                    <div class="py-2">
-                        <a href="{{ route('formation.international') }}" @click="moreOpen = false"
-                            class="block px-4 py-2 text-sm text-gray-700 transition duration-200 hover:bg-yellow-50 hover:text-yellow-700">
-                            Formation à l'international
-                        </a>
-                        <a href="{{ route('location') }}" @click="moreOpen = false"
-                            class="block px-4 py-2 text-sm text-gray-700 transition duration-200 hover:bg-yellow-50 hover:text-yellow-700">
-                            Location de voitures
-                        </a>
-                        <a href="{{ route('conciergerie') }}" @click="moreOpen = false"
-                            class="block px-4 py-2 text-sm text-gray-700 transition duration-200 hover:bg-yellow-50 hover:text-yellow-700">
-                            Conciergerie
-                        </a>
-                        <a href="{{ route('blog') }}" @click="moreOpen = false"
-                            class="block px-4 py-2 text-sm text-gray-700 transition duration-200 hover:bg-yellow-50 hover:text-yellow-700">
-                            Blog
-                        </a>
-                    </div>
-                </div>
+            <div x-show="open" @click.outside="open = false" x-transition.opacity.duration.300ms
+                class="absolute z-[9999] w-48 mt-2 bg-black border border-yellow-600 rounded-lg shadow-lg top-full left-0">
+                <a href="{{ route('formation') }}"
+                    class="block px-4 py-3 text-sm text-white hover:bg-yellow-600 hover:text-black border-b border-gray-800">
+                    Formation VTC
+                </a>
+                <a href="{{ route('formation.international') }}"
+                    class="block px-4 py-3 text-sm text-white hover:bg-yellow-600 hover:text-black">
+                    Formation Internationale
+                </a>
             </div>
         </div>
 
-        <!-- Desktop & Tablet Auth Links (visible sur md et plus) -->
-        <div class="items-center hidden space-x-4 md:flex">
-            @if (Route::has('login'))
-            <div class="text-right">
-                @auth
-                <a href="{{ url('/user/dashboard') }}" class="transition duration-300 hover:text-yellow-400"
-                    :class="scrolled ? 'text-gray-900' : 'text-white'">
-                    <i class="mr-2 fas fa-tachometer-alt"></i>Dashboard
+        <!-- Services Dropdown -->
+        <div x-data="{ open: false }" class="relative">
+            <a href="#" @click.prevent="open = !open"
+                :class="{ 'active': {{ request()->is('reservation') || request()->is('location') || request()->is('conciergerie') ? 'true' : 'false' }} }"
+                class="flex items-center">
+                NOS SERVICES <i class="fa-solid fa-chevron-down ml-1 transition-transform duration-300"
+                    :class="{ 'rotate-180': open }"></i>
+            </a>
+            <div x-show="open" @click.outside="open = false" x-transition.opacity.duration.300ms
+                class="absolute z-[9999] w-48 mt-2 bg-black border border-yellow-600 rounded-lg shadow-lg top-full left-0">
+                <a href="{{ route('reservation') }}"
+                    class="block px-4 py-3 text-sm text-white hover:bg-yellow-600 hover:text-black border-b border-gray-800">
+                    VTC & Transport
                 </a>
-                @else
-                @if (Route::has('register'))
-                <a href="{{ route('espaceclient') }}"
-                    class="px-3 py-2 text-sm font-medium text-white transition duration-300 bg-yellow-600 rounded-lg hover:bg-yellow-700 lg:px-4 lg:py-3">
-                    <i class="mr-1 fas fa-user-shield lg:mr-2"></i>
-                    <span class="hidden lg:inline">Espace Client</span>
-                    <span class="lg:hidden">Client</span>
+                <a href="{{ route('location') }}"
+                    class="block px-4 py-3 text-sm text-white hover:bg-yellow-600 hover:text-black border-b border-gray-800">
+                    Location de Voitures
                 </a>
-                @endif
-                @endauth
+                <a href="{{ route('conciergerie') }}"
+                    class="block px-4 py-3 text-sm text-white hover:bg-yellow-600 hover:text-black">
+                    Conciergerie
+                </a>
             </div>
-            @endif
         </div>
 
-        <!-- Mobile Auth Button & Menu Button -->
-        <div class="flex items-center space-x-4 md:hidden">
-            @if (Route::has('login'))
+        <a href="{{ route('contact') }}" class="{{ request()->is('contact') ? 'active' : '' }}">NOUS CONTACTER</a>
+        <a href="{{ route('blog') }}" class="{{ request()->is('blog*') ? 'active' : '' }}">BLOG</a>
+    </nav>
+
+    <!-- Auth -->
+    <div class="auth-section">
+        @if (Route::has('login'))
+        <div class="auth-links">
             @auth
-            <!-- Bouton Dashboard visible sur mobile -->
-            <a href="{{ url('/user/dashboard') }}"
-                class="px-3 py-2 text-sm font-medium text-white transition duration-300 bg-yellow-600 rounded-lg hover:bg-yellow-700">
-                <i class="fas fa-tachometer-alt"></i>
+            <a href="{{ url('/user/dashboard') }}" class="dashboard-link">
+                <i class="fas fa-tachometer-alt"></i> DASHBOARD
             </a>
             @else
             @if (Route::has('register'))
-            <!-- Bouton Espace Client visible sur mobile -->
-            <a href="{{ route('espaceclient') }}"
-                class="px-3 py-2 text-sm font-medium text-white transition duration-300 bg-yellow-600 rounded-lg hover:bg-yellow-700">
-                <i class="fas fa-user-shield"></i>
+            <a href="{{ route('espaceclient') }}" class="client-btn">
+                <i class="fas fa-user-shield"></i> ESPACE CLIENT
             </a>
             @endif
             @endauth
-            @endif
-
-            <!-- Mobile Menu Button -->
-            <button @click="mobileMenuOpen = !mobileMenuOpen"
-                class="p-2 text-xl transition duration-300 focus:outline-none"
-                :class="scrolled ? 'text-gray-900' : 'text-white'">
-                <i class="fas" :class="mobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
-            </button>
         </div>
+        @endif
     </div>
 
-    <!-- Mobile Menu (petit écran) -->
-    <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-300"
-        x-transition:enter-start="opacity-0 transform -translate-y-4"
-        x-transition:enter-end="opacity-100 transform translate-y-0"
-        x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100 transform translate-y-0"
-        x-transition:leave-end="opacity-0 transform -translate-y-4"
-        class="absolute left-0 right-0 z-40 px-4 py-6 text-gray-900 bg-white shadow-lg md:hidden top-full"
-        style="display: none;" @click.outside="mobileMenuOpen = false">
+    <!-- Mobile Menu -->
+    <div x-data="{ mobileOpen: false, formationsMobileOpen: false, servicesMobileOpen: false }">
+        <!-- Mobile Menu Button -->
+        <button @click="mobileOpen = !mobileOpen" class="mobile-menu-btn md:hidden">
+            <i :class="mobileOpen ? 'fas fa-times' : 'fas fa-bars'" class="text-xl"></i>
+        </button>
 
-        <div class="space-y-4">
-            <!-- Accueil Mobile -->
-            <a href="{{ url('/') }}" @click="mobileMenuOpen = false"
-                class="block py-4 text-gray-900 transition duration-300 border-b border-gray-200 hover:text-yellow-600">
-                Accueil
-            </a>
-
-            <!-- Formation VTC Mobile -->
-            <a href="{{ route('formation') }}" @click="mobileMenuOpen = false"
-                class="block py-4 text-gray-900 transition duration-300 border-b border-gray-200 hover:text-yellow-600">
-                Formation VTC
-            </a>
-
-            <!-- Formation à l'international Mobile -->
-            <a href="{{ route('formation.international') }}" @click="mobileMenuOpen = false"
-                class="block py-4 text-gray-900 transition duration-300 border-b border-gray-200 hover:text-yellow-600">
-                Formation à l'international
-            </a>
-
-            <!-- VTC & Transport Mobile -->
-            <a href="{{ route('reservation') }}" @click="mobileMenuOpen = false"
-                class="block py-4 text-gray-900 transition duration-300 border-b border-gray-200 hover:text-yellow-600">
-                VTC & Transport
-            </a>
-
-            <!-- Location de voitures Mobile -->
-            <a href="{{ route('location') }}" @click="mobileMenuOpen = false"
-                class="block py-4 text-gray-900 transition duration-300 border-b border-gray-200 hover:text-yellow-600">
-                Location de voitures
-            </a>
-
-            <!-- Conciergerie Mobile -->
-            <a href="{{ route('conciergerie') }}" @click="mobileMenuOpen = false"
-                class="block py-4 text-gray-900 transition duration-300 border-b border-gray-200 hover:text-yellow-600">
-                Conciergerie
-            </a>
-
-            <!-- Blog Mobile -->
-            <a href="{{ route('blog') }}" @click="mobileMenuOpen = false"
-                class="block py-4 text-gray-900 transition duration-300 border-b border-gray-200 hover:text-yellow-600">
-                Blog
-            </a>
-
-            <!-- Mobile Auth Links (dans le menu déroulant) -->
-            <div class="pt-4 space-y-4">
-                @auth
-                <a href="{{ url('/user/dashboard') }}" @click="mobileMenuOpen = false"
-                    class="block py-3 text-gray-900 transition duration-300 hover:text-yellow-600">
-                    <i class="mr-2 fas fa-tachometer-alt"></i>Dashboard
+        <!-- Mobile Menu Content -->
+        <div x-show="mobileOpen" x-transition.opacity.duration.300ms @click.outside="mobileOpen = false"
+            class="mobile-menu md:hidden">
+            <div class="mobile-menu-content">
+                <a href="{{ url('/') }}" @click="mobileOpen = false" class="mobile-link">
+                    ACCUEIL
                 </a>
-                @else
-                @if (Route::has('register'))
-                <a href="{{ route('espaceclient') }}" @click="mobileMenuOpen = false"
-                    class="block py-3 font-medium text-yellow-600 transition duration-300 hover:text-yellow-700">
-                    <i class="mr-2 fas fa-user-shield"></i>Espace Client
+                <a href="{{ route('about') }}" @click="mobileOpen = false" class="mobile-link">
+                    A PROPOS
                 </a>
-                @endif
-                @endauth
-            </div>
 
-            <!-- Mobile Contact -->
-            <div class="pt-6 border-t border-gray-200">
-                <div class="space-y-4 text-sm text-center text-gray-600">
-                    <div class="flex items-center justify-center space-x-2">
-                        <i class="text-yellow-600 fas fa-phone"></i>
-                        <span>01 48 47 52 13</span>
+                <!-- Formations Mobile -->
+                <div class="mobile-dropdown">
+                    <button @click="formationsMobileOpen = !formationsMobileOpen" class="mobile-dropdown-btn">
+                        FORMATIONS <i class="fas fa-chevron-down transform transition-transform duration-300"
+                            :class="{ 'rotate-180': formationsMobileOpen }"></i>
+                    </button>
+                    <div x-show="formationsMobileOpen" x-collapse class="mobile-dropdown-content">
+                        <a href="{{ route('formation') }}" @click="mobileOpen = false" class="mobile-sub-link">
+                            Formation VTC
+                        </a>
+                        <a href="{{ route('formation.international') }}" @click="mobileOpen = false"
+                            class="mobile-sub-link">
+                            Formation Internationale
+                        </a>
                     </div>
-                    <div class="flex items-center justify-center space-x-2">
-                        <i class="text-green-500 fab fa-whatsapp"></i>
-                        <span>WhatsApp</span>
+                </div>
+
+                <!-- Services Mobile -->
+                <div class="mobile-dropdown">
+                    <button @click="servicesMobileOpen = !servicesMobileOpen" class="mobile-dropdown-btn">
+                        NOS SERVICES <i class="fas fa-chevron-down transform transition-transform duration-300"
+                            :class="{ 'rotate-180': servicesMobileOpen }"></i>
+                    </button>
+                    <div x-show="servicesMobileOpen" x-collapse class="mobile-dropdown-content">
+                        <a href="{{ route('reservation') }}" @click="mobileOpen = false" class="mobile-sub-link">
+                            VTC & Transport
+                        </a>
+                        <a href="{{ route('location') }}" @click="mobileOpen = false" class="mobile-sub-link">
+                            Location de Voitures
+                        </a>
+                        <a href="{{ route('conciergerie') }}" @click="mobileOpen = false" class="mobile-sub-link">
+                            Conciergerie
+                        </a>
                     </div>
-                    <a href="{{ route('espaceclient') }}" @click="mobileMenuOpen = false"
-                        class="block mt-3 text-base font-medium text-yellow-600">
-                        Espace Client
+                </div>
+
+                <a href="{{ route('contact') }}" @click="mobileOpen = false" class="mobile-link">
+                    NOUS CONTACTER
+                </a>
+                <a href="{{ route('blog') }}" @click="mobileOpen = false" class="mobile-link">
+                    BLOG
+                </a>
+
+                <!-- Auth Mobile -->
+                <div class="mobile-auth">
+                    @auth
+                    <a href="{{ url('/user/dashboard') }}" @click="mobileOpen = false" class="mobile-dashboard">
+                        <i class="fas fa-tachometer-alt"></i> DASHBOARD
                     </a>
+                    @else
+                    <a href="{{ route('espaceclient') }}" @click="mobileOpen = false" class="mobile-client-btn">
+                        <i class="fas fa-user-shield"></i> ESPACE CLIENT
+                    </a>
+                    @endauth
+                </div>
+
+                <!-- Contact Mobile -->
+                <div class="mobile-contact">
+                    <div class="mobile-phone">
+                        <i class="fa-solid fa-phone text-yellow-600"></i> 06.99.16.44.55
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</nav>
+</header>
+
+<style>
+    /* Base Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Montserrat", sans-serif;
+    }
+
+    /* Header */
+    .header {
+        background: #000;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 15px 50px;
+        position: relative;
+        width: 100%;
+        z-index: 100;
+    }
+
+    /* Header Top - Le numéro reste à gauche */
+    .header-top {
+        display: flex;
+        justify-content: flex-start;
+        /* Changé de center à flex-start */
+        align-items: center;
+        width: 100%;
+    }
+
+    .phone {
+        background: #caa24d;
+        color: #000;
+        padding: 8px 15px;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Logo Container */
+    .logo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 15px 0;
+        margin-top: -50px;
+        /* Retour à -50px comme avant */
+        width: 100%;
+    }
+
+    /* Logo */
+    .logo {
+        text-align: center;
+    }
+
+    .logo img {
+        max-width: 180px;
+        width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+
+    /* Desktop Navigation */
+    .nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 35px;
+        margin-top: 10px;
+        position: relative;
+        z-index: 101;
+    }
+
+    .nav a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        padding-bottom: 6px;
+        position: relative;
+        transition: color 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .nav a.active,
+    .nav a:hover {
+        color: #caa24d;
+    }
+
+    .nav a.active::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -8px;
+        width: 100%;
+        height: 2px;
+        background: #caa24d;
+    }
+
+    /* Dropdown Styles */
+    .nav .relative {
+        position: relative;
+    }
+
+    .nav .relative a {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
+
+    .nav .relative .rotate-180 {
+        transform: rotate(180deg);
+    }
+
+    .nav .absolute {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: #000;
+        border: 1px solid #caa24d;
+        border-radius: 4px;
+        min-width: 220px;
+        z-index: 9999;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .nav .absolute a {
+        display: block;
+        padding: 12px 20px;
+        font-size: 13px;
+        color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    .nav .absolute a:hover {
+        background: #caa24d;
+        color: #000;
+    }
+
+    /* Auth Section - RESTE À DROITE */
+    .auth-section {
+        position: absolute;
+        right: 50px;
+        bottom: 15px;
+        display: flex;
+        align-items: center;
+        z-index: 101;
+    }
+
+    /* Auth Links */
+    .auth-links {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .dashboard-link {
+        color: #caa24d;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 12px;
+        border: 1px solid #caa24d;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-link:hover {
+        background: rgba(202, 162, 77, 0.1);
+    }
+
+    .client-btn {
+        background: #caa24d;
+        color: #000;
+        padding: 8px 15px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .client-btn:hover {
+        background: #e6b85c;
+        transform: translateY(-2px);
+    }
+
+    /* Mobile Menu Button */
+    .mobile-menu-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: #caa24d;
+        cursor: pointer;
+        display: none;
+        z-index: 102;
+        padding: 10px;
+    }
+
+    /* Mobile Menu */
+    .mobile-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.98);
+        z-index: 9998;
+        overflow-y: auto;
+    }
+
+    .mobile-menu-content {
+        padding: 80px 20px 40px;
+        min-height: 100%;
+        overflow-y: auto;
+    }
+
+    .mobile-link {
+        display: block;
+        color: #fff;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .mobile-link:hover {
+        color: #caa24d;
+    }
+
+    /* Mobile Dropdown */
+    .mobile-dropdown {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .mobile-dropdown-btn {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 15px 0;
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .mobile-dropdown-btn:hover {
+        color: #caa24d;
+    }
+
+    .mobile-dropdown-content {
+        padding-left: 20px;
+    }
+
+    .mobile-sub-link {
+        display: block;
+        color: #ccc;
+        text-decoration: none;
+        font-size: 14px;
+        padding: 12px 0;
+        transition: all 0.3s ease;
+    }
+
+    .mobile-sub-link:hover {
+        color: #caa24d;
+    }
+
+    /* Mobile Auth */
+    .mobile-auth {
+        margin-top: 30px;
+        padding: 20px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .mobile-dashboard {
+        display: block;
+        color: #caa24d;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 15px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid #caa24d;
+        border-radius: 4px;
+        padding: 15px;
+        text-align: center;
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+
+    .mobile-client-btn {
+        display: block;
+        background: #caa24d;
+        color: #000;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 15px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    /* Mobile Contact */
+    .mobile-contact {
+        margin-top: 30px;
+    }
+
+    .mobile-phone {
+        background: #caa24d;
+        color: #000;
+        padding: 15px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .header {
+            padding: 15px 30px;
+        }
+
+        .auth-section {
+            right: 30px;
+        }
+    }
+
+    @media (max-width: 768px) {
+
+        .nav,
+        .auth-section {
+            display: none;
+        }
+
+        .mobile-menu-btn {
+            display: block;
+        }
+
+        .header {
+            padding: 15px;
+        }
+
+        .logo-container {
+            margin-top: 10px;
+        }
+
+        .logo img {
+            max-width: 140px;
+        }
+
+        .header-top {
+            justify-content: flex-start;
+            /* Garde à gauche sur mobile aussi */
+        }
+
+        .mobile-menu-content {
+            padding: 70px 20px 30px;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .header {
+            padding: 12px;
+        }
+
+        .logo img {
+            max-width: 120px;
+        }
+
+        .phone {
+            font-size: 12px;
+            padding: 8px 15px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .header {
+            padding: 10px;
+        }
+
+        .logo img {
+            max-width: 110px;
+        }
+
+        .phone {
+            font-size: 11px;
+            padding: 6px 12px;
+        }
+    }
+</style>

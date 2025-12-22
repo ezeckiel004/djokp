@@ -11,6 +11,8 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 
 /*
 |--------------------------------------------------------------------------
@@ -178,6 +180,19 @@ Route::middleware(['auth'])->group(function () {
 // ==============================================
 Route::post('/stripe/webhook', [FormationController::class, 'webhook'])
     ->name('stripe.webhook');
+
+Route::post('/change-language', function (Request $request) {
+    $locale = $request->input('locale');
+
+    if (in_array($locale, ['fr', 'en', 'es'])) {
+        Session::put('locale', $locale);
+        App::setLocale($locale);
+
+        return response()->json(['success' => true, 'locale' => $locale]);
+    }
+
+    return response()->json(['success' => false], 400);
+})->name('change.language');
 
 /*
 |--------------------------------------------------------------------------

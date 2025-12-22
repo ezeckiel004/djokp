@@ -1,4 +1,4 @@
-@extends('layouts.base-black')
+@extends('layouts.main')
 
 @section('title', 'Politique de Confidentialité RGPD - DJOK PRESTIGE')
 

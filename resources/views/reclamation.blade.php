@@ -1,4 +1,4 @@
-@extends('layouts.base-black')
+@extends('layouts.main')
 
 @section('title', 'Formulaire de Réclamation - DJOK PRESTIGE')
 

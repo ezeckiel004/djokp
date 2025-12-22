@@ -1,4 +1,4 @@
-@extends('layouts.base-black')
+@extends('layouts.main')
 
 @section('title', 'Mentions Légales - DJOK PRESTIGE')
 
@@ -17,7 +17,7 @@
                             Le présent site www.djokprestige.com est la propriété de Djok Prestige SAS dont le siège
                             social est situé :
                         </p>
-                        <ul class="mt-3 space-y-2 text-gray-700 list-none">
+                        <ul class="mt-3 space-y-2 text-gray-700">
                             <li><strong>Adresse :</strong> 66 Avenue des Champs Elysées 75008 Paris</li>
                             <li><strong>SIRET :</strong> 90326843100017</li>
                             <li><strong>Code NAF :</strong> 4932Z</li>
@@ -34,7 +34,7 @@
                         <p class="text-gray-700">
                             Ce site web est hébergé par :
                         </p>
-                        <ul class="mt-3 space-y-2 text-gray-700 list-none">
+                        <ul class="mt-3 space-y-2 text-gray-700">
                             <li><strong>Société :</strong> HOSTINGER</li>
                             <li><strong>Capital social :</strong> 100 000 €</li>
                             <li><strong>SIRET :</strong> 510 909 807 00032</li>
@@ -120,7 +120,7 @@
                         <p class="text-gray-700">
                             Pour toute question relative aux présentes mentions légales, vous pouvez nous contacter :
                         </p>
-                        <ul class="mt-3 space-y-2 text-gray-700 list-none">
+                        <ul class="mt-3 space-y-2 text-gray-700">
                             <li><strong>Par email :</strong> contact@djokprestige.com</li>
                             <li><strong>Par téléphone :</strong> +33 1 48 47 52 13</li>
                             <li><strong>Par courrier :</strong> Djok Prestige SAS, 66 Avenue des Champs Élysées, 75008
@@ -139,4 +139,4 @@
         </div>
     </div>
 </div>
-@endsections
+@endsection

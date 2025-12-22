@@ -1,4 +1,4 @@
-@extends('layouts.base-black')
+@extends('layouts.main')
 
 @section('title', 'Conditions Générales de Vente - DJOK PRESTIGE')
 
