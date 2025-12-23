@@ -4,7 +4,7 @@
         <!-- Logo -->
         <div class="footer-logo">
             <!-- Remplacez l'URL par le chemin de votre logo -->
-            <img src="{{ asset('DP.png') }}" alt="DJOK PRESTIGE" />
+            <img src="{{ asset('DP2.webp') }}" alt="DJOK PRESTIGE" />
         </div>
 
         <!-- Services -->

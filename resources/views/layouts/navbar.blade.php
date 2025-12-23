@@ -10,55 +10,44 @@
     <!-- Logo -->
     <div class="logo-container">
         <div class="logo">
-            <img src="{{ asset('DP.png') }}" alt="DJOK PRESTIGE">
+            <img src="{{ asset('DP2.webp') }}" alt="DJOK PRESTIGE">
         </div>
     </div>
 
     <!-- Desktop Navigation -->
-    <nav class="nav hidden md:flex">
+    <nav class="desktop-nav">
         <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">ACCUEIL</a>
         <a href="{{ route('about') }}" class="{{ request()->is('about') ? 'active' : '' }}">A PROPOS</a>
 
         <!-- Formations Dropdown -->
-        <div x-data="{ open: false }" class="relative">
-            <a href="#" @click.prevent="open = !open"
-                :class="{ 'active': {{ request()->is('formation*') ? 'true' : 'false' }} }" class="flex items-center">
-                FORMATIONS <i class="fa-solid fa-chevron-down ml-1 transition-transform duration-300"
-                    :class="{ 'rotate-180': open }"></i>
+        <div class="dropdown">
+            <a href="#" class="dropdown-toggle {{ request()->is('formation*') ? 'active' : '' }}">
+                FORMATIONS <i class="fa-solid fa-chevron-down ml-1"></i>
             </a>
-            <div x-show="open" @click.outside="open = false" x-transition.opacity.duration.300ms
-                class="absolute z-[9999] w-48 mt-2 bg-black border border-yellow-600 rounded-lg shadow-lg top-full left-0">
-                <a href="{{ route('formation') }}"
-                    class="block px-4 py-3 text-sm text-white hover:bg-yellow-600 hover:text-black border-b border-gray-800">
+            <div class="dropdown-menu">
+                <a href="{{ route('formation') }}" class="dropdown-item">
                     Formation VTC
                 </a>
-                <a href="{{ route('formation.international') }}"
-                    class="block px-4 py-3 text-sm text-white hover:bg-yellow-600 hover:text-black">
+                <a href="{{ route('formation.international') }}" class="dropdown-item">
                     Formation Internationale
                 </a>
             </div>
         </div>
 
         <!-- Services Dropdown -->
-        <div x-data="{ open: false }" class="relative">
-            <a href="#" @click.prevent="open = !open"
-                :class="{ 'active': {{ request()->is('reservation') || request()->is('location') || request()->is('conciergerie') ? 'true' : 'false' }} }"
-                class="flex items-center">
-                NOS SERVICES <i class="fa-solid fa-chevron-down ml-1 transition-transform duration-300"
-                    :class="{ 'rotate-180': open }"></i>
+        <div class="dropdown">
+            <a href="#"
+                class="dropdown-toggle {{ request()->is('reservation') || request()->is('location') || request()->is('conciergerie') ? 'active' : '' }}">
+                NOS SERVICES <i class="fa-solid fa-chevron-down ml-1"></i>
             </a>
-            <div x-show="open" @click.outside="open = false" x-transition.opacity.duration.300ms
-                class="absolute z-[9999] w-48 mt-2 bg-black border border-yellow-600 rounded-lg shadow-lg top-full left-0">
-                <a href="{{ route('reservation') }}"
-                    class="block px-4 py-3 text-sm text-white hover:bg-yellow-600 hover:text-black border-b border-gray-800">
+            <div class="dropdown-menu">
+                <a href="{{ route('reservation') }}" class="dropdown-item">
                     VTC & Transport
                 </a>
-                <a href="{{ route('location') }}"
-                    class="block px-4 py-3 text-sm text-white hover:bg-yellow-600 hover:text-black border-b border-gray-800">
+                <a href="{{ route('location') }}" class="dropdown-item">
                     Location de Voitures
                 </a>
-                <a href="{{ route('conciergerie') }}"
-                    class="block px-4 py-3 text-sm text-white hover:bg-yellow-600 hover:text-black">
+                <a href="{{ route('conciergerie') }}" class="dropdown-item">
                     Conciergerie
                 </a>
             </div>
@@ -87,85 +76,61 @@
         @endif
     </div>
 
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu mobile">
+        <i class="fas fa-bars"></i>
+    </button>
+
     <!-- Mobile Menu -->
-    <div x-data="{ mobileOpen: false, formationsMobileOpen: false, servicesMobileOpen: false }">
-        <!-- Mobile Menu Button -->
-        <button @click="mobileOpen = !mobileOpen" class="mobile-menu-btn md:hidden">
-            <i :class="mobileOpen ? 'fas fa-times' : 'fas fa-bars'" class="text-xl"></i>
-        </button>
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-content">
+            <a href="{{ url('/') }}" class="mobile-link">ACCUEIL</a>
+            <a href="{{ route('about') }}" class="mobile-link">A PROPOS</a>
 
-        <!-- Mobile Menu Content -->
-        <div x-show="mobileOpen" x-transition.opacity.duration.300ms @click.outside="mobileOpen = false"
-            class="mobile-menu md:hidden">
-            <div class="mobile-menu-content">
-                <a href="{{ url('/') }}" @click="mobileOpen = false" class="mobile-link">
-                    ACCUEIL
-                </a>
-                <a href="{{ route('about') }}" @click="mobileOpen = false" class="mobile-link">
-                    A PROPOS
-                </a>
-
-                <!-- Formations Mobile -->
-                <div class="mobile-dropdown">
-                    <button @click="formationsMobileOpen = !formationsMobileOpen" class="mobile-dropdown-btn">
-                        FORMATIONS <i class="fas fa-chevron-down transform transition-transform duration-300"
-                            :class="{ 'rotate-180': formationsMobileOpen }"></i>
-                    </button>
-                    <div x-show="formationsMobileOpen" x-collapse class="mobile-dropdown-content">
-                        <a href="{{ route('formation') }}" @click="mobileOpen = false" class="mobile-sub-link">
-                            Formation VTC
-                        </a>
-                        <a href="{{ route('formation.international') }}" @click="mobileOpen = false"
-                            class="mobile-sub-link">
-                            Formation Internationale
-                        </a>
-                    </div>
+            <!-- Formations Mobile -->
+            <div class="mobile-dropdown">
+                <button class="mobile-dropdown-btn" data-target="formations-dropdown">
+                    FORMATIONS <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="mobile-dropdown-content" id="formations-dropdown">
+                    <a href="{{ route('formation') }}" class="mobile-sub-link">Formation VTC</a>
+                    <a href="{{ route('formation.international') }}" class="mobile-sub-link">Formation
+                        Internationale</a>
                 </div>
+            </div>
 
-                <!-- Services Mobile -->
-                <div class="mobile-dropdown">
-                    <button @click="servicesMobileOpen = !servicesMobileOpen" class="mobile-dropdown-btn">
-                        NOS SERVICES <i class="fas fa-chevron-down transform transition-transform duration-300"
-                            :class="{ 'rotate-180': servicesMobileOpen }"></i>
-                    </button>
-                    <div x-show="servicesMobileOpen" x-collapse class="mobile-dropdown-content">
-                        <a href="{{ route('reservation') }}" @click="mobileOpen = false" class="mobile-sub-link">
-                            VTC & Transport
-                        </a>
-                        <a href="{{ route('location') }}" @click="mobileOpen = false" class="mobile-sub-link">
-                            Location de Voitures
-                        </a>
-                        <a href="{{ route('conciergerie') }}" @click="mobileOpen = false" class="mobile-sub-link">
-                            Conciergerie
-                        </a>
-                    </div>
+            <!-- Services Mobile -->
+            <div class="mobile-dropdown">
+                <button class="mobile-dropdown-btn" data-target="services-dropdown">
+                    NOS SERVICES <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="mobile-dropdown-content" id="services-dropdown">
+                    <a href="{{ route('reservation') }}" class="mobile-sub-link">VTC & Transport</a>
+                    <a href="{{ route('location') }}" class="mobile-sub-link">Location de Voitures</a>
+                    <a href="{{ route('conciergerie') }}" class="mobile-sub-link">Conciergerie</a>
                 </div>
+            </div>
 
-                <a href="{{ route('contact') }}" @click="mobileOpen = false" class="mobile-link">
-                    NOUS CONTACTER
+            <a href="{{ route('contact') }}" class="mobile-link">NOUS CONTACTER</a>
+            <a href="{{ route('blog') }}" class="mobile-link">BLOG</a>
+
+            <!-- Auth Mobile -->
+            <div class="mobile-auth">
+                @auth
+                <a href="{{ url('/user/dashboard') }}" class="mobile-dashboard">
+                    <i class="fas fa-tachometer-alt"></i> DASHBOARD
                 </a>
-                <a href="{{ route('blog') }}" @click="mobileOpen = false" class="mobile-link">
-                    BLOG
+                @else
+                <a href="{{ route('espaceclient') }}" class="mobile-client-btn">
+                    <i class="fas fa-user-shield"></i> ESPACE CLIENT
                 </a>
+                @endauth
+            </div>
 
-                <!-- Auth Mobile -->
-                <div class="mobile-auth">
-                    @auth
-                    <a href="{{ url('/user/dashboard') }}" @click="mobileOpen = false" class="mobile-dashboard">
-                        <i class="fas fa-tachometer-alt"></i> DASHBOARD
-                    </a>
-                    @else
-                    <a href="{{ route('espaceclient') }}" @click="mobileOpen = false" class="mobile-client-btn">
-                        <i class="fas fa-user-shield"></i> ESPACE CLIENT
-                    </a>
-                    @endauth
-                </div>
-
-                <!-- Contact Mobile -->
-                <div class="mobile-contact">
-                    <div class="mobile-phone">
-                        <i class="fa-solid fa-phone text-yellow-600"></i> 06.99.16.44.55
-                    </div>
+            <!-- Contact Mobile -->
+            <div class="mobile-contact">
+                <div class="mobile-phone">
+                    <i class="fa-solid fa-phone text-yellow-600"></i> 06.99.16.44.55
                 </div>
             </div>
         </div>
@@ -191,11 +156,10 @@
         z-index: 100;
     }
 
-    /* Header Top - Le numéro reste à gauche */
+    /* Header Top */
     .header-top {
         display: flex;
         justify-content: flex-start;
-        /* Changé de center à flex-start */
         align-items: center;
         width: 100%;
     }
@@ -220,7 +184,6 @@
         align-items: center;
         margin: 15px 0;
         margin-top: -50px;
-        /* Retour à -50px comme avant */
         width: 100%;
     }
 
@@ -238,7 +201,7 @@
     }
 
     /* Desktop Navigation */
-    .nav {
+    .desktop-nav {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -248,7 +211,7 @@
         z-index: 101;
     }
 
-    .nav a {
+    .desktop-nav a {
         color: #fff;
         text-decoration: none;
         font-size: 13px;
@@ -259,12 +222,12 @@
         white-space: nowrap;
     }
 
-    .nav a.active,
-    .nav a:hover {
+    .desktop-nav a.active,
+    .desktop-nav a:hover {
         color: #caa24d;
     }
 
-    .nav a.active::after {
+    .desktop-nav a.active::after {
         content: "";
         position: absolute;
         left: 0;
@@ -274,22 +237,18 @@
         background: #caa24d;
     }
 
-    /* Dropdown Styles */
-    .nav .relative {
+    /* Desktop Dropdown */
+    .dropdown {
         position: relative;
     }
 
-    .nav .relative a {
-        cursor: pointer;
+    .dropdown-toggle {
         display: flex;
         align-items: center;
+        cursor: pointer;
     }
 
-    .nav .relative .rotate-180 {
-        transform: rotate(180deg);
-    }
-
-    .nav .absolute {
+    .dropdown-menu {
         position: absolute;
         top: 100%;
         left: 0;
@@ -299,22 +258,33 @@
         min-width: 220px;
         z-index: 9999;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        display: none;
     }
 
-    .nav .absolute a {
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-item {
         display: block;
         padding: 12px 20px;
         font-size: 13px;
         color: #fff;
+        text-decoration: none;
         transition: all 0.3s ease;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .nav .absolute a:hover {
+    .dropdown-item:last-child {
+        border-bottom: none;
+    }
+
+    .dropdown-item:hover {
         background: #caa24d;
         color: #000;
     }
 
-    /* Auth Section - RESTE À DROITE */
+    /* Auth Section */
     .auth-section {
         position: absolute;
         right: 50px;
@@ -324,7 +294,6 @@
         z-index: 101;
     }
 
-    /* Auth Links */
     .auth-links {
         display: flex;
         gap: 15px;
@@ -377,9 +346,28 @@
         border: none;
         color: #caa24d;
         cursor: pointer;
-        display: none;
-        z-index: 102;
+        z-index: 10000;
         padding: 10px;
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        display: none;
+    }
+
+    .mobile-menu-btn:hover {
+        background: rgba(202, 162, 77, 0.1);
+        border-radius: 4px;
+    }
+
+    .mobile-menu-btn i {
+        font-size: 24px;
+    }
+
+    .mobile-menu-btn.active i {
+        content: "\f00d";
     }
 
     /* Mobile Menu */
@@ -390,12 +378,20 @@
         right: 0;
         bottom: 0;
         background: rgba(0, 0, 0, 0.98);
-        z-index: 9998;
+        z-index: 9999;
         overflow-y: auto;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .mobile-menu.active {
+        display: block;
+        opacity: 1;
     }
 
     .mobile-menu-content {
-        padding: 80px 20px 40px;
+        padding: 100px 20px 40px;
         min-height: 100%;
         overflow-y: auto;
     }
@@ -439,8 +435,21 @@
         color: #caa24d;
     }
 
+    .mobile-dropdown-btn i {
+        transition: transform 0.3s ease;
+    }
+
+    .mobile-dropdown-btn.active i {
+        transform: rotate(180deg);
+    }
+
     .mobile-dropdown-content {
         padding-left: 20px;
+        display: none;
+    }
+
+    .mobile-dropdown-content.active {
+        display: block;
     }
 
     .mobile-sub-link {
@@ -527,13 +536,13 @@
 
     @media (max-width: 768px) {
 
-        .nav,
+        .desktop-nav,
         .auth-section {
             display: none;
         }
 
         .mobile-menu-btn {
-            display: block;
+            display: flex;
         }
 
         .header {
@@ -550,11 +559,10 @@
 
         .header-top {
             justify-content: flex-start;
-            /* Garde à gauche sur mobile aussi */
         }
 
         .mobile-menu-content {
-            padding: 70px 20px 30px;
+            padding: 100px 20px 30px;
         }
     }
 
@@ -571,6 +579,13 @@
             font-size: 12px;
             padding: 8px 15px;
         }
+
+        .mobile-menu-btn {
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+        }
     }
 
     @media (max-width: 480px) {
@@ -586,5 +601,98 @@
             font-size: 11px;
             padding: 6px 12px;
         }
+
+        .mobile-menu-btn {
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+        }
+
+        .mobile-menu-btn i {
+            font-size: 20px;
+        }
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Éléments du DOM
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileMenuIcon = mobileMenuBtn.querySelector('i');
+
+    // Ouvrir/fermer le menu mobile
+    mobileMenuBtn.addEventListener('click', function() {
+        const isMenuOpen = mobileMenu.classList.contains('active');
+
+        if (isMenuOpen) {
+            // Fermer le menu
+            mobileMenu.classList.remove('active');
+            mobileMenuIcon.classList.remove('fa-times');
+            mobileMenuIcon.classList.add('fa-bars');
+            document.body.style.overflow = ''; // Réactiver le défilement
+        } else {
+            // Ouvrir le menu
+            mobileMenu.classList.add('active');
+            mobileMenuIcon.classList.remove('fa-bars');
+            mobileMenuIcon.classList.add('fa-times');
+            document.body.style.overflow = 'hidden'; // Bloquer le défilement
+        }
+    });
+
+    // Fermer le menu en cliquant sur un lien
+    const mobileLinks = document.querySelectorAll('.mobile-link, .mobile-sub-link, .mobile-dashboard, .mobile-client-btn');
+    mobileLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            mobileMenu.classList.remove('active');
+            mobileMenuIcon.classList.remove('fa-times');
+            mobileMenuIcon.classList.add('fa-bars');
+            document.body.style.overflow = '';
+        });
+    });
+
+    // Gérer les dropdowns mobiles
+    const mobileDropdownBtns = document.querySelectorAll('.mobile-dropdown-btn');
+    mobileDropdownBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const dropdownContent = document.getElementById(targetId);
+
+            // Fermer tous les autres dropdowns
+            mobileDropdownBtns.forEach(otherBtn => {
+                if (otherBtn !== btn) {
+                    const otherTargetId = otherBtn.getAttribute('data-target');
+                    const otherContent = document.getElementById(otherTargetId);
+                    otherContent.classList.remove('active');
+                    otherBtn.classList.remove('active');
+                }
+            });
+
+            // Basculer le dropdown actuel
+            dropdownContent.classList.toggle('active');
+            this.classList.toggle('active');
+        });
+    });
+
+    // Fermer le menu en cliquant en dehors (sur le fond)
+    mobileMenu.addEventListener('click', function(e) {
+        if (e.target === mobileMenu) {
+            mobileMenu.classList.remove('active');
+            mobileMenuIcon.classList.remove('fa-times');
+            mobileMenuIcon.classList.add('fa-bars');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // Fermer le menu avec la touche Échap
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+            mobileMenu.classList.remove('active');
+            mobileMenuIcon.classList.remove('fa-times');
+            mobileMenuIcon.classList.add('fa-bars');
+            document.body.style.overflow = '';
+        }
+    });
+});
+</script>

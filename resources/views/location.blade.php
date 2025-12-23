@@ -153,45 +153,46 @@
                 </thead>
                 <tbody>
                     @foreach([
-                        [
-                            'formule' => 'Location courte durée',
-                            'duree' => '1 à 7 jours',
-                            'public' => 'Particuliers / Chauffeurs VTC occasionnels',
-                            'inclus' => 'Assurance + Entretien + Assistance',
-                            'tarif' => 'Dès 100 €/jour',
-                            'action' => 'Réserver'
-                        ],
-                        [
-                            'formule' => 'Location moyenne durée',
-                            'duree' => '1 à 4 semaines',
-                            'public' => 'Chauffeurs VTC actifs ou entreprises',
-                            'inclus' => 'Assurance + Maintenance + Véhicule de remplacement',
-                            'tarif' => 'Dès 280 €/semaine',
-                            'action' => 'Réserver'
-                        ],
-                        [
-                            'formule' => 'Location longue durée (LLD)',
-                            'duree' => '1 à 12 mois',
-                            'public' => 'Chauffeurs indépendants / Flottes d\'entreprises',
-                            'inclus' => 'Assurance, révision, pneus, véhicule de prêt',
-                            'tarif' => 'Dès 790 €/mois',
-                            'action' => 'Réserver'
-                        ],
-                        [
-                            'formule' => 'Location avec chauffeur',
-                            'duree' => 'Sur demande',
-                            'public' => 'Événements / Transferts / VIP',
-                            'inclus' => 'Véhicule + Chauffeur professionnel + Service personnalisé',
-                            'tarif' => 'Sur devis',
-                            'action' => 'Demander devis'
-                        ]
+                    [
+                    'formule' => 'Location courte durée',
+                    'duree' => '1 à 7 jours',
+                    'public' => 'Particuliers / Chauffeurs VTC occasionnels',
+                    'inclus' => 'Assurance + Entretien + Assistance',
+                    'tarif' => 'Dès 100 €/jour',
+                    'action' => 'Réserver'
+                    ],
+                    [
+                    'formule' => 'Location moyenne durée',
+                    'duree' => '1 à 4 semaines',
+                    'public' => 'Chauffeurs VTC actifs ou entreprises',
+                    'inclus' => 'Assurance + Maintenance + Véhicule de remplacement',
+                    'tarif' => 'Dès 280 €/semaine',
+                    'action' => 'Réserver'
+                    ],
+                    [
+                    'formule' => 'Location longue durée (LLD)',
+                    'duree' => '1 à 12 mois',
+                    'public' => 'Chauffeurs indépendants / Flottes d\'entreprises',
+                    'inclus' => 'Assurance, révision, pneus, véhicule de prêt',
+                    'tarif' => 'Dès 790 €/mois',
+                    'action' => 'Réserver'
+                    ],
+                    [
+                    'formule' => 'Location avec chauffeur',
+                    'duree' => 'Sur demande',
+                    'public' => 'Événements / Transferts / VIP',
+                    'inclus' => 'Véhicule + Chauffeur professionnel + Service personnalisé',
+                    'tarif' => 'Sur devis',
+                    'action' => 'Demander devis'
+                    ]
                     ] as $offer)
                     <tr class="border-b" style="border-color: #333; color: white;">
                         <td class="py-4 px-4 md:px-6 font-semibold">{{ $offer['formule'] }}</td>
                         <td class="py-4 px-4 md:px-6 text-center">{{ $offer['duree'] }}</td>
                         <td class="py-4 px-4 md:px-6 text-center">{{ $offer['public'] }}</td>
                         <td class="py-4 px-4 md:px-6 text-center">{{ $offer['inclus'] }}</td>
-                        <td class="py-4 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">{{ $offer['tarif'] }}</td>
+                        <td class="py-4 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">{{
+                            $offer['tarif'] }}</td>
                         <td class="py-4 px-4 md:px-6 text-center">
                             @if($offer['action'] === 'Réserver')
                             <a href="#reservation"
@@ -232,17 +233,19 @@
 <section id="flotte" class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Notre flotte de véhicules premium</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Notre flotte de véhicules
+                premium</h2>
             <p class="text-gray-400 max-w-3xl mx-auto">Catégories de véhicules disponibles</p>
         </div>
 
         <!-- Véhicules économiques -->
         <div class="mb-16">
-            <h3 class="mb-8 text-2xl md:text-3xl font-semibold text-center" style="color: white;">Véhicules économiques</h3>
+            <h3 class="mb-8 text-2xl md:text-3xl font-semibold text-center" style="color: white;">Véhicules économiques
+            </h3>
             <p class="text-center text-gray-400 mb-8 max-w-2xl mx-auto">
                 Idéal pour les nouveaux chauffeurs ou les petits budgets.
             </p>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 @forelse($ecoVehicles as $vehicle)
                 <div class="p-4 md:p-6" style="background: #1a1a1a; border: 1px solid #333;">
@@ -258,10 +261,13 @@
                         @endif
                     </div>
                     <div>
-                        <h4 class="text-lg md:text-xl font-bold mb-2" style="color: white;">{{ $vehicle->full_name }}</h4>
-                        <p class="text-gray-400 mb-3 text-sm">{{ $vehicle->category_fr }} • {{ $vehicle->fuel_type_fr }}</p>
+                        <h4 class="text-lg md:text-xl font-bold mb-2" style="color: white;">{{ $vehicle->full_name }}
+                        </h4>
+                        <p class="text-gray-400 mb-3 text-sm">{{ $vehicle->category_fr }} • {{ $vehicle->fuel_type_fr }}
+                        </p>
                         <div class="mb-4">
-                            <span class="text-xl md:text-2xl font-bold" style="color: var(--gold);">{{ $vehicle->weekly_rate_formatted }}</span>
+                            <span class="text-xl md:text-2xl font-bold" style="color: var(--gold);">{{
+                                $vehicle->weekly_rate_formatted }}</span>
                             <span class="text-gray-500">/semaine</span>
                         </div>
                         <div class="flex gap-3">
@@ -293,11 +299,12 @@
 
         <!-- Véhicules confort / business -->
         <div class="mb-16">
-            <h3 class="mb-8 text-2xl md:text-3xl font-semibold text-center" style="color: white;">Véhicules confort / business</h3>
+            <h3 class="mb-8 text-2xl md:text-3xl font-semibold text-center" style="color: white;">Véhicules confort /
+                business</h3>
             <p class="text-center text-gray-400 mb-8 max-w-2xl mx-auto">
                 Parfait pour les VTC expérimentés ou les transferts professionnels.
             </p>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 @forelse($businessVehicles as $vehicle)
                 <div class="p-4 md:p-6" style="background: #1a1a1a; border: 1px solid #333;">
@@ -313,10 +320,13 @@
                         @endif
                     </div>
                     <div>
-                        <h4 class="text-lg md:text-xl font-bold mb-2" style="color: white;">{{ $vehicle->full_name }}</h4>
-                        <p class="text-gray-400 mb-3 text-sm">{{ $vehicle->category_fr }} • {{ $vehicle->fuel_type_fr }}</p>
+                        <h4 class="text-lg md:text-xl font-bold mb-2" style="color: white;">{{ $vehicle->full_name }}
+                        </h4>
+                        <p class="text-gray-400 mb-3 text-sm">{{ $vehicle->category_fr }} • {{ $vehicle->fuel_type_fr }}
+                        </p>
                         <div class="mb-4">
-                            <span class="text-xl md:text-2xl font-bold" style="color: var(--gold);">{{ $vehicle->weekly_rate_formatted }}</span>
+                            <span class="text-xl md:text-2xl font-bold" style="color: var(--gold);">{{
+                                $vehicle->weekly_rate_formatted }}</span>
                             <span class="text-gray-500">/semaine</span>
                         </div>
                         <div class="flex gap-3">
@@ -348,11 +358,12 @@
 
         <!-- Véhicules prestige -->
         <div class="mb-16">
-            <h3 class="mb-8 text-2xl md:text-3xl font-semibold text-center" style="color: white;">Véhicules prestige</h3>
+            <h3 class="mb-8 text-2xl md:text-3xl font-semibold text-center" style="color: white;">Véhicules prestige
+            </h3>
             <p class="text-center text-gray-400 mb-8 max-w-2xl mx-auto">
                 Le luxe à portée de main.
             </p>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 @forelse($prestigeVehicles as $vehicle)
                 <div class="p-4 md:p-6" style="background: #1a1a1a; border: 1px solid #333;">
@@ -368,10 +379,13 @@
                         @endif
                     </div>
                     <div>
-                        <h4 class="text-lg md:text-xl font-bold mb-2" style="color: white;">{{ $vehicle->full_name }}</h4>
-                        <p class="text-gray-400 mb-3 text-sm">{{ $vehicle->category_fr }} • {{ $vehicle->fuel_type_fr }}</p>
+                        <h4 class="text-lg md:text-xl font-bold mb-2" style="color: white;">{{ $vehicle->full_name }}
+                        </h4>
+                        <p class="text-gray-400 mb-3 text-sm">{{ $vehicle->category_fr }} • {{ $vehicle->fuel_type_fr }}
+                        </p>
                         <div class="mb-4">
-                            <span class="text-xl md:text-2xl font-bold" style="color: var(--gold);">{{ $vehicle->weekly_rate_formatted }}</span>
+                            <span class="text-xl md:text-2xl font-bold" style="color: var(--gold);">{{
+                                $vehicle->weekly_rate_formatted }}</span>
                             <span class="text-gray-500">/semaine</span>
                         </div>
                         <div class="flex gap-3">
@@ -407,7 +421,8 @@
 <section class="py-16" style="background: #000;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Services inclus avec chaque location</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Services inclus avec chaque
+                location</h2>
             <p class="text-gray-400 max-w-3xl mx-auto">
                 Chaque véhicule DJOK PRESTIGE bénéficie d'un service clé en main, sans frais cachés.
             </p>
@@ -415,12 +430,12 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             @foreach([
-                ['Assurance tous risques', 'fas fa-shield-alt'],
-                ['Entretien et révision régulière', 'fas fa-tools'],
-                ['Assistance 24h/24 et 7j/7', 'fas fa-headset'],
-                ['Véhicule de remplacement en cas de panne', 'fas fa-car'],
-                ['Nettoyage professionnel avant chaque mise à disposition', 'fas fa-spray-can'],
-                ['Option GPS, siège bébé, ou chargeur électrique', 'fas fa-cogs']
+            ['Assurance tous risques', 'fas fa-shield-alt'],
+            ['Entretien et révision régulière', 'fas fa-tools'],
+            ['Assistance 24h/24 et 7j/7', 'fas fa-headset'],
+            ['Véhicule de remplacement en cas de panne', 'fas fa-car'],
+            ['Nettoyage professionnel avant chaque mise à disposition', 'fas fa-spray-can'],
+            ['Option GPS, siège bébé, ou chargeur électrique', 'fas fa-cogs']
             ] as $service)
             <div class="p-4 md:p-6" style="background: #111; border: 1px solid #333;">
                 <div class="flex items-start">
@@ -452,7 +467,8 @@
 <section class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Offres spéciales Chauffeurs VTC</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Offres spéciales Chauffeurs VTC
+            </h2>
             <p class="text-gray-400 max-w-3xl mx-auto">
                 Vous débutez ou vous exercez déjà en tant que chauffeur ? DJOK PRESTIGE vous accompagne avec des
                 formules adaptées aux pros du transport.
@@ -514,8 +530,7 @@
         </div>
 
         <div class="mt-12 text-center">
-            <a href="#devis"
-                class="inline-flex items-center px-6 md:px-8 py-3 font-semibold transition duration-300"
+            <a href="#devis" class="inline-flex items-center px-6 md:px-8 py-3 font-semibold transition duration-300"
                 style="background: var(--gold); color: black;">
                 Je suis chauffeur, je veux un devis
             </a>
@@ -588,7 +603,8 @@
                             </li>
                             <li class="flex items-center">
                                 <i class="fas fa-calendar-alt mr-3" style="color: var(--gold);"></i>
-                                <span style="color: white;">Paiement échelonné possible pour les contrats longue durée</span>
+                                <span style="color: white;">Paiement échelonné possible pour les contrats longue
+                                    durée</span>
                             </li>
                         </ul>
                     </div>
@@ -641,14 +657,17 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                     <!-- Colonne gauche : Formulaire -->
                     <div>
-                        <h3 class="text-xl md:text-2xl font-bold mb-4" style="color: white;">Formulaire de réservation</h3>
-                        <p class="text-gray-400 mb-6">Remplissez ce formulaire pour réserver votre véhicule en ligne.</p>
+                        <h3 class="text-xl md:text-2xl font-bold mb-4" style="color: white;">Formulaire de réservation
+                        </h3>
+                        <p class="text-gray-400 mb-6">Remplissez ce formulaire pour réserver votre véhicule en ligne.
+                        </p>
 
                         <form action="{{ route('location.reservation.store') }}" method="POST" id="reservationForm">
                             @csrf
 
                             <!-- Véhicule sélectionné (caché) -->
-                            <input type="hidden" name="vehicle_id" id="selected_vehicle_id" value="{{ old('vehicle_id') }}">
+                            <input type="hidden" name="vehicle_id" id="selected_vehicle_id"
+                                value="{{ old('vehicle_id') }}">
 
                             <div class="space-y-4">
                                 <!-- Champ Nom complet -->
@@ -689,12 +708,14 @@
 
                                 <!-- Champ Type de véhicule (affiché en lecture seule) -->
                                 <div>
-                                    <label class="block mb-2 font-medium" style="color: #ddd;">Véhicule sélectionné *</label>
+                                    <label class="block mb-2 font-medium" style="color: #ddd;">Véhicule sélectionné
+                                        *</label>
                                     <input type="text" id="vehicle_display" readonly required
                                         class="w-full px-4 py-3 rounded focus:outline-none cursor-not-allowed"
                                         style="background: #0a0a0a; border: 1px solid #333; color: #888;"
                                         value="{{ old('vehicle_model', 'Veuillez sélectionner un véhicule ci-dessus') }}">
-                                    <p class="text-xs text-gray-500 mt-1">Cliquez sur "Sélectionner" sur le véhicule de votre choix</p>
+                                    <p class="text-xs text-gray-500 mt-1">Cliquez sur "Sélectionner" sur le véhicule de
+                                        votre choix</p>
                                     @error('vehicle_id')
                                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                                     @enderror
@@ -702,10 +723,10 @@
 
                                 <!-- CHAMP DATE DE DÉBUT DE LOCATION -->
                                 <div>
-                                    <label class="block mb-2 font-medium" style="color: #ddd;">Date de début de location *</label>
+                                    <label class="block mb-2 font-medium" style="color: #ddd;">Date de début de location
+                                        *</label>
                                     <input type="date" name="date_debut" id="date_debut" required
-                                        min="{{ date('Y-m-d') }}"
-                                        class="w-full px-4 py-3 rounded focus:outline-none"
+                                        min="{{ date('Y-m-d') }}" class="w-full px-4 py-3 rounded focus:outline-none"
                                         style="background: #111; border: 1px solid #444; color: white;"
                                         value="{{ old('date_debut') }}">
                                     <p class="text-xs text-gray-500 mt-1">La date minimale est aujourd'hui</p>
@@ -716,13 +737,15 @@
 
                                 <!-- CHAMP DATE DE FIN DE LOCATION -->
                                 <div>
-                                    <label class="block mb-2 font-medium" style="color: #ddd;">Date de fin de location *</label>
+                                    <label class="block mb-2 font-medium" style="color: #ddd;">Date de fin de location
+                                        *</label>
                                     <input type="date" name="date_fin" id="date_fin" required
                                         min="{{ date('Y-m-d', strtotime('+1 day')) }}"
                                         class="w-full px-4 py-3 rounded focus:outline-none"
                                         style="background: #111; border: 1px solid #444; color: white;"
                                         value="{{ old('date_fin') }}">
-                                    <p class="text-xs text-gray-500 mt-1">La date doit être postérieure à la date de début</p>
+                                    <p class="text-xs text-gray-500 mt-1">La date doit être postérieure à la date de
+                                        début</p>
                                     @error('date_fin')
                                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                                     @enderror
@@ -730,9 +753,9 @@
 
                                 <!-- Message supplémentaire -->
                                 <div>
-                                    <label class="block mb-2 font-medium" style="color: #ddd;">Message (optionnel)</label>
-                                    <textarea name="notes" rows="3"
-                                        class="w-full px-4 py-3 rounded focus:outline-none"
+                                    <label class="block mb-2 font-medium" style="color: #ddd;">Message
+                                        (optionnel)</label>
+                                    <textarea name="notes" rows="3" class="w-full px-4 py-3 rounded focus:outline-none"
                                         style="background: #111; border: 1px solid #444; color: white;"
                                         placeholder="Informations complémentaires, questions...">{{ old('notes') }}</textarea>
                                 </div>
@@ -757,10 +780,11 @@
                                             class="mt-1 mr-3 h-5 w-5 rounded focus:outline-none"
                                             style="background: #111; border: 1px solid #444;">
                                         <label for="terms" class="text-gray-300 text-sm">
-                                            J'accepte les <a href="{{ route('cgv') }}"
-                                                style="color: var(--gold);" class="hover:text-yellow-400">conditions générales de location</a>
+                                            J'accepte les <a href="{{ route('cgv') }}" style="color: var(--gold);"
+                                                class="hover:text-yellow-400">conditions générales de location</a>
                                             et j'ai pris connaissance de la <a href="{{ route('rgpd') }}"
-                                                style="color: var(--gold);" class="hover:text-yellow-400">politique de confidentialité</a>.
+                                                style="color: var(--gold);" class="hover:text-yellow-400">politique de
+                                                confidentialité</a>.
                                         </label>
                                     </div>
                                     @error('terms')
@@ -781,7 +805,8 @@
 
                     <!-- Colonne droite : Contact et devis -->
                     <div id="devis">
-                        <h3 class="text-xl md:text-2xl font-bold mb-4" style="color: white;">Demande de devis / Simulation</h3>
+                        <h3 class="text-xl md:text-2xl font-bold mb-4" style="color: white;">Demande de devis /
+                            Simulation</h3>
                         <p class="text-gray-400 mb-6">Besoin d'un devis personnalisé ou d'une simulation de tarif ?</p>
 
                         <div class="space-y-6">
@@ -790,7 +815,8 @@
                                 <p class="text-gray-300">
                                     <i class="fas fa-phone-alt mr-2" style="color: var(--gold);"></i>
                                     Téléphone :
-                                    <a href="tel:0176380017" class="font-semibold hover:text-yellow-400 transition duration-300"
+                                    <a href="tel:0176380017"
+                                        class="font-semibold hover:text-yellow-400 transition duration-300"
                                         style="color: var(--gold);">01 76 38 00 17</a>
                                 </p>
                                 <p class="text-gray-300 mt-2">
@@ -833,7 +859,8 @@
 <section class="py-16" style="background: #000;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Découvrez tous nos véhicules</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Découvrez tous nos véhicules
+            </h2>
             <p class="text-gray-400 max-w-3xl mx-auto">
                 Notre flotte est régulièrement mise à jour avec de nouveaux véhicules. Consultez les pages détaillées
                 pour en savoir plus.
@@ -941,7 +968,8 @@
 <!-- CTA Final - Style sobre -->
 <section class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6 text-center">
-        <h2 class="text-2xl md:text-3xl font-bold mb-6" style="color: var(--gold);">Trouvez le véhicule parfait pour vos besoins</h2>
+        <h2 class="text-2xl md:text-3xl font-bold mb-6" style="color: var(--gold);">Trouvez le véhicule parfait pour vos
+            besoins</h2>
         <p class="text-gray-400 mb-8 max-w-2xl mx-auto">
             Que vous soyez chauffeur VTC, entrepreneur ou particulier, nous avons la solution adaptée à vos besoins.
         </p>
@@ -963,9 +991,9 @@
 
         <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
             @foreach([
-                ['Assurance incluse', 'fas fa-shield-alt', 'Tous risques avec assistance 24h/24'],
-                ['Entretien compris', 'fas fa-tools', 'Révisions et maintenance incluses'],
-                ['Flexibilité totale', 'fas fa-calendar-check', 'Location à la journée, semaine ou mois']
+            ['Assurance incluse', 'fas fa-shield-alt', 'Tous risques avec assistance 24h/24'],
+            ['Entretien compris', 'fas fa-tools', 'Révisions et maintenance incluses'],
+            ['Flexibilité totale', 'fas fa-calendar-check', 'Location à la journée, semaine ou mois']
             ] as $feature)
             <div class="p-4 rounded" style="background: #1a1a1a; border: 1px solid #333;">
                 <i class="{{ $feature[1] }} mb-3" style="color: var(--gold); font-size: 1.5rem;"></i>
@@ -999,7 +1027,7 @@
             anchor.addEventListener('click', function(e) {
                 const href = this.getAttribute('href');
                 if (href === '#') return;
-                
+
                 e.preventDefault();
                 const target = document.querySelector(href);
                 if (target) {

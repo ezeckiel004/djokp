@@ -53,7 +53,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Admin DJOK',
             'email' => 'admin@djokprestige.com',
-            'password' => Hash::make('password123'),
+            'password' => Hash::make('password1234'),
             'role_id' => 1, // admin
             'phone' => '+221 33 867 90 00',
             'is_active' => true,

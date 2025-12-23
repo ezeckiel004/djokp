@@ -471,33 +471,33 @@
 <script>
     function confirmDelete(participantId, participantName) {
         // Mettre à jour le message
-        document.getElementById('deleteMessage').textContent = 
+        document.getElementById('deleteMessage').textContent =
             `Êtes-vous sûr de vouloir supprimer le participant "${participantName}" ?`;
-        
+
         // Mettre à jour l'action du formulaire
         const form = document.getElementById('deleteForm');
         form.action = `/admin/participants/${participantId}`;
-        
+
         // Afficher la modal
         $('#deleteModal').modal('show');
     }
-    
+
     function updateParticipantStatus(participantId) {
         // Mettre à jour l'action du formulaire
         const form = document.getElementById('statusForm');
         form.action = `/admin/participants/${participantId}/update-status`;
-        
+
         // Réinitialiser le formulaire
         form.reset();
-        
+
         // Afficher la modal
         $('#statusModal').modal('show');
     }
-    
+
     // Initialisation des tooltips
     $(function () {
         $('[title]').tooltip();
-        
+
         // Auto-focus sur le champ de recherche
         $('input[name="search"]').focus();
     });
