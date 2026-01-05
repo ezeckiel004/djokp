@@ -160,7 +160,7 @@
                         <th class="py-4 px-4 md:px-6 text-center text-white">Frais d'examen</th>
                         <th class="py-4 px-4 md:px-6 text-center text-white">Location véhicule</th>
                         <th class="py-4 px-4 md:px-6 text-center text-white">Tarif TTC</th>
-                        <th class="py-4 px-4 md:px-6 text-center text-white">Action</th>
+                        <th class="py-4 px-4 md:px-6 text-center text-white">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -181,19 +181,32 @@
                             {{ number_format($formation->price, 0, ',', ' ') }} €
                         </td>
                         <td class="py-4 px-4 md:px-6 text-center">
-                            @if($formation->type_formation == 'presentiel')
-                            <a href="{{ route('formation.inscrire.presentiel', $formation->id) }}"
-                                class="inline-flex items-center px-4 py-2 text-sm font-semibold transition-all duration-300"
-                                style="background: var(--gold); color: black;">
-                                <i class="fas fa-user-plus mr-2"></i>S'inscrire
-                            </a>
-                            @elseif($formation->type_formation == 'e_learning')
-                            <a href="{{ route('formation.acheter.elearning', $formation->id) }}"
-                                class="inline-flex items-center px-4 py-2 text-sm font-semibold transition-all duration-300"
-                                style="background: #059669; color: white;">
-                                <i class="fas fa-shopping-cart mr-2"></i>Acheter
-                            </a>
-                            @endif
+                            <div class="flex items-center justify-center space-x-2">
+                                <!-- Bouton Voir Programme PDF -->
+                                @if($formation->program || $formation->programme_pdf_exists)
+                                <a href="{{ $formation->programme_pdf_route }}" target="_blank"
+                                    class="inline-flex items-center px-3 py-2 text-sm transition-all duration-300 hover:bg-gray-800 rounded"
+                                    style="background: #1f2937; color: white; border: 1px solid #374151;"
+                                    title="Voir le programme PDF" onclick="trackPdfView('{{ $formation->title }}')">
+                                    <i class="fas fa-eye mr-1"></i>
+                                </a>
+                                @endif
+
+                                <!-- Bouton S'inscrire/Acheter -->
+                                @if($formation->type_formation == 'presentiel')
+                                <a href="{{ route('formation.inscrire.presentiel', $formation->id) }}"
+                                    class="inline-flex items-center px-4 py-2 text-sm font-semibold transition-all duration-300 hover:opacity-90 rounded"
+                                    style="background: var(--gold); color: black;">
+                                    <i class="fas fa-user-plus mr-2"></i>S'inscrire
+                                </a>
+                                @elseif($formation->type_formation == 'e_learning')
+                                <a href="{{ route('formation.acheter.elearning', $formation->id) }}"
+                                    class="inline-flex items-center px-4 py-2 text-sm font-semibold transition-all duration-300 hover:opacity-90 rounded"
+                                    style="background: #059669; color: white;">
+                                    <i class="fas fa-shopping-cart mr-2"></i>Acheter
+                                </a>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @empty
@@ -225,7 +238,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($formations as $formation)
                 <div
-                    class="bg-gray-900 overflow-hidden border border-gray-800 hover:border-gray-700 transition duration-300">
+                    class="bg-gray-900 overflow-hidden border border-gray-800 hover:border-gray-700 transition duration-300 rounded-lg">
                     <!-- En-tête avec miniature si disponible -->
                     @php
                     $videoMedia = $formation->media->where('type', 'video')->first();
@@ -246,7 +259,7 @@
 
                         <!-- Badge type de formation -->
                         <div class="absolute top-4 right-4">
-                            <span class="px-3 py-1 text-xs font-semibold"
+                            <span class="px-3 py-1 text-xs font-semibold rounded"
                                 style="{{ $formation->type_formation === 'e_learning' ? 'background: #059669;' : 'background: var(--gold); color: black;' }}">
                                 {{ $formation->type_formation === 'e_learning' ? 'En ligne' : 'Présentiel' }}
                             </span>
@@ -256,7 +269,7 @@
                     <div class="p-6">
                         <!-- Catégorie -->
                         <div class="mb-3">
-                            <span class="inline-block px-3 py-1 text-xs font-semibold"
+                            <span class="inline-block px-3 py-1 text-xs font-semibold rounded"
                                 style="background: #222; color: #ddd;">
                                 {{ $formation->categorie === 'vtc_theorique' ? 'VTC Théorique' :
                                 ($formation->categorie === 'vtc_pratique' ? 'VTC Pratique' :
@@ -300,11 +313,12 @@
                             <!-- Frais inclus -->
                             <div class="text-right">
                                 @if($formation->frais_examen === 'Inclus')
-                                <span class="text-xs px-2 py-1" style="background: #064e3b; color: #a7f3d0;">Examen
+                                <span class="text-xs px-2 py-1 rounded"
+                                    style="background: #064e3b; color: #a7f3d0;">Examen
                                     inclus</span>
                                 @endif
                                 @if($formation->location_vehicule === 'Inclus')
-                                <span class="text-xs px-2 py-1 block mt-1"
+                                <span class="text-xs px-2 py-1 block mt-1 rounded"
                                     style="background: #064e3b; color: #a7f3d0;">Véhicule inclus</span>
                                 @endif
                             </div>
@@ -312,25 +326,36 @@
 
                         <!-- Boutons d'action -->
                         <div class="space-y-3">
+                            <!-- Bouton Programme PDF -->
+                            @if($formation->program || $formation->programme_pdf_exists)
+                            <a href="{{ $formation->programme_pdf_route }}" target="_blank"
+                                class="w-full inline-flex items-center justify-center px-4 py-2.5 font-semibold transition-all duration-300 hover:bg-blue-800 rounded"
+                                style="background: #1e40af; color: white;" title="Voir le programme détaillé"
+                                onclick="trackPdfView('{{ $formation->title }}')">
+                                <i class="fas fa-file-pdf mr-2"></i>
+                                Télécharger le programme
+                            </a>
+                            @endif
+
                             <!-- Bouton Détails -->
                             <a href="{{ route('formation.show', $formation->slug) }}"
-                                class="w-full inline-flex items-center justify-center px-4 py-2.5 font-semibold transition-all duration-300"
+                                class="w-full inline-flex items-center justify-center px-4 py-2.5 font-semibold transition-all duration-300 hover:bg-gray-800 rounded"
                                 style="background: #111; color: white;">
-                                <i class="fas fa-eye mr-2"></i>
+                                <i class="fas fa-info-circle mr-2"></i>
                                 Voir les détails
                             </a>
 
                             <!-- Bouton S'inscrire/Acheter -->
                             @if($formation->type_formation === 'presentiel')
                             <a href="{{ route('formation.inscrire.presentiel', $formation->id) }}"
-                                class="w-full inline-flex items-center justify-center px-4 py-2.5 font-semibold transition-all duration-300"
+                                class="w-full inline-flex items-center justify-center px-4 py-2.5 font-semibold transition-all duration-300 hover:opacity-90 rounded"
                                 style="background: var(--gold); color: black;">
                                 <i class="fas fa-user-plus mr-2"></i>
                                 S'inscrire maintenant
                             </a>
                             @elseif($formation->type_formation === 'e_learning')
                             <a href="{{ route('formation.acheter.elearning', $formation->id) }}"
-                                class="w-full inline-flex items-center justify-center px-4 py-2.5 font-semibold transition-all duration-300"
+                                class="w-full inline-flex items-center justify-center px-4 py-2.5 font-semibold transition-all duration-300 hover:opacity-90 rounded"
                                 style="background: #059669; color: white;">
                                 <i class="fas fa-shopping-cart mr-2"></i>
                                 Acheter la formation
@@ -355,11 +380,12 @@
 
         <div class="mt-12 flex flex-col sm:flex-row gap-4 justify-center">
             <a href="#inscription"
-                class="inline-flex items-center px-8 py-3 text-lg font-semibold transition-all duration-300"
+                class="inline-flex items-center px-8 py-3 text-lg font-semibold transition-all duration-300 rounded"
                 style="background: var(--gold); color: black;">
                 S'inscrire maintenant
             </a>
-            <a href="#" class="inline-flex items-center px-8 py-3 text-lg font-semibold transition-all duration-300"
+            <a href="#"
+                class="inline-flex items-center px-8 py-3 text-lg font-semibold transition-all duration-300 rounded"
                 style="background: #111; color: white; border: 1px solid #333;">
                 Télécharger la brochure complète
             </a>
@@ -1005,5 +1031,30 @@
             }, 8000);
         }
     });
+
+    function trackPdfView(formationTitle) {
+        // Envoyer un événement à Google Analytics (si configuré)
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'pdf_view', {
+                'event_category': 'Formation',
+                'event_label': formationTitle,
+                'value': 1
+            });
+        }
+
+        // Optionnel : envoyer une requête à votre backend pour tracker
+        fetch('/api/track-pdf-view', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                formation_title: formationTitle,
+                url: window.location.href,
+                timestamp: new Date().toISOString()
+            })
+        }).catch(error => console.log('Tracking error:', error));
+    }
 </script>
 @endsection

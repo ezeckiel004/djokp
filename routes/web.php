@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FormationController;
+use App\Http\Controllers\ProgrammePdfController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LocationReservationController;
 use App\Http\Controllers\ConciergerieController;
@@ -27,6 +28,13 @@ Route::get('/about', fn() => view('about'))->name('about');
 // Formations
 Route::get('/formation', [FormationController::class, 'index'])->name('formation');
 Route::get('/formation/{slug}', [FormationController::class, 'show'])->name('formation.show');
+
+// PDF Programme des formations
+Route::get('/formation/{id}/programme-pdf', [ProgrammePdfController::class, 'show'])
+    ->name('formation.programme.pdf.show');
+
+Route::get('/formation/{id}/programme-pdf/download', [ProgrammePdfController::class, 'download'])
+    ->name('formation.programme.pdf.download');
 
 // Location
 Route::get('/location', [LocationController::class, 'index'])->name('location');

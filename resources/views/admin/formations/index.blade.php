@@ -230,7 +230,17 @@
                     <!-- Actions -->
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex items-center space-x-2">
-                            <!-- Voir -->
+                            <!-- Voir le programme PDF -->
+                            @if($formation->program || $formation->programme_pdf_exists)
+                            <a href="{{ route('formation.programme.pdf.show', $formation->id) }}" target="_blank"
+                                class="text-indigo-600 hover:text-indigo-900 transition-colors duration-200 group p-2 rounded-lg bg-indigo-50 hover:bg-indigo-100"
+                                title="Voir le programme PDF"
+                                onclick="trackPdfView('{{ $formation->title }}', 'admin')">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+                            @endif
+
+                            <!-- Voir détails -->
                             <a href="{{ route('admin.formations.show', $formation) }}"
                                 class="text-blue-600 hover:text-blue-900 transition-colors duration-200 group p-2 rounded-lg bg-blue-50 hover:bg-blue-100"
                                 title="Voir les détails">
@@ -331,6 +341,34 @@
                 alert('Erreur lors de la mise à jour du statut');
             });
         }
+    }
+
+    function trackPdfView(formationTitle, source = 'admin') {
+        // Envoyer un événement à Google Analytics (si configuré)
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'pdf_view', {
+                'event_category': 'Formation',
+                'event_label': formationTitle,
+                'event_source': source,
+                'value': 1
+            });
+        }
+
+        // Envoyer une requête pour tracker le clic depuis l'admin
+        fetch('/api/track-pdf-view', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                formation_title: formationTitle,
+                url: window.location.href,
+                source: source,
+                timestamp: new Date().toISOString(),
+                user_type: 'admin'
+            })
+        }).catch(error => console.log('Tracking error:', error));
     }
 </script>
 @endpush

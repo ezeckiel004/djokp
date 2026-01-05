@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\NewsletterController as AdminNewsletterController
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\Admin\ParticipantController as AdminParticipantController;
+use App\Http\Controllers\ProgrammePdfController;
 
 
 Route::middleware(['auth', 'can:access-admin-dashboard'])->prefix('admin')->name('admin.')->group(function () {
@@ -57,6 +58,10 @@ Route::middleware(['auth', 'can:access-admin-dashboard'])->prefix('admin')->name
         ->name('formations.check-slugs-admin');
     Route::get('/formations/slugs-report', [AdminFormationController::class, 'slugsReport'])
         ->name('formations.slugs-report');
+
+    // Génération PDF programme
+    Route::post('/formations/{formation}/generate-pdf', [ProgrammePdfController::class, 'generateAndSave'])
+        ->name('formations.generate-pdf');
 
     // Gestion des articles du blog
     Route::resource('articles', AdminArticleController::class);

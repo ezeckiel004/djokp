@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class Formation extends Model
 {
@@ -31,6 +32,8 @@ class Formation extends Model
         'program',
         'requirements',
         'included_services',
+        'programme_pdf',
+        'programme_pdf_generated_at',
     ];
 
     protected $casts = [
@@ -41,12 +44,16 @@ class Formation extends Model
         'requirements' => 'array',
         'included_services' => 'array',
         'price' => 'decimal:2',
+        'programme_pdf_generated_at' => 'datetime',
     ];
 
     protected $appends = [
         'price_formatted',
         'frais_examen_color',
         'location_vehicule_color',
+        'programme_pdf_url',
+        'programme_pdf_exists',
+        'programme_pdf_route',
     ];
 
     /**
@@ -155,6 +162,57 @@ class Formation extends Model
     }
 
     /**
+     * URL du PDF programme
+     */
+    public function getProgrammePdfUrlAttribute()
+    {
+        if ($this->programme_pdf && Storage::disk('public')->exists($this->programme_pdf)) {
+            return Storage::url($this->programme_pdf);
+        }
+        return null;
+    }
+
+    /**
+     * Vérifie si un PDF programme existe
+     */
+    public function getProgrammePdfExistsAttribute()
+    {
+        return $this->programme_pdf && Storage::disk('public')->exists($this->programme_pdf);
+    }
+
+    /**
+     * Route pour accéder au PDF (génère automatiquement si besoin)
+     */
+    public function getProgrammePdfRouteAttribute()
+    {
+        return route('formation.programme.pdf.show', $this->id);
+    }
+
+    /**
+     * Vérifie si le PDF doit être régénéré
+     */
+    public function shouldRegeneratePdf()
+    {
+        if (!$this->programme_pdf_generated_at) {
+            return true;
+        }
+
+        // Regénérer si plus vieux que 7 jours
+        return $this->programme_pdf_generated_at->diffInDays(now()) > 7;
+    }
+
+    /**
+     * Récupère les PDFs programmes des médias
+     */
+    public function getProgrammePdfMediaAttribute()
+    {
+        return $this->media()
+            ->where('type', 'pdf')
+            ->where('is_programme', true)
+            ->first();
+    }
+
+    /**
      * Méthodes pratiques
      */
     public function isElearning()
@@ -246,6 +304,11 @@ class Formation extends Model
             if ($formation->isElearning() && $formation->isDirty('price') && $formation->stripe_price_id) {
                 \Log::info("Le prix de la formation {$formation->id} a changé. Mettre à jour Stripe manuellement.");
             }
+
+            // Si le programme, les prérequis ou les services inclus changent, marquer pour régénération PDF
+            if ($formation->isDirty(['program', 'requirements', 'included_services', 'description', 'title'])) {
+                \Log::info("Formation {$formation->id} modifiée - PDF programme doit être régénéré");
+            }
         });
     }
 
@@ -298,5 +361,30 @@ class Formation extends Model
             return $this->generateSlugFromTitle();
         }
         return $this->slug;
+    }
+
+    /**
+     * Supprime le PDF programme
+     */
+    public function deleteProgrammePdf()
+    {
+        if ($this->programme_pdf && Storage::disk('public')->exists($this->programme_pdf)) {
+            Storage::disk('public')->delete($this->programme_pdf);
+        }
+
+        $this->update([
+            'programme_pdf' => null,
+            'programme_pdf_generated_at' => null,
+        ]);
+    }
+
+    /**
+     * Met à jour la date de génération du PDF
+     */
+    public function markPdfGenerated()
+    {
+        $this->update([
+            'programme_pdf_generated_at' => now(),
+        ]);
     }
 }

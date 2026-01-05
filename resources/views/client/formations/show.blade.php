@@ -33,7 +33,7 @@
                         'Formation présentielle' }}
                     </p>
                 </div>
-                <div>
+                <div class="flex space-x-2">
                     @php
                     $statusColors = [
                     'active' => 'bg-green-100 text-green-800',
@@ -47,6 +47,15 @@
                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $colorClass }}">
                         {{ ucfirst($userFormation->status) }}
                     </span>
+
+                    <!-- Bouton Programme PDF -->
+                    @if($userFormation->formation->program)
+                    <a href="{{ route('formation.programme.pdf.show', $userFormation->formation->id) }}" target="_blank"
+                        class="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700">
+                        <i class="fas fa-file-pdf mr-1"></i>
+                        Programme
+                    </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -60,23 +69,36 @@
                         {!! $userFormation->formation->description !!}
                     </div>
 
-                    @if($userFormation->formation->objectives)
+                    @if($userFormation->formation->program)
                     <div class="mt-6">
-                        <h4 class="text-lg font-medium text-gray-900 mb-4">Objectifs</h4>
+                        <h4 class="text-lg font-medium text-gray-900 mb-4">Programme détaillé</h4>
+                        <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                            <p class="text-sm text-gray-600 mb-2">
+                                <i class="fas fa-file-pdf text-blue-600 mr-2"></i>
+                                Téléchargez le programme complet au format PDF :
+                            </p>
+                            <a href="{{ route('formation.programme.pdf.show', $userFormation->formation->id) }}"
+                                target="_blank"
+                                class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700">
+                                <i class="fas fa-download mr-2"></i>
+                                Télécharger le programme PDF
+                            </a>
+                        </div>
+
                         <ul class="list-disc pl-5 space-y-2 text-gray-600">
-                            @foreach(explode("\n", $userFormation->formation->objectives) as $objective)
-                            <li>{{ trim($objective) }}</li>
+                            @foreach($userFormation->formation->program as $item)
+                            <li>{{ trim($item) }}</li>
                             @endforeach
                         </ul>
                     </div>
                     @endif
 
-                    @if($userFormation->formation->prerequisites)
+                    @if($userFormation->formation->requirements)
                     <div class="mt-6">
-                        <h4 class="text-lg font-medium text-gray-900 mb-4">Prérequis</h4>
+                        <h4 class="text-lg font-medium text-gray-900 mb-4">Conditions d'admission</h4>
                         <ul class="list-disc pl-5 space-y-2 text-gray-600">
-                            @foreach(explode("\n", $userFormation->formation->prerequisites) as $prerequisite)
-                            <li>{{ trim($prerequisite) }}</li>
+                            @foreach($userFormation->formation->requirements as $requirement)
+                            <li>{{ trim($requirement) }}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -130,6 +152,14 @@
                             <a href="{{ route('client.formations.acceder', $userFormation->id) }}"
                                 class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-djok-yellow hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-djok-yellow w-full">
                                 <i class="fas fa-play mr-2"></i> Accéder à la formation
+                            </a>
+                            @endif
+
+                            @if($userFormation->formation->program)
+                            <a href="{{ route('formation.programme.pdf.show', $userFormation->formation->id) }}"
+                                target="_blank"
+                                class="inline-flex items-center justify-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 w-full">
+                                <i class="fas fa-file-pdf mr-2"></i> Programme PDF
                             </a>
                             @endif
 

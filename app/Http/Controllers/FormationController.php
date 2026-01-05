@@ -31,7 +31,7 @@ class FormationController extends Controller
     public function index()
     {
         $formations = Formation::with(['media' => function ($query) {
-            $query->where('type', 'video')->orderBy('order');
+            $query->orderBy('order');
         }])
             ->where('is_active', true)
             ->orderBy('price')
@@ -362,9 +362,6 @@ class FormationController extends Controller
     /**
      * Succès du paiement
      */
-    /**
-     * Succès du paiement
-     */
     public function paymentSuccess(Request $request)
     {
         Log::info('=== DÉBUT paymentSuccess ===');
@@ -619,9 +616,6 @@ class FormationController extends Controller
         return $this->stripeService->handleWebhook($payload, $sigHeader);
     }
 
-    /**
-     * Mes formations (pour utilisateur connecté)
-     */
     /**
      * Mes formations (pour utilisateur connecté) - SUPPRIMER
      */

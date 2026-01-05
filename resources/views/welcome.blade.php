@@ -63,13 +63,20 @@
 
                 <!-- Boutons -->
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button class="gold-button px-8 py-4 text-lg font-semibold">
-                        <i class="mr-2 fas fa-play-circle"></i> Découvrir la formation
-                    </button>
-                    <button
-                        class="border-2 border-var(--gold) text-var(--gold) px-8 py-4 text-lg font-semibold rounded-lg hover:bg-var(--gold) hover:text-black transition-all duration-300">
-                        <i class="mr-2 fas fa-info-circle"></i> Demander des informations
-                    </button>
+                    <a href="{{ route('formation') }}">
+                        <button class="gold-button px-8 py-4 text-lg font-semibold">
+                            <i class="mr-2 fas fa-play-circle"></i> Découvrir la formation
+                        </button>
+                    </a>
+
+                    <a href="{{route('contact')}}">
+                        <button
+                            class="border-2 border-var(--gold) text-var(--gold) px-8 py-4 text-lg font-semibold rounded-lg hover:bg-var(--gold) hover:text-white transition-all duration-300">
+                            <i class="mr-2 fas fa-info-circle"></i> Demander des informations
+                        </button>
+
+                    </a>
+
                 </div>
             </div>
 
@@ -114,35 +121,142 @@
                     tarifs compétitifs et entretien inclus
                 </p>
 
-                <!-- Avantages -->
-                <div class="grid max-w-5xl grid-cols-2 gap-6 mx-auto mb-16 md:grid-cols-4">
-                    <div class="p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-                        <i class="mb-4 text-3xl fas fa-car" style="color: var(--gold);"></i>
-                        <p class="font-semibold">Véhicules récents</p>
+                <!-- Nouvelles cartes avec images - VERSION CORRIGÉE -->
+                <div class="grid max-w-6xl grid-cols-1 gap-8 mx-auto mb-16 md:grid-cols-3">
+                    <!-- Véhicule Électrique -->
+                    <div
+                        class="group relative overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:transform hover:scale-105 hover:border-var(--gold)/30">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="{{ asset('v_electrique.webp') }}" alt="Véhicule Électrique VTC"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            <!-- Overlay pour rendre le texte lisible -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                            </div>
+                            <!-- Badge de capacité -->
+                            <div class="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+                                <div class="flex items-center space-x-2 bg-black/70 px-3 py-1 rounded-full">
+                                    <i class="fas fa-users text-sm" style="color: var(--gold);"></i>
+                                    <span class="text-sm font-semibold">3 passagers</span>
+                                </div>
+                                <div class="flex items-center space-x-2 bg-black/70 px-3 py-1 rounded-full">
+                                    <i class="fas fa-suitcase text-sm" style="color: var(--gold);"></i>
+                                    <span class="text-sm font-semibold">3 bagages</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="mb-3 text-xl font-bold">Véhicule Électrique</h3>
+                            <p class="text-gray-300 mb-4 text-sm">
+                                Écologique et économique, idéal pour les trajets urbains avec un confort optimal.
+                            </p>
+                            <div class="flex items-center text-sm">
+                                <i class="fas fa-bolt mr-2" style="color: var(--gold);"></i>
+                                <span>100% électrique • Autonomie 400km</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-                        <i class="mb-4 text-3xl fas fa-tools" style="color: var(--gold);"></i>
-                        <p class="font-semibold">Entretien inclus</p>
+
+                    <!-- Véhicule Berline -->
+                    <div
+                        class="group relative overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:transform hover:scale-105 hover:border-var(--gold)/30">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="{{ asset('v_berline.webp') }}" alt="Berline VTC Premium"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            <!-- Overlay pour rendre le texte lisible -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                            </div>
+                            <!-- Badge de capacité -->
+                            <div class="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+                                <div class="flex items-center space-x-2 bg-black/70 px-3 py-1 rounded-full">
+                                    <i class="fas fa-users text-sm" style="color: var(--gold);"></i>
+                                    <span class="text-sm font-semibold">3 passagers</span>
+                                </div>
+                                <div class="flex items-center space-x-2 bg-black/70 px-3 py-1 rounded-full">
+                                    <i class="fas fa-suitcase text-sm" style="color: var(--gold);"></i>
+                                    <span class="text-sm font-semibold">3 bagages</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="mb-3 text-xl font-bold">Berline Premium</h3>
+                            <p class="text-gray-300 mb-4 text-sm">
+                                Luxe et confort pour vos déplacements professionnels ou événements spéciaux.
+                            </p>
+                            <div class="flex items-center text-sm">
+                                <i class="fas fa-star mr-2" style="color: var(--gold);"></i>
+                                <span>Classe affaires • Intérieur cuir</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-                        <i class="mb-4 text-3xl fas fa-euro-sign" style="color: var(--gold);"></i>
-                        <p class="font-semibold">Tarifs compétitifs</p>
+
+                    <!-- Véhicule VAN -->
+                    <div
+                        class="group relative overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:transform hover:scale-105 hover:border-var(--gold)/30">
+                        <div class="relative h-48 overflow-hidden">
+                            <img src="{{ asset('v_VAN.webp') }}" alt="VAN VTC 7 places"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            <!-- Overlay pour rendre le texte lisible -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                            </div>
+                            <!-- Badge de capacité -->
+                            <div class="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+                                <div class="flex items-center space-x-2 bg-black/70 px-3 py-1 rounded-full">
+                                    <i class="fas fa-users text-sm" style="color: var(--gold);"></i>
+                                    <span class="text-sm font-semibold">7 passagers</span>
+                                </div>
+                                <div class="flex items-center space-x-2 bg-black/70 px-3 py-1 rounded-full">
+                                    <i class="fas fa-suitcase text-sm" style="color: var(--gold);"></i>
+                                    <span class="text-sm font-semibold">7 bagages</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="mb-3 text-xl font-bold">VAN 7 Places</h3>
+                            <p class="text-gray-300 mb-4 text-sm">
+                                Parfait pour les groupes, familles ou transferts aéroport avec beaucoup de bagages.
+                            </p>
+                            <div class="flex items-center text-sm">
+                                <i class="fas fa-shield-alt mr-2" style="color: var(--gold);"></i>
+                                <span>Confort groupe • Espace optimisé</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="p-6 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-                        <i class="mb-4 text-3xl fas fa-calendar-alt" style="color: var(--gold);"></i>
-                        <p class="font-semibold">Flexibilité totale</p>
+                </div>
+
+                <!-- Avantages additionnels -->
+                <div class="grid max-w-3xl grid-cols-2 md:grid-cols-4 gap-4 mx-auto mb-12">
+                    <div class="text-center p-4">
+                        <i class="mb-3 text-2xl fas fa-tools" style="color: var(--gold);"></i>
+                        <p class="text-sm font-semibold">Entretien inclus</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <i class="mb-3 text-2xl fas fa-euro-sign" style="color: var(--gold);"></i>
+                        <p class="text-sm font-semibold">Tarifs compétitifs</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <i class="mb-3 text-2xl fas fa-calendar-alt" style="color: var(--gold);"></i>
+                        <p class="text-sm font-semibold">Flexibilité totale</p>
+                    </div>
+                    <div class="text-center p-4">
+                        <i class="mb-3 text-2xl fas fa-shield-alt" style="color: var(--gold);"></i>
+                        <p class="text-sm font-semibold">Assurance complète</p>
                     </div>
                 </div>
 
                 <!-- Boutons -->
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button class="gold-button px-8 py-4 text-lg font-semibold">
-                        <i class="mr-2 fas fa-search"></i> Voir les véhicules
-                    </button>
-                    <button
-                        class="border-2 border-var(--gold) text-var(--gold) px-8 py-4 text-lg font-semibold rounded-lg hover:bg-var(--gold) hover:text-black transition-all duration-300">
-                        <i class="mr-2 fas fa-calendar-check"></i> Réserver maintenant
-                    </button>
+                    <a href="{{route('location')}}">
+                        <button class="gold-button px-8 py-4 text-lg font-semibold">
+                            <i class="mr-2 fas fa-search"></i> Voir les véhicules
+                        </button>
+                    </a>
+                    <a href="{{ route('location') }}">
+                        <button
+                            class="border-2 border-var(--gold) text-var(--gold) px-8 py-4 text-lg font-semibold rounded-lg hover:bg-var(--gold) hover:text-white transition-all duration-300">
+                            <i class="mr-2 fas fa-calendar-check"></i> Réserver maintenant
+                        </button>
+                    </a>
+
                 </div>
             </div>
 
@@ -155,7 +269,7 @@
         </section>
 
         <!-- Bannière 3 - Conciergerie -->
-        <section id="banner-3"
+        {{-- <section id="banner-3"
             class="min-h-screen flex items-center justify-center relative overflow-hidden banner-section">
             <!-- Séparateur décoratif -->
             <div class="absolute top-0 left-0 right-0 h-1">
@@ -228,75 +342,108 @@
                     <i class="text-3xl fas fa-chevron-down"></i>
                 </a>
             </div>
-        </section>
+        </section> --}}
     </div>
 </header>
 
-<!-- Services Section avec style sobre -->
+<!-- SERVICES SECTION AVEC NOUVEAU DESIGN -->
 <section id="services" class="py-20 bg-black">
     <div class="px-4 mx-auto max-w-7xl">
-        <h2 class="section-title">Nos Services</h2>
-        <p class="max-w-3xl mx-auto mt-4 text-center text-gray-300">
+        <h2 class="text-center text-4xl font-bold mb-4" style="color: var(--gold);">NOS SERVICES</h2>
+        <p class="max-w-3xl mx-auto mt-4 text-center text-gray-300 text-lg">
             Découvrez notre gamme complète de services conçus pour répondre à tous vos besoins professionnels et
             personnels
         </p>
 
-        <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 mt-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-16">
             <!-- VTC & Location -->
-            <div class="service-card p-6 text-center">
-                <div class="flex items-center justify-center w-16 h-16 mx-auto mb-6" style="background: var(--gold);">
-                    <i class="text-2xl fas fa-car text-black"></i>
+            <div class="flex flex-col md:flex-row bg-white text-black min-h-[260px] border-2"
+                style="border-color: var(--gold);">
+                <div class="md:w-1/2 h-56 md:h-auto">
+                    <img src="https://images.pexels.com/photos/125779/pexels-photo-125779.jpeg" alt="VTC & Location"
+                        class="w-full h-full object-cover">
                 </div>
-                <h3 class="mb-4 text-xl font-bold">VTC & Location</h3>
-                <p class="mb-6 text-gray-600">
-                    Services de véhicules haut de gamme, déplacements professionnels et personnels avec chauffeurs
-                    expérimentés.
-                </p>
-                <button class="gold-button w-full">
-                    Réserver maintenant
-                </button>
+                <div class="md:w-1/2 p-8 flex flex-col justify-center text-center">
+                    <h3 class="text-2xl font-bold mb-3">VTC & Location</h3>
+                    <p class="text-gray-700 mb-6">
+                        Services de véhicules haut de gamme, déplacements professionnels et personnels avec chauffeurs
+                        expérimentés.
+                    </p>
+                    <button onclick="showServiceDetails('VTC & Location')"
+                        class="px-8 py-3 font-semibold transition-all duration-300 self-center"
+                        style="background: var(--gold); color: black; border: 2px solid black;"
+                        onmouseover="this.style.background='black'; this.style.color='var(--gold)'; this.style.borderColor='var(--gold)'"
+                        onmouseout="this.style.background='var(--gold)'; this.style.color='black'; this.style.borderColor='black'">
+                        Réserver maintenant
+                    </button>
+                </div>
             </div>
 
             <!-- Formations -->
-            <div class="service-card p-6 text-center">
-                <div class="flex items-center justify-center w-16 h-16 mx-auto mb-6" style="background: var(--gold);">
-                    <i class="text-2xl fas fa-graduation-cap text-black"></i>
+            <div class="flex flex-col md:flex-row bg-white text-black min-h-[260px] border-2"
+                style="border-color: var(--gold);">
+                <div class="md:w-1/2 h-56 md:h-auto">
+                    <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg" alt="Formations"
+                        class="w-full h-full object-cover">
                 </div>
-                <h3 class="mb-4 text-xl font-bold">Formations</h3>
-                <p class="mb-6 text-gray-600">
-                    Formations professionnelles certifiantes pour développer vos compétences et booster votre carrière.
-                </p>
-                <button class="gold-button w-full">
-                    Voir les formations
-                </button>
+                <div class="md:w-1/2 p-8 flex flex-col justify-center text-center">
+                    <h3 class="text-2xl font-bold mb-3">Formations</h3>
+                    <p class="text-gray-700 mb-6">
+                        Formations professionnelles certifiantes pour développer vos compétences et booster votre
+                        carrière.
+                    </p>
+                    <a href="{{ route('formation') }}">
+                        <button class="px-8 py-3 font-semibold transition-all duration-300 self-center"
+                            style="background: var(--gold); color: black; border: 2px solid black;"
+                            onmouseover="this.style.background='black'; this.style.color='var(--gold)'; this.style.borderColor='var(--gold)'"
+                            onmouseout="this.style.background='var(--gold)'; this.style.color='black'; this.style.borderColor='black'">
+                            Voir les formations
+                        </button>
+                    </a>
+                </div>
             </div>
 
             <!-- Entrepreneuriat Afrique -->
-            <div class="service-card p-6 text-center">
-                <div class="flex items-center justify-center w-16 h-16 mx-auto mb-6" style="background: var(--gold);">
-                    <i class="text-2xl fas fa-globe-africa text-black"></i>
+            <div class="flex flex-col md:flex-row bg-white text-black min-h-[260px] border-2"
+                style="border-color: var(--gold);">
+                <div class="md:w-1/2 h-56 md:h-auto">
+                    <img src="https://images.pexels.com/photos/210182/pexels-photo-210182.jpeg"
+                        alt="Entrepreneuriat Afrique" class="w-full h-full object-cover">
                 </div>
-                <h3 class="mb-4 text-xl font-bold">Entrepreneuriat Afrique</h3>
-                <p class="mb-6 text-gray-600">
-                    Accompagnement entrepreneurial adapté au contexte africain avec des experts locaux.
-                </p>
-                <button class="gold-button w-full">
-                    Découvrir
-                </button>
+                <div class="md:w-1/2 p-8 flex flex-col justify-center text-center">
+                    <h3 class="text-2xl font-bold mb-3">Entrepreneuriat Afrique</h3>
+                    <p class="text-gray-700 mb-6">
+                        Accompagnement entrepreneurial adapté au contexte africain avec des experts locaux.
+                    </p>
+                    <button onclick="showServiceDetails('Entrepreneuriat Afrique')"
+                        class="px-8 py-3 font-semibold transition-all duration-300 self-center"
+                        style="background: var(--gold); color: black; border: 2px solid black;"
+                        onmouseover="this.style.background='black'; this.style.color='var(--gold)'; this.style.borderColor='var(--gold)'"
+                        onmouseout="this.style.background='var(--gold)'; this.style.color='black'; this.style.borderColor='black'">
+                        Découvrir
+                    </button>
+                </div>
             </div>
 
             <!-- Espace Client -->
-            <div class="service-card p-6 text-center">
-                <div class="flex items-center justify-center w-16 h-16 mx-auto mb-6" style="background: #333;">
-                    <i class="text-2xl fas fa-user-shield text-white"></i>
+            <div class="flex flex-col md:flex-row bg-white text-black min-h-[260px] border-2"
+                style="border-color: var(--gold);">
+                <div class="md:w-1/2 h-56 md:h-auto">
+                    <img src="https://images.pexels.com/photos/3768916/pexels-photo-3768916.jpeg" alt="Espace Client"
+                        class="w-full h-full object-cover">
                 </div>
-                <h3 class="mb-4 text-xl font-bold">Espace Client</h3>
-                <p class="mb-6 text-gray-600">
-                    Accédez à votre espace personnel pour gérer vos réservations, formations et séminaires.
-                </p>
-                <button class="w-full bg-black text-white py-3 font-semibold hover:bg-gray-900 transition">
-                    Se connecter
-                </button>
+                <div class="md:w-1/2 p-8 flex flex-col justify-center text-center">
+                    <h3 class="text-2xl font-bold mb-3">Espace Client</h3>
+                    <p class="text-gray-700 mb-6">
+                        Accédez à votre espace personnel pour gérer vos réservations, formations et séminaires.
+                    </p>
+                    <button
+                        class="px-8 py-3 font-semibold transition-all duration-300 self-center bg-black text-white border-2 border-black hover:bg-white hover:text-black hover:border-black"
+                        onmouseover="this.style.background='white'; this.style.color='black'; this.style.borderColor='black'"
+                        onmouseout="this.style.background='black'; this.style.color='white'; this.style.borderColor='black'">
+                        Se connecter
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -329,23 +476,257 @@
     </div>
 </section>
 
-<!-- Testimonials Section -->
+<!-- NOUVELLE SECTION AVIS CLIENTS AVEC SLIDER -->
 <section id="testimonials" class="py-20 bg-black">
     <div class="px-4 mx-auto max-w-7xl">
-        <h2 class="section-title">CE QUE PENSENT NOS CLIENTS</h2>
+        <div class="flex flex-col lg:flex-row gap-10 items-start">
+            <!-- Carte entreprise fixe -->
+            <div class="lg:w-1/4">
+                <div class="company-card flex gap-4">
+                    <div class="company-avatar w-16 h-16 flex items-center justify-center rounded-xl"
+                        style="background: #4a6cf7;">
+                        <i class="fas fa-user text-2xl text-white"></i>
+                    </div>
+                    <div class="company-info">
+                        <h3 class="text-2xl font-bold mb-2">Djok Prestige SAS</h3>
+                        <div class="stars text-2xl mb-1" style="color: var(--gold);">★★★★★</div>
+                        <small class="text-gray-400 text-sm">15 avis Google</small>
+                        <br>
+                        <a href="https://search.google.com/local/writereview?placeid=ChIJ6QjR9E5u5kcR6v5lQv6N7IU"
+                            target="_blank" rel="noopener noreferrer" class="inline-block mt-3">
+                            <button
+                                class="btn-review px-6 py-2 border border-white bg-transparent text-white hover:bg-white hover:text-black transition-all duration-300">
+                                Écrire un avis
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-        <div class="flex flex-col md:flex-row justify-center gap-6 mt-12">
-            <div class="review-box">
-                ⭐⭐⭐⭐⭐<br />
-                Service impeccable et chauffeur professionnel.
-            </div>
-            <div class="review-box">
-                ⭐⭐⭐⭐⭐<br />
-                Très satisfait de la prestation VTC.
-            </div>
-            <div class="review-box">
-                ⭐⭐⭐⭐⭐<br />
-                Entreprise sérieuse et ponctuelle.
+            <!-- Zone slider avec avis -->
+            <div class="lg:w-3/4 relative">
+                <!-- Flèches de navigation -->
+                <div class="arrow left absolute top-1/2 -left-5 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-var(--gold) bg-black/80 flex items-center justify-center cursor-pointer hover:bg-var(--gold) hover:text-black transition-all duration-300"
+                    style="color: var(--gold);" onclick="scrollReviews(-1)">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+
+                <div class="arrow right absolute top-1/2 -right-5 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-var(--gold) bg-black/80 flex items-center justify-center cursor-pointer hover:bg-var(--gold) hover:text-black transition-all duration-300"
+                    style="color: var(--gold);" onclick="scrollReviews(1)">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+
+                <!-- Slider d'avis -->
+                <div class="reviews-slider flex gap-6 overflow-x-auto scroll-smooth pb-4" id="reviewsSlider"
+                    style="scrollbar-width: none;">
+
+                    <!-- Avis 1 -->
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                        <div class="review-header flex gap-3 items-center mb-3">
+                            <div class="avatar w-10 h-10 rounded-full flex items-center justify-center"
+                                style="background: #b8b2a8;">
+                                <span class="font-bold">L</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Lalla Guindo</h4>
+                                <small class="text-gray-400 text-sm">il y a 2 ans</small>
+                            </div>
+                            <i class="fab fa-google ml-auto" style="color: #4285F4;"></i>
+                        </div>
+                        <div class="review-stars mb-3">
+                            <span class="text-xl" style="color: var(--gold);">★★★★★</span>
+                            <i class="fas fa-check-circle text-sm ml-1" style="color: #4285F4;"></i>
+                        </div>
+                        <p class="text-gray-300">Entreprise au top ! Service impeccable et professionnel.</p>
+                    </div>
+
+                    <!-- Avis 2 -->
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                        <div class="review-header flex gap-3 items-center mb-3">
+                            <div class="avatar w-10 h-10 rounded-full flex items-center justify-center"
+                                style="background: #6c7cff;">
+                                <span class="font-bold text-white">B</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Bruno Bouet</h4>
+                                <small class="text-gray-400 text-sm">il y a 2 ans</small>
+                            </div>
+                            <i class="fab fa-google ml-auto" style="color: #4285F4;"></i>
+                        </div>
+                        <div class="review-stars mb-3">
+                            <span class="text-xl" style="color: var(--gold);">★★★★★</span>
+                            <i class="fas fa-check-circle text-sm ml-1" style="color: #4285F4;"></i>
+                        </div>
+                        <p class="text-gray-300">Directrice très expérimentée et très compétente. Je recommande !</p>
+                    </div>
+
+                    <!-- Avis 3 -->
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                        <div class="review-header flex gap-3 items-center mb-3">
+                            <div class="avatar w-10 h-10 rounded-full flex items-center justify-center"
+                                style="background: #4f6b6f;">
+                                <span class="font-bold text-white">A</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Aminta B.</h4>
+                                <small class="text-gray-400 text-sm">il y a 2 ans</small>
+                            </div>
+                            <i class="fab fa-google ml-auto" style="color: #4285F4;"></i>
+                        </div>
+                        <div class="review-stars mb-3">
+                            <span class="text-xl" style="color: var(--gold);">★★★★★</span>
+                            <i class="fas fa-check-circle text-sm ml-1" style="color: #4285F4;"></i>
+                        </div>
+                        <p class="text-gray-300">J'ai fait appel à Djok Prestige pour une prestation ! Je recommande
+                            fortement !!</p>
+                    </div>
+
+                    <!-- Avis 4 -->
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                        <div class="review-header flex gap-3 items-center mb-3">
+                            <div class="avatar w-10 h-10 rounded-full flex items-center justify-center"
+                                style="background: #ff6b6b;">
+                                <span class="font-bold text-white">M</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Marie Dubois</h4>
+                                <small class="text-gray-400 text-sm">il y a 1 an</small>
+                            </div>
+                            <i class="fab fa-google ml-auto" style="color: #4285F4;"></i>
+                        </div>
+                        <div class="review-stars mb-3">
+                            <span class="text-xl" style="color: var(--gold);">★★★★★</span>
+                            <i class="fas fa-check-circle text-sm ml-1" style="color: #4285F4;"></i>
+                        </div>
+                        <p class="text-gray-300">Service de VTC excellent, ponctuel et très professionnel.</p>
+                    </div>
+
+                    <!-- Avis 5 -->
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                        <div class="review-header flex gap-3 items-center mb-3">
+                            <div class="avatar w-10 h-10 rounded-full flex items-center justify-center"
+                                style="background: #5cd85c;">
+                                <span class="font-bold text-white">T</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Thomas Martin</h4>
+                                <small class="text-gray-400 text-sm">il y a 8 mois</small>
+                            </div>
+                            <i class="fab fa-google ml-auto" style="color: #4285F4;"></i>
+                        </div>
+                        <div class="review-stars mb-3">
+                            <span class="text-xl" style="color: var(--gold);">★★★★★</span>
+                            <i class="fas fa-check-circle text-sm ml-1" style="color: #4285F4;"></i>
+                        </div>
+                        <p class="text-gray-300">Formation VTC de qualité, équipe pédagogique compétente et à l'écoute.
+                        </p>
+                    </div>
+
+                    <!-- Avis 6 -->
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                        <div class="review-header flex gap-3 items-center mb-3">
+                            <div class="avatar w-10 h-10 rounded-full flex items-center justify-center"
+                                style="background: #ffa500;">
+                                <span class="font-bold text-white">S</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Sophie Laurent</h4>
+                                <small class="text-gray-400 text-sm">il y a 6 mois</small>
+                            </div>
+                            <i class="fab fa-google ml-auto" style="color: #4285F4;"></i>
+                        </div>
+                        <div class="review-stars mb-3">
+                            <span class="text-xl" style="color: var(--gold);">★★★★★</span>
+                            <i class="fas fa-check-circle text-sm ml-1" style="color: #4285F4;"></i>
+                        </div>
+                        <p class="text-gray-300">Location de véhicule sans souci, entretien parfait et tarif compétitif.
+                        </p>
+                    </div>
+
+                    <!-- Avis 7 -->
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                        <div class="review-header flex gap-3 items-center mb-3">
+                            <div class="avatar w-10 h-10 rounded-full flex items-center justify-center"
+                                style="background: #9b59b6;">
+                                <span class="font-bold text-white">K</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Karim S.</h4>
+                                <small class="text-gray-400 text-sm">il y a 3 mois</small>
+                            </div>
+                            <i class="fab fa-google ml-auto" style="color: #4285F4;"></i>
+                        </div>
+                        <div class="review-stars mb-3">
+                            <span class="text-xl" style="color: var(--gold);">★★★★★</span>
+                            <i class="fas fa-check-circle text-sm ml-1" style="color: #4285F4;"></i>
+                        </div>
+                        <p class="text-gray-300">Accompagnement entrepreneurial exceptionnel pour mon projet en Afrique.
+                        </p>
+                    </div>
+
+                    <!-- Avis 8 -->
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                        <div class="review-header flex gap-3 items-center mb-3">
+                            <div class="avatar w-10 h-10 rounded-full flex items-center justify-center"
+                                style="background: #3498db;">
+                                <span class="font-bold text-white">J</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Jean Dupont</h4>
+                                <small class="text-gray-400 text-sm">il y a 1 mois</small>
+                            </div>
+                            <i class="fab fa-google ml-auto" style="color: #4285F4;"></i>
+                        </div>
+                        <div class="review-stars mb-3">
+                            <span class="text-xl" style="color: var(--gold);">★★★★★</span>
+                            <i class="fas fa-check-circle text-sm ml-1" style="color: #4285F4;"></i>
+                        </div>
+                        <p class="text-gray-300">Service conciergerie parfait pour mon arrivée en France. Très
+                            professionnel.</p>
+                    </div>
+
+                    <!-- Avis 9 -->
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                        <div class="review-header flex gap-3 items-center mb-3">
+                            <div class="avatar w-10 h-10 rounded-full flex items-center justify-center"
+                                style="background: #e74c3c;">
+                                <span class="font-bold text-white">A</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Alice R.</h4>
+                                <small class="text-gray-400 text-sm">il y a 2 semaines</small>
+                            </div>
+                            <i class="fab fa-google ml-auto" style="color: #4285F4;"></i>
+                        </div>
+                        <div class="review-stars mb-3">
+                            <span class="text-xl" style="color: var(--gold);">★★★★★</span>
+                            <i class="fas fa-check-circle text-sm ml-1" style="color: #4285F4;"></i>
+                        </div>
+                        <p class="text-gray-300">Chauffeur VTC très courtois, voiture propre et trajet en toute
+                            sécurité.</p>
+                    </div>
+
+                    <!-- Avis 10 -->
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                        <div class="review-header flex gap-3 items-center mb-3">
+                            <div class="avatar w-10 h-10 rounded-full flex items-center justify-center"
+                                style="background: #2ecc71;">
+                                <span class="font-bold text-white">P</span>
+                            </div>
+                            <div>
+                                <h4 class="font-bold">Paul G.</h4>
+                                <small class="text-gray-400 text-sm">il y a 1 semaine</small>
+                            </div>
+                            <i class="fab fa-google ml-auto" style="color: #4285F4;"></i>
+                        </div>
+                        <div class="review-stars mb-3">
+                            <span class="text-xl" style="color: var(--gold);">★★★★★</span>
+                            <i class="fas fa-check-circle text-sm ml-1" style="color: #4285F4;"></i>
+                        </div>
+                        <p class="text-gray-300">Excellent rapport qualité-prix, je reviendrai certainement pour mes
+                            futurs besoins.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -438,7 +819,7 @@
         animation: bounce 2s infinite;
     }
 
-    /* Styles responsives */
+    /* Styles pour les nouvelles cartes de service */
     @media (max-width: 768px) {
         .floating-buttons-container {
             bottom: 20px;
@@ -462,6 +843,47 @@
         .grid-cols-5 {
             grid-template-columns: repeat(2, 1fr) !important;
         }
+
+        /* Ajustements pour les nouvelles cartes */
+        .grid-cols-3 {
+            grid-template-columns: 1fr !important;
+        }
+
+        .relative.h-48 {
+            height: 200px;
+        }
+
+        /* Ajustements pour les cartes de service */
+        .flex-col.md\:flex-row {
+            flex-direction: column;
+        }
+
+        .md\:w-1\/2 {
+            width: 100%;
+        }
+
+        .min-h-\[260px\] {
+            min-height: auto;
+        }
+
+        .h-56 {
+            height: 200px;
+        }
+
+        /* Ajustements pour la section avis */
+        .flex-col.lg\:flex-row {
+            flex-direction: column;
+        }
+
+        .lg\:w-1\/4,
+        .lg\:w-3\/4 {
+            width: 100%;
+        }
+
+        .arrow.left,
+        .arrow.right {
+            display: none;
+        }
     }
 
     /* Amélioration du scroll */
@@ -477,9 +899,49 @@
     span[style*="background: rgba(212, 175, 55, 0.2)"]:hover {
         background: rgba(212, 175, 55, 0.3) !important;
     }
+
+    /* Styles pour les nouvelles cartes */
+    .relative.h-48 {
+        height: 12rem;
+    }
+
+    /* Animation pour les cartes de service */
+    .flex-col.md\:flex-row {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .flex-col.md\:flex-row:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+    }
+
+    /* Styles pour le slider d'avis */
+    .reviews-slider {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .reviews-slider::-webkit-scrollbar {
+        display: none;
+    }
+
+    .review {
+        flex: 0 0 auto;
+        transition: transform 0.3s ease;
+    }
+
+    .review:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Styles pour les flèches */
+    .arrow {
+        transition: all 0.3s ease;
+    }
 </style>
 
-<!-- Script pour animations au scroll -->
+<!-- Scripts pour la page -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Animation d'apparition progressive
@@ -505,5 +967,17 @@
             observer.observe(el);
         });
     });
+
+    // Fonction pour afficher les détails des services
+    function showServiceDetails(service) {
+        alert("Détails du service : " + service + "\n\nCette fonctionnalité sera bientôt disponible.");
+    }
+
+    // Fonction pour le slider d'avis
+    const slider = document.getElementById('reviewsSlider');
+    function scrollReviews(dir) {
+        const scrollAmount = 320; // Largeur d'une carte + gap
+        slider.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' });
+    }
 </script>
 @endsection

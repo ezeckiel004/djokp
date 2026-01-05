@@ -153,7 +153,7 @@
         padding: 15px 50px;
         position: relative;
         width: 100%;
-        z-index: 100;
+        z-index: 1000;
     }
 
     /* Header Top */
@@ -208,7 +208,7 @@
         gap: 35px;
         margin-top: 10px;
         position: relative;
-        z-index: 101;
+        z-index: 1001;
     }
 
     .desktop-nav a {
@@ -237,42 +237,60 @@
         background: #caa24d;
     }
 
-    /* Desktop Dropdown */
+    /* Desktop Dropdown - CORRECTIONS */
     .dropdown {
         position: relative;
+        z-index: 1002;
     }
 
     .dropdown-toggle {
         display: flex;
         align-items: center;
         cursor: pointer;
+        position: relative;
+        z-index: 1003;
     }
 
     .dropdown-menu {
         position: absolute;
-        top: 100%;
-        left: 0;
+        top: calc(100% + 8px);
+        left: -20px;
         background: #000;
         border: 1px solid #caa24d;
         border-radius: 4px;
         min-width: 220px;
         z-index: 9999;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        display: none;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        padding: 8px 0;
     }
 
     .dropdown:hover .dropdown-menu {
-        display: block;
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    /* Garder le dropdown ouvert quand on est dessus */
+    .dropdown-menu:hover {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: translateY(0) !important;
     }
 
     .dropdown-item {
         display: block;
         padding: 12px 20px;
         font-size: 13px;
-        color: #fff;
+        color: #fff !important;
         text-decoration: none;
         transition: all 0.3s ease;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        background: #000 !important;
     }
 
     .dropdown-item:last-child {
@@ -280,8 +298,9 @@
     }
 
     .dropdown-item:hover {
-        background: #caa24d;
-        color: #000;
+        background: #caa24d !important;
+        color: #000 !important;
+        padding-left: 25px;
     }
 
     /* Auth Section */
@@ -291,7 +310,7 @@
         bottom: 15px;
         display: flex;
         align-items: center;
-        z-index: 101;
+        z-index: 1001;
     }
 
     .auth-links {
@@ -364,10 +383,6 @@
 
     .mobile-menu-btn i {
         font-size: 24px;
-    }
-
-    .mobile-menu-btn.active i {
-        content: "\f00d";
     }
 
     /* Mobile Menu */
@@ -446,23 +461,33 @@
     .mobile-dropdown-content {
         padding-left: 20px;
         display: none;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
     }
 
     .mobile-dropdown-content.active {
         display: block;
+        max-height: 300px;
     }
 
     .mobile-sub-link {
         display: block;
-        color: #ccc;
+        color: #ccc !important;
         text-decoration: none;
         font-size: 14px;
         padding: 12px 0;
         transition: all 0.3s ease;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .mobile-sub-link:last-child {
+        border-bottom: none;
     }
 
     .mobile-sub-link:hover {
-        color: #caa24d;
+        color: #caa24d !important;
+        padding-left: 10px;
     }
 
     /* Mobile Auth */
@@ -613,6 +638,27 @@
             font-size: 20px;
         }
     }
+
+    /* Correction pour les dropdowns qui se ferment trop vite */
+    .dropdown-menu {
+        pointer-events: auto;
+    }
+
+    /* Ajouter une marge entre le dropdown et le lien parent */
+    .dropdown-toggle::after {
+        display: none;
+    }
+
+    /* Assurer que le dropdown reste ouvert pendant la transition */
+    .dropdown-menu::before {
+        content: '';
+        position: absolute;
+        top: -10px;
+        left: 0;
+        right: 0;
+        height: 10px;
+        background: transparent;
+    }
 </style>
 
 <script>
@@ -621,6 +667,11 @@
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const mobileMenu = document.getElementById('mobileMenu');
     const mobileMenuIcon = mobileMenuBtn.querySelector('i');
+
+    // Variables pour les dropdowns desktop
+    let dropdownCloseTimeout = null;
+    const dropdowns = document.querySelectorAll('.dropdown');
+    const dropdownMenus = document.querySelectorAll('.dropdown-menu');
 
     // Ouvrir/fermer le menu mobile
     mobileMenuBtn.addEventListener('click', function() {
@@ -641,7 +692,7 @@
         }
     });
 
-    // Fermer le menu en cliquant sur un lien
+    // Fermer le menu mobile en cliquant sur un lien
     const mobileLinks = document.querySelectorAll('.mobile-link, .mobile-sub-link, .mobile-dashboard, .mobile-client-btn');
     mobileLinks.forEach(link => {
         link.addEventListener('click', function() {
@@ -675,7 +726,7 @@
         });
     });
 
-    // Fermer le menu en cliquant en dehors (sur le fond)
+    // Fermer le menu mobile en cliquant en dehors
     mobileMenu.addEventListener('click', function(e) {
         if (e.target === mobileMenu) {
             mobileMenu.classList.remove('active');
@@ -685,7 +736,7 @@
         }
     });
 
-    // Fermer le menu avec la touche Échap
+    // Fermer le menu mobile avec la touche Échap
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
             mobileMenu.classList.remove('active');
@@ -693,6 +744,112 @@
             mobileMenuIcon.classList.add('fa-bars');
             document.body.style.overflow = '';
         }
+    });
+
+    // Gestion améliorée des dropdowns desktop
+    dropdowns.forEach(dropdown => {
+        const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+        const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
+
+        // Ouvrir le dropdown au survol
+        dropdown.addEventListener('mouseenter', function() {
+            // Annuler tout timer de fermeture en cours
+            if (dropdownCloseTimeout) {
+                clearTimeout(dropdownCloseTimeout);
+                dropdownCloseTimeout = null;
+            }
+
+            // Ouvrir le dropdown
+            dropdownMenu.style.opacity = '1';
+            dropdownMenu.style.visibility = 'visible';
+            dropdownMenu.style.transform = 'translateY(0)';
+        });
+
+        // Fermer le dropdown avec un délai
+        dropdown.addEventListener('mouseleave', function() {
+            // Mettre un délai avant de fermer
+            dropdownCloseTimeout = setTimeout(function() {
+                dropdownMenu.style.opacity = '0';
+                dropdownMenu.style.visibility = 'hidden';
+                dropdownMenu.style.transform = 'translateY(-10px)';
+            }, 300); // 300ms de délai
+        });
+
+        // Garder le dropdown ouvert si la souris est dessus
+        dropdownMenu.addEventListener('mouseenter', function() {
+            // Annuler le timer de fermeture
+            if (dropdownCloseTimeout) {
+                clearTimeout(dropdownCloseTimeout);
+                dropdownCloseTimeout = null;
+            }
+
+            // Garder ouvert
+            dropdownMenu.style.opacity = '1';
+            dropdownMenu.style.visibility = 'visible';
+            dropdownMenu.style.transform = 'translateY(0)';
+        });
+
+        // Fermer le dropdown quand on quitte le menu
+        dropdownMenu.addEventListener('mouseleave', function() {
+            dropdownCloseTimeout = setTimeout(function() {
+                dropdownMenu.style.opacity = '0';
+                dropdownMenu.style.visibility = 'hidden';
+                dropdownMenu.style.transform = 'translateY(-10px)';
+            }, 200);
+        });
+
+        // Gérer le clic sur mobile (pour les écrans tactiles)
+        if (window.innerWidth <= 768) {
+            dropdownToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                const isActive = dropdownMenu.style.opacity === '1';
+
+                // Fermer tous les autres dropdowns
+                dropdowns.forEach(otherDropdown => {
+                    if (otherDropdown !== dropdown) {
+                        const otherMenu = otherDropdown.querySelector('.dropdown-menu');
+                        otherMenu.style.opacity = '0';
+                        otherMenu.style.visibility = 'hidden';
+                        otherMenu.style.transform = 'translateY(-10px)';
+                    }
+                });
+
+                // Basculer l'état actuel
+                if (isActive) {
+                    dropdownMenu.style.opacity = '0';
+                    dropdownMenu.style.visibility = 'hidden';
+                    dropdownMenu.style.transform = 'translateY(-10px)';
+                } else {
+                    dropdownMenu.style.opacity = '1';
+                    dropdownMenu.style.visibility = 'visible';
+                    dropdownMenu.style.transform = 'translateY(0)';
+                }
+            });
+        }
+    });
+
+    // Fermer tous les dropdowns desktop quand on clique ailleurs
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 768) {
+            const isDropdown = e.target.closest('.dropdown');
+            if (!isDropdown) {
+                dropdownMenus.forEach(menu => {
+                    menu.style.opacity = '0';
+                    menu.style.visibility = 'hidden';
+                    menu.style.transform = 'translateY(-10px)';
+                });
+            }
+        }
+    });
+
+    // Réinitialiser les timers quand la souris entre dans un dropdown
+    dropdownMenus.forEach(menu => {
+        menu.addEventListener('mouseenter', function() {
+            if (dropdownCloseTimeout) {
+                clearTimeout(dropdownCloseTimeout);
+                dropdownCloseTimeout = null;
+            }
+        });
     });
 });
 </script>

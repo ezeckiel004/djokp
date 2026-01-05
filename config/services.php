@@ -35,5 +35,9 @@ return [
         'secret' => env('STRIPE_SECRET'),
         'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
     ],
+    'google' => [
+        'maps_api_key' => env('GOOGLE_MAPS_API_KEY'),
+        'places_api_key' => env('GOOGLE_MAPS_API_KEY'), // Même clé ou différente
+    ],
 
 ];
