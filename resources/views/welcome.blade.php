@@ -369,13 +369,15 @@
                         Services de véhicules haut de gamme, déplacements professionnels et personnels avec chauffeurs
                         expérimentés.
                     </p>
-                    <button onclick="showServiceDetails('VTC & Location')"
-                        class="px-8 py-3 font-semibold transition-all duration-300 self-center"
-                        style="background: var(--gold); color: black; border: 2px solid black;"
-                        onmouseover="this.style.background='black'; this.style.color='var(--gold)'; this.style.borderColor='var(--gold)'"
-                        onmouseout="this.style.background='var(--gold)'; this.style.color='black'; this.style.borderColor='black'">
-                        Réserver maintenant
-                    </button>
+                    <a href="{{ route('reservation') }}">
+                        <button class="px-8 py-3 font-semibold transition-all duration-300 self-center"
+                            style="background: var(--gold); color: black; border: 2px solid black;"
+                            onmouseover="this.style.background='black'; this.style.color='var(--gold)'; this.style.borderColor='var(--gold)'"
+                            onmouseout="this.style.background='var(--gold)'; this.style.color='black'; this.style.borderColor='black'">
+                            Réserver maintenant
+                        </button>
+                    </a>
+
                 </div>
             </div>
 
@@ -408,20 +410,22 @@
                 style="border-color: var(--gold);">
                 <div class="md:w-1/2 h-56 md:h-auto">
                     <img src="https://images.pexels.com/photos/210182/pexels-photo-210182.jpeg"
-                        alt="Entrepreneuriat Afrique" class="w-full h-full object-cover">
+                        alt="Formation Internationale" class="w-full h-full object-cover">
                 </div>
                 <div class="md:w-1/2 p-8 flex flex-col justify-center text-center">
-                    <h3 class="text-2xl font-bold mb-3">Entrepreneuriat Afrique</h3>
+                    <h3 class="text-2xl font-bold mb-3">Formation Internationale</h3>
                     <p class="text-gray-700 mb-6">
-                        Accompagnement entrepreneurial adapté au contexte africain avec des experts locaux.
+                        Formations ouvertes à l’international, combinant expertise mondiale et adaptation aux réalités locales.
                     </p>
-                    <button onclick="showServiceDetails('Entrepreneuriat Afrique')"
-                        class="px-8 py-3 font-semibold transition-all duration-300 self-center"
-                        style="background: var(--gold); color: black; border: 2px solid black;"
-                        onmouseover="this.style.background='black'; this.style.color='var(--gold)'; this.style.borderColor='var(--gold)'"
-                        onmouseout="this.style.background='var(--gold)'; this.style.color='black'; this.style.borderColor='black'">
-                        Découvrir
-                    </button>
+                    <a href="{{ route('formation.international') }}">
+                        <button class="px-8 py-3 font-semibold transition-all duration-300 self-center"
+                            style="background: var(--gold); color: black; border: 2px solid black;"
+                            onmouseover="this.style.background='black'; this.style.color='var(--gold)'; this.style.borderColor='var(--gold)'"
+                            onmouseout="this.style.background='var(--gold)'; this.style.color='black'; this.style.borderColor='black'">
+                            Découvrir
+                        </button>
+                    </a>
+
                 </div>
             </div>
 
@@ -435,14 +439,17 @@
                 <div class="md:w-1/2 p-8 flex flex-col justify-center text-center">
                     <h3 class="text-2xl font-bold mb-3">Espace Client</h3>
                     <p class="text-gray-700 mb-6">
-                        Accédez à votre espace personnel pour gérer vos réservations, formations et séminaires.
+                        Connectez-vous à votre espace personnel pour gérer vos réservations, formations et séminaires.
                     </p>
-                    <button
-                        class="px-8 py-3 font-semibold transition-all duration-300 self-center bg-black text-white border-2 border-black hover:bg-white hover:text-black hover:border-black"
-                        onmouseover="this.style.background='white'; this.style.color='black'; this.style.borderColor='black'"
-                        onmouseout="this.style.background='black'; this.style.color='white'; this.style.borderColor='black'">
-                        Se connecter
-                    </button>
+                    <a href="{{ route('espaceclient') }}">
+                        <button
+                            class="px-8 py-3 font-semibold transition-all duration-300 self-center bg-black text-white border-2 border-black hover:bg-white hover:text-black hover:border-black"
+                            onmouseover="this.style.background='white'; this.style.color='black'; this.style.borderColor='black'"
+                            onmouseout="this.style.background='black'; this.style.color='white'; this.style.borderColor='black'">
+                            Se connecter
+                        </button>
+                    </a>
+
                 </div>
             </div>
         </div>
