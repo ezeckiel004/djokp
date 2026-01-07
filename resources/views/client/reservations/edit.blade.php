@@ -53,9 +53,35 @@
 
         <div class="bg-white shadow rounded-lg">
             <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
-                <h3 class="text-lg font-medium text-gray-900">Modifier la réservation</h3>
-                <p class="mt-1 text-sm text-gray-500">Modifiez les détails de votre réservation #{{
-                    $reservation->reference }}</p>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900">Modifier la réservation</h3>
+                        <p class="mt-1 text-sm text-gray-500">Modifiez les détails de votre réservation #{{
+                            $reservation->reference }}</p>
+                    </div>
+                    <div>
+                        @php
+                        $statusColors = [
+                        'pending' => 'bg-yellow-100 text-yellow-800',
+                        'confirmed' => 'bg-green-100 text-green-800',
+                        'in_progress' => 'bg-blue-100 text-blue-800',
+                        'completed' => 'bg-gray-100 text-gray-800',
+                        'cancelled' => 'bg-red-100 text-red-800',
+                        ];
+                        $statusLabels = [
+                        'pending' => 'En attente',
+                        'confirmed' => 'Confirmée',
+                        'in_progress' => 'En cours',
+                        'completed' => 'Terminée',
+                        'cancelled' => 'Annulée',
+                        ];
+                        @endphp
+                        <span
+                            class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {{ $statusColors[$reservation->status] ?? 'bg-gray-100 text-gray-800' }}">
+                            {{ $statusLabels[$reservation->status] ?? $reservation->status }}
+                        </span>
+                    </div>
+                </div>
             </div>
 
             <form action="{{ route('client.reservations.update', $reservation->id) }}" method="POST">
@@ -68,8 +94,8 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <input type="radio" name="type_service" id="transfert" value="transfert"
-                                    class="sr-only peer" {{ $reservation->type_service == 'transfert' ? 'checked' : ''
-                                }}>
+                                    class="sr-only peer" {{ old('type_service', $reservation->type_service) ==
+                                'transfert' ? 'checked' : '' }}>
                                 <label for="transfert"
                                     class="flex flex-col p-4 border rounded-lg cursor-pointer peer-checked:border-djok-yellow peer-checked:ring-2 peer-checked:ring-djok-yellow">
                                     <div class="flex items-center">
@@ -81,8 +107,8 @@
                             </div>
                             <div>
                                 <input type="radio" name="type_service" id="professionnel" value="professionnel"
-                                    class="sr-only peer" {{ $reservation->type_service == 'professionnel' ? 'checked' :
-                                '' }}>
+                                    class="sr-only peer" {{ old('type_service', $reservation->type_service) ==
+                                'professionnel' ? 'checked' : '' }}>
                                 <label for="professionnel"
                                     class="flex flex-col p-4 border rounded-lg cursor-pointer peer-checked:border-djok-yellow peer-checked:ring-2 peer-checked:ring-djok-yellow">
                                     <div class="flex items-center">
@@ -94,8 +120,8 @@
                             </div>
                             <div>
                                 <input type="radio" name="type_service" id="evenement" value="evenement"
-                                    class="sr-only peer" {{ $reservation->type_service == 'evenement' ? 'checked' : ''
-                                }}>
+                                    class="sr-only peer" {{ old('type_service', $reservation->type_service) ==
+                                'evenement' ? 'checked' : '' }}>
                                 <label for="evenement"
                                     class="flex flex-col p-4 border rounded-lg cursor-pointer peer-checked:border-djok-yellow peer-checked:ring-2 peer-checked:ring-djok-yellow">
                                     <div class="flex items-center">
@@ -107,8 +133,8 @@
                             </div>
                             <div>
                                 <input type="radio" name="type_service" id="mise_disposition" value="mise_disposition"
-                                    class="sr-only peer" {{ $reservation->type_service == 'mise_disposition' ? 'checked'
-                                : '' }}>
+                                    class="sr-only peer" {{ old('type_service', $reservation->type_service) ==
+                                'mise_disposition' ? 'checked' : '' }}>
                                 <label for="mise_disposition"
                                     class="flex flex-col p-4 border rounded-lg cursor-pointer peer-checked:border-djok-yellow peer-checked:ring-2 peer-checked:ring-djok-yellow">
                                     <div class="flex items-center">
@@ -182,39 +208,22 @@
                     </div>
 
                     <!-- Véhicule & Passagers -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Type de véhicule *</label>
-                            <div class="space-y-2">
-                                <div class="flex items-center">
-                                    <input type="radio" name="type_vehicule" id="eco" value="eco"
-                                        class="h-4 w-4 text-djok-yellow focus:ring-djok-yellow border-gray-300" {{
-                                        $reservation->type_vehicule == 'eco' ? 'checked' : '' }}>
-                                    <label for="eco" class="ml-3">
-                                        <span class="font-medium">Économique</span>
-                                        <p class="text-sm text-gray-500">Jusqu'à 3 passagers</p>
-                                    </label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="radio" name="type_vehicule" id="business" value="business"
-                                        class="h-4 w-4 text-djok-yellow focus:ring-djok-yellow border-gray-300" {{
-                                        $reservation->type_vehicule == 'business' ? 'checked' : '' }}>
-                                    <label for="business" class="ml-3">
-                                        <span class="font-medium">Business</span>
-                                        <p class="text-sm text-gray-500">Jusqu'à 4 passagers</p>
-                                    </label>
-                                </div>
-                                <div class="flex items-center">
-                                    <input type="radio" name="type_vehicule" id="prestige" value="prestige"
-                                        class="h-4 w-4 text-djok-yellow focus:ring-djok-yellow border-gray-300" {{
-                                        $reservation->type_vehicule == 'prestige' ? 'checked' : '' }}>
-                                    <label for="prestige" class="ml-3">
-                                        <span class="font-medium">Prestige</span>
-                                        <p class="text-sm text-gray-500">Jusqu'à 8 passagers</p>
-                                    </label>
-                                </div>
-                            </div>
-                            @error('type_vehicule')
+                            <label for="vehicle_category_id" class="block text-sm font-medium text-gray-700 mb-2">
+                                Type de véhicule *
+                            </label>
+                            <select name="vehicle_category_id" id="vehicle_category_id" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-djok-yellow focus:border-djok-yellow">
+                                <option value="">Choisir un véhicule</option>
+                                @foreach($vehicleCategories as $category)
+                                <option value="{{ $category->id }}" {{ old('vehicle_category_id', $reservation->
+                                    vehicle_category_id) == $category->id ? 'selected' : '' }}>
+                                    {{ $category->display_name }}
+                                </option>
+                                @endforeach
+                            </select>
+                            @error('vehicle_category_id')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
@@ -225,16 +234,12 @@
                             </label>
                             <select name="passagers" id="passagers" required
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-djok-yellow focus:border-djok-yellow">
-                                <option value="1" {{ $reservation->passagers == '1' ? 'selected' : '' }}>1 passager
-                                </option>
-                                <option value="2" {{ $reservation->passagers == '2' ? 'selected' : '' }}>2 passagers
-                                </option>
-                                <option value="3" {{ $reservation->passagers == '3' ? 'selected' : '' }}>3 passagers
-                                </option>
-                                <option value="4" {{ $reservation->passagers == '4' ? 'selected' : '' }}>4 passagers
-                                </option>
-                                <option value="5+" {{ $reservation->passagers == '5+' ? 'selected' : '' }}>5+ passagers
-                                </option>
+                                <option value="">Nombre de personnes</option>
+                                @for($i = 1; $i <= 8; $i++) <option value="{{ $i }}" {{ old('passagers', $reservation->
+                                    passagers) == $i ? 'selected' : '' }}>
+                                    {{ $i }} passager(s)
+                                    </option>
+                                    @endfor
                             </select>
                             @error('passagers')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

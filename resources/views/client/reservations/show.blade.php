@@ -83,7 +83,7 @@
                         <div>
                             <dt class="text-sm text-gray-500">Type de véhicule</dt>
                             <dd class="font-medium text-gray-900">
-                                {{ ucfirst($reservation->type_vehicule) }}
+                                {{ $reservation->type_vehicule }}
                             </dd>
                         </div>
                         <div>
@@ -109,7 +109,13 @@
                     <dl class="space-y-3">
                         <div>
                             <dt class="text-sm text-gray-500">Date</dt>
-                            <dd class="font-medium text-gray-900">{{ $reservation->date->format('d/m/Y') }}</dd>
+                            <dd class="font-medium text-gray-900">
+                                @if($reservation->date)
+                                {{ $reservation->date->format('d/m/Y') }}
+                                @else
+                                -
+                                @endif
+                            </dd>
                         </div>
                         <div>
                             <dt class="text-sm text-gray-500">Heure</dt>
@@ -158,6 +164,28 @@
                 </div>
             </div>
             @endif
+
+            <!-- Montant -->
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-4">Montant</h4>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-700">Montant total</span>
+                        <span class="text-lg font-bold text-djok-yellow">
+                            @if($reservation->total_amount)
+                            {{ number_format($reservation->total_amount, 2, ',', ' ') }} € TTC
+                            @else
+                            À confirmer
+                            @endif
+                        </span>
+                    </div>
+                    @if($reservation->calculated_distance_km)
+                    <div class="mt-2 text-sm text-gray-500">
+                        <p>Distance estimée : {{ $reservation->calculated_distance_km }} km</p>
+                    </div>
+                    @endif
+                </div>
+            </div>
         </div>
 
         <!-- Client Info -->

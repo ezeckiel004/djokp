@@ -5,9 +5,10 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use App\Models\Vehicle;
-use App\Mail\ReservationMail; // Pour la création
-use App\Mail\ReservationUpdatedMail; // Pour la modification
-use App\Mail\ReservationCancelledMail; // Pour l'annulation
+use App\Models\VehicleCategory;
+use App\Mail\ReservationMail;
+use App\Mail\ReservationUpdatedMail;
+use App\Mail\ReservationCancelledMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -38,9 +39,12 @@ class ReservationController extends Controller
      */
     public function create()
     {
-        $vehicles = Vehicle::where('category', 'business')->available()->get();
+        // Utiliser VehicleCategory au lieu de Vehicle
+        $vehicleCategories = VehicleCategory::where('actif', true)
+            ->orderBy('display_name')
+            ->get();
 
-        return view('client.reservations.create', compact('vehicles'));
+        return view('client.reservations.create', compact('vehicleCategories'));
     }
 
     /**
@@ -56,8 +60,8 @@ class ReservationController extends Controller
             'arrivee' => 'required|string|max:255',
             'date' => 'required|date|after_or_equal:today',
             'heure' => 'required|date_format:H:i',
-            'type_vehicule' => 'required|in:eco,business,prestige',
-            'passagers' => 'required|string|in:1,2,3,4,5+',
+            'vehicle_category_id' => 'required|exists:vehicle_categories,id',
+            'passagers' => 'required|string|in:1,2,3,4,5,6,7,8',
             'instructions' => 'nullable|string|max:1000',
         ]);
 
@@ -65,26 +69,14 @@ class ReservationController extends Controller
             // Convertir la date
             $date = Carbon::parse($validated['date']);
 
-            // Préparer les données pour l'email
-            $reservationData = [
-                'type_service' => $validated['type_service'],
-                'depart' => $validated['depart'],
-                'arrivee' => $validated['arrivee'],
-                'date' => $date->format('Y-m-d'),
-                'heure' => $validated['heure'],
-                'type_vehicule' => $validated['type_vehicule'],
-                'passagers' => $validated['passagers'],
-                'nom' => $user->name,
-                'telephone' => $user->phone,
-                'email' => $user->email,
-                'instructions' => $validated['instructions'] ?? null,
-            ];
+            // Récupérer la catégorie de véhicule
+            $vehicleCategory = VehicleCategory::findOrFail($validated['vehicle_category_id']);
+
+            // Convertir passagers en nombre
+            $passengersCount = $this->convertPassagersToCount($validated['passagers']);
 
             // Calculer le montant estimé
-            $estimatedAmount = $this->calculateEstimatedAmount($reservationData);
-
-            // Convertir passagers en nombre pour le champ passengers
-            $passengersCount = $this->convertPassagersToCount($reservationData['passagers']);
+            $estimatedAmount = $this->calculateEstimatedAmount($validated, $vehicleCategory);
 
             // Créer la réservation selon le format du contrôleur principal
             $reservation = Reservation::create([
@@ -106,10 +98,11 @@ class ReservationController extends Controller
                 'arrivee' => $validated['arrivee'],
                 'date' => $date,
                 'heure' => $validated['heure'],
-                'type_vehicule' => $validated['type_vehicule'],
+                'type_vehicule' => $vehicleCategory->display_name,
+                'vehicle_category_id' => $vehicleCategory->id,
                 'passagers' => $validated['passagers'],
                 'nom' => $user->name,
-                'telephone' => $user->phone,
+                'telephone' => $user->phone ?? 'Non renseigné',
                 'email' => $user->email,
                 'instructions' => $validated['instructions'] ?? null,
 
@@ -125,21 +118,33 @@ class ReservationController extends Controller
                 'special_requests' => $validated['instructions'] ?? null,
             ]);
 
+            // Préparer les données pour l'email
+            $emailData = [
+                'nom' => $user->name,
+                'email' => $user->email,
+                'telephone' => $user->phone ?? 'Non renseigné',
+                'depart' => $validated['depart'],
+                'arrivee' => $validated['arrivee'],
+                'date' => $date->format('d/m/Y'),
+                'heure' => $validated['heure'],
+                'type_service' => $validated['type_service'],
+                'type_service_label' => $this->getServiceTypeLabel($validated['type_service']),
+                'type_vehicule' => $vehicleCategory->display_name,
+                'vehicle_category_name' => $vehicleCategory->display_name,
+                'passagers' => $validated['passagers'],
+                'instructions' => $validated['instructions'] ?? null,
+                'reference' => $reservation->reference,
+                'estimated_amount' => number_format($estimatedAmount, 2, ',', ' ') . ' €',
+            ];
+
             // Envoyer l'email de création au client
-            Mail::to($reservationData['email'])
-                ->send(new ReservationMail($reservationData, 'client'));
+            Mail::to($user->email)
+                ->send(new ReservationMail($emailData, 'client'));
 
             // Envoyer l'email de création à l'admin
             $adminEmail = config('mail.from.address', 'vtc@djokprestige.com');
             Mail::to($adminEmail)
-                ->send(new ReservationMail($reservationData, 'admin'));
-
-            // Envoyer un email de secours à un autre admin si nécessaire
-            $secondaryAdminEmail = 'admin@djokprestige.com';
-            if ($secondaryAdminEmail && $secondaryAdminEmail !== $adminEmail) {
-                Mail::to($secondaryAdminEmail)
-                    ->send(new ReservationMail($reservationData, 'admin'));
-            }
+                ->send(new ReservationMail($emailData, 'admin'));
 
             Log::info('Réservation VTC créée par le client', [
                 'user_id' => $user->id,
@@ -197,9 +202,12 @@ class ReservationController extends Controller
             $reservation->formatted_date = Carbon::today()->format('Y-m-d');
         }
 
-        $vehicles = Vehicle::where('category', 'business')->get();
+        // Utiliser VehicleCategory
+        $vehicleCategories = VehicleCategory::where('actif', true)
+            ->orderBy('display_name')
+            ->get();
 
-        return view('client.reservations.edit', compact('reservation', 'vehicles'));
+        return view('client.reservations.edit', compact('reservation', 'vehicleCategories'));
     }
 
     /**
@@ -220,8 +228,8 @@ class ReservationController extends Controller
             'arrivee' => 'required|string|max:255',
             'date' => 'required|date|after_or_equal:today',
             'heure' => 'required|date_format:H:i',
-            'type_vehicule' => 'required|in:eco,business,prestige',
-            'passagers' => 'required|string|in:1,2,3,4,5+',
+            'vehicle_category_id' => 'required|exists:vehicle_categories,id',
+            'passagers' => 'required|string|in:1,2,3,4,5,6,7,8',
             'instructions' => 'nullable|string|max:1000',
         ]);
 
@@ -229,19 +237,17 @@ class ReservationController extends Controller
             // Convertir la date
             $date = Carbon::parse($validated['date']);
 
+            // Récupérer la catégorie de véhicule
+            $vehicleCategory = VehicleCategory::findOrFail($validated['vehicle_category_id']);
+
             // Détecter les changements
-            $changes = $this->detectChanges($reservation, $validated);
+            $changes = $this->detectChanges($reservation, $validated, $vehicleCategory);
+
+            // Convertir passagers en nombre
+            $passengersCount = $this->convertPassagersToCount($validated['passagers']);
 
             // Calculer le nouveau montant estimé
-            $reservationData = array_merge($validated, [
-                'nom' => $user->name,
-                'telephone' => $user->phone,
-                'email' => $user->email,
-                'date' => $date->format('Y-m-d'),
-            ]);
-
-            $estimatedAmount = $this->calculateEstimatedAmount($reservationData);
-            $passengersCount = $this->convertPassagersToCount($reservationData['passagers']);
+            $estimatedAmount = $this->calculateEstimatedAmount($validated, $vehicleCategory);
 
             // Mettre à jour la réservation
             $reservation->update([
@@ -250,7 +256,8 @@ class ReservationController extends Controller
                 'arrivee' => $validated['arrivee'],
                 'date' => $date,
                 'heure' => $validated['heure'],
-                'type_vehicule' => $validated['type_vehicule'],
+                'type_vehicule' => $vehicleCategory->display_name,
+                'vehicle_category_id' => $vehicleCategory->id,
                 'passagers' => $validated['passagers'],
                 'instructions' => $validated['instructions'] ?? null,
                 'start_date' => $date,
@@ -324,7 +331,7 @@ class ReservationController extends Controller
     /**
      * Détecter les changements entre l'ancienne et la nouvelle réservation
      */
-    private function detectChanges(Reservation $oldReservation, array $newData): array
+    private function detectChanges(Reservation $oldReservation, array $newData, VehicleCategory $vehicleCategory): array
     {
         $changes = [];
         $fieldLabels = [
@@ -333,7 +340,7 @@ class ReservationController extends Controller
             'arrivee' => 'Lieu d\'arrivée',
             'date' => 'Date',
             'heure' => 'Heure',
-            'type_vehicule' => 'Type de véhicule',
+            'vehicle_category_id' => 'Type de véhicule',
             'passagers' => 'Nombre de passagers',
             'instructions' => 'Instructions',
         ];
@@ -341,6 +348,13 @@ class ReservationController extends Controller
         foreach ($fieldLabels as $field => $label) {
             $oldValue = $oldReservation->$field;
             $newValue = $newData[$field] ?? null;
+
+            // Gestion spéciale pour vehicle_category_id
+            if ($field === 'vehicle_category_id') {
+                $oldCategory = VehicleCategory::find($oldReservation->vehicle_category_id);
+                $oldValue = $oldCategory ? $oldCategory->display_name : 'Inconnu';
+                $newValue = $vehicleCategory->display_name;
+            }
 
             // Formater les valeurs pour l'affichage
             if ($field === 'date' && $oldValue) {
@@ -357,16 +371,6 @@ class ReservationController extends Controller
                 ];
                 $oldValue = $serviceLabels[$oldValue] ?? $oldValue;
                 $newValue = $serviceLabels[$newValue] ?? $newValue;
-            }
-
-            if ($field === 'type_vehicule') {
-                $vehicleLabels = [
-                    'eco' => 'Économique',
-                    'business' => 'Business',
-                    'prestige' => 'Prestige',
-                ];
-                $oldValue = $vehicleLabels[$oldValue] ?? $oldValue;
-                $newValue = $vehicleLabels[$newValue] ?? $newValue;
             }
 
             // Pour les instructions nulles
@@ -387,28 +391,21 @@ class ReservationController extends Controller
     }
 
     /**
-     * Envoyer les notifications de mise à jour (avec ReservationUpdatedMail)
+     * Envoyer les notifications de mise à jour
      */
     private function sendUpdateNotifications(Reservation $reservation, array $changes): void
     {
         try {
-            // Email au client (avec ReservationUpdatedMail)
+            // Email au client
             Mail::to($reservation->email)
                 ->send(new ReservationUpdatedMail($reservation, 'client', $changes));
 
-            // Email à l'admin principal (avec ReservationUpdatedMail)
+            // Email à l'admin principal
             $adminEmail = config('mail.from.address', 'vtc@djokprestige.com');
             Mail::to($adminEmail)
                 ->send(new ReservationUpdatedMail($reservation, 'admin', $changes));
 
-            // Email à l'admin secondaire (avec ReservationUpdatedMail)
-            $secondaryAdminEmail = 'admin@djokprestige.com';
-            if ($secondaryAdminEmail && $secondaryAdminEmail !== $adminEmail) {
-                Mail::to($secondaryAdminEmail)
-                    ->send(new ReservationUpdatedMail($reservation, 'admin', $changes));
-            }
-
-            Log::info('Emails de mise à jour envoyés avec ReservationUpdatedMail', [
+            Log::info('Emails de mise à jour envoyés', [
                 'reservation_id' => $reservation->id,
                 'client_email' => $reservation->email,
             ]);
@@ -421,28 +418,21 @@ class ReservationController extends Controller
     }
 
     /**
-     * Envoyer les notifications d'annulation (avec ReservationCancelledMail)
+     * Envoyer les notifications d'annulation
      */
     private function sendCancellationNotifications(Reservation $reservation): void
     {
         try {
-            // Email au client (avec ReservationCancelledMail)
+            // Email au client
             Mail::to($reservation->email)
                 ->send(new ReservationCancelledMail($reservation, 'client'));
 
-            // Email à l'admin principal (avec ReservationCancelledMail)
+            // Email à l'admin principal
             $adminEmail = config('mail.from.address', 'vtc@djokprestige.com');
             Mail::to($adminEmail)
                 ->send(new ReservationCancelledMail($reservation, 'admin'));
 
-            // Email à l'admin secondaire (avec ReservationCancelledMail)
-            $secondaryAdminEmail = 'admin@djokprestige.com';
-            if ($secondaryAdminEmail && $secondaryAdminEmail !== $adminEmail) {
-                Mail::to($secondaryAdminEmail)
-                    ->send(new ReservationCancelledMail($reservation, 'admin'));
-            }
-
-            Log::info('Emails d\'annulation envoyés avec ReservationCancelledMail', [
+            Log::info('Emails d\'annulation envoyés', [
                 'reservation_id' => $reservation->id,
                 'client_email' => $reservation->email,
             ]);
@@ -457,29 +447,45 @@ class ReservationController extends Controller
     /**
      * Calcule un montant estimé pour la réservation
      */
-    private function calculateEstimatedAmount(array $data): float
+    private function calculateEstimatedAmount(array $data, VehicleCategory $vehicleCategory): float
     {
-        $basePrice = 50.00;
-        $vehicleMultiplier = [
-            'eco' => 1.0,
-            'business' => 1.5,
-            'prestige' => 2.0
-        ];
-        $multiplier = $vehicleMultiplier[$data['type_vehicule']] ?? 1.0;
+        // Utiliser la logique similaire au contrôleur principal
+        $basePrice = $vehicleCategory->prise_en_charge;
 
-        if ($data['passagers'] === '5+') {
-            $multiplier *= 1.3;
+        // Estimation simplifiée (vous pouvez améliorer cette logique)
+        $estimatedDistance = 20; // km par défaut
+        $distancePrice = $estimatedDistance * $vehicleCategory->prix_au_km;
+
+        $priceHT = $basePrice + $distancePrice;
+
+        // Appliquer le prix minimum
+        if ($priceHT < $vehicleCategory->prix_minimum) {
+            $priceHT = $vehicleCategory->prix_minimum;
         }
 
-        $serviceMultiplier = [
-            'transfert' => 1.0,
-            'professionnel' => 1.2,
-            'evenement' => 1.5,
-            'mise_disposition' => 2.0
-        ];
-        $multiplier *= $serviceMultiplier[$data['type_service']] ?? 1.0;
+        // Multiplier par le nombre de passagers
+        $passengers = $this->convertPassagersToCount($data['passagers']);
+        $priceHT = $priceHT * $passengers;
 
-        return round($basePrice * $multiplier, 2);
+        // TVA 10%
+        $priceTTC = $priceHT * 1.1;
+
+        return round($priceTTC, 2);
+    }
+
+    /**
+     * Retourne le label du type de service
+     */
+    private function getServiceTypeLabel(string $type): string
+    {
+        $labels = [
+            'transfert' => 'Transfert aéroport/gare',
+            'professionnel' => 'Déplacement professionnel',
+            'evenement' => 'Événement/mariage',
+            'mise_disposition' => 'Mise à disposition'
+        ];
+
+        return $labels[$type] ?? $type;
     }
 
     /**
@@ -487,6 +493,6 @@ class ReservationController extends Controller
      */
     private function convertPassagersToCount(string $passagers): int
     {
-        return $passagers === '5+' ? 5 : (int) $passagers;
+        return (int) $passagers;
     }
 }

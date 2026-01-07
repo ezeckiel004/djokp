@@ -2,7 +2,7 @@
 
 @section('title', 'Modifier la réservation #' . $reservation->id)
 
-@section('page-title', 'Modifier la réservation')
+@section('page-title', 'Modifier la réservation VTC')
 
 @section('content')
 <div class="bg-white shadow rounded-lg">
@@ -10,18 +10,20 @@
         <div class="flex justify-between items-center">
             <div>
                 <h3 class="text-lg font-medium text-gray-900">
-                    Modification de la réservation #{{ $reservation->id }}
+                    Modification de la réservation VTC #{{ $reservation->id }}
                 </h3>
                 <p class="mt-1 text-sm text-gray-500">
-                    Client: {{ $reservation->user->name }} |
-                    Type: {{ $types[$reservation->type] }}
+                    Client: {{ $reservation->nom }} ({{ $reservation->email }}) |
+                    Type: {{ $vtcServiceTypes[$reservation->type_service] ?? $reservation->type_service }}
+                </p>
+                <p class="mt-1 text-xs text-gray-400">
+                    Référence: {{ $reservation->reference }} |
+                    Statut actuel: {{ $statuses[$reservation->status] ?? $reservation->status }}
                 </p>
             </div>
             <span
                 class="badge {{ $reservation->status == 'pending' ? 'badge-warning' : ($reservation->status == 'confirmed' ? 'badge-info' : ($reservation->status == 'in_progress' ? 'badge-primary' : ($reservation->status == 'completed' ? 'badge-success' : 'badge-danger'))) }}">
-                {{ $reservation->status == 'pending' ? 'En attente' : ($reservation->status == 'confirmed' ? 'Confirmé'
-                : ($reservation->status == 'in_progress' ? 'En cours' : ($reservation->status == 'completed' ? 'Terminé'
-                : 'Annulé'))) }}
+                {{ $statuses[$reservation->status] ?? $reservation->status }}
             </span>
         </div>
     </div>
@@ -31,55 +33,96 @@
         @method('PUT')
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Client -->
+            <!-- Type de service VTC -->
             <div>
-                <label for="user_id" class="block text-sm font-medium text-gray-700">Client *</label>
-                <select name="user_id" id="user_id" required
+                <label for="type_service" class="block text-sm font-medium text-gray-700">Type de service *</label>
+                <select name="type_service" id="type_service" required
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                    @foreach($users as $user)
-                    <option value="{{ $user->id }}" {{ $reservation->user_id == $user->id ? 'selected' : '' }}>
-                        {{ $user->name }} ({{ $user->email }})
-                    </option>
+                    <option value="">Sélectionner un service</option>
+                    @foreach($vtcServiceTypes as $key => $label)
+                    <option value="{{ $key }}" {{ old('type_service', $reservation->type_service) == $key ? 'selected' :
+                        '' }}>{{ $label }}</option>
                     @endforeach
                 </select>
-                @error('user_id')
+                @error('type_service')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
-            <!-- Type de réservation -->
+            <!-- Catégorie de véhicule -->
             <div>
-                <label for="type" class="block text-sm font-medium text-gray-700">Type de service *</label>
-                <select name="type" id="type" required
+                <label for="vehicle_category_id" class="block text-sm font-medium text-gray-700">Type de véhicule
+                    *</label>
+                <select name="vehicle_category_id" id="vehicle_category_id" required
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                    @foreach($types as $key => $label)
-                    <option value="{{ $key }}" {{ $reservation->type == $key ? 'selected' : '' }}>
-                        {{ $label }}
+                    <option value="">Choisir un véhicule</option>
+                    @foreach($vehicleCategories as $category)
+                    <option value="{{ $category->id }}" {{ old('vehicle_category_id', $reservation->vehicle_category_id)
+                        == $category->id ? 'selected' : '' }}>
+                        {{ $category->display_name }}
                     </option>
                     @endforeach
                 </select>
-                @error('type')
+                @error('vehicle_category_id')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
-            <!-- Véhicule -->
-            <div id="vehicle-field">
-                <label for="vehicle_id" class="block text-sm font-medium text-gray-700">Véhicule</label>
-                <select name="vehicle_id" id="vehicle_id"
+            <!-- Lieu de départ -->
+            <div>
+                <label for="depart" class="block text-sm font-medium text-gray-700">Lieu de départ *</label>
+                <input type="text" name="depart" id="depart" required value="{{ old('depart', $reservation->depart) }}"
+                    placeholder="Ex: 123 Avenue des Champs-Élysées, Paris"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                    <option value="">Sélectionner un véhicule</option>
-                    @foreach($vehicles as $vehicle)
-                    <option value="{{ $vehicle->id }}" {{ $reservation->vehicle_id == $vehicle->id ? 'selected' : '' }}
-                        {{ !$vehicle->is_available && $reservation->vehicle_id != $vehicle->id ? 'disabled' : '' }}>
-                        {{ $vehicle->brand }} {{ $vehicle->model }}
-                        ({{ $vehicle->registration }}) - {{ ucfirst($vehicle->category) }}
-                        {{ !$vehicle->is_available && $reservation->vehicle_id != $vehicle->id ? ' - Non disponible' :
-                        '' }}
-                    </option>
-                    @endforeach
+                @error('depart')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Lieu d'arrivée -->
+            <div>
+                <label for="arrivee" class="block text-sm font-medium text-gray-700">Lieu d'arrivée *</label>
+                <input type="text" name="arrivee" id="arrivee" required
+                    value="{{ old('arrivee', $reservation->arrivee) }}"
+                    placeholder="Ex: Aéroport Charles de Gaulle, Paris"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
+                @error('arrivee')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Date -->
+            <div>
+                <label for="date" class="block text-sm font-medium text-gray-700">Date *</label>
+                <input type="date" name="date" id="date" required
+                    value="{{ old('date', $reservation->date ? $reservation->date->format('Y-m-d') : '') }}"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
+                @error('date')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Heure -->
+            <div>
+                <label for="heure" class="block text-sm font-medium text-gray-700">Heure *</label>
+                <input type="time" name="heure" id="heure" required value="{{ old('heure', $reservation->heure) }}"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
+                @error('heure')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Nombre de passagers -->
+            <div>
+                <label for="passagers" class="block text-sm font-medium text-gray-700">Nombre de passagers *</label>
+                <select name="passagers" id="passagers" required
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
+                    <option value="">Nombre de personnes</option>
+                    @for($i = 1; $i <= 8; $i++) <option value="{{ $i }}" {{ old('passagers', $reservation->passagers) ==
+                        $i ? 'selected' : '' }}>{{ $i }} personne{{ $i > 1 ? 's' : '' }}</option>
+                        @endfor
                 </select>
-                @error('vehicle_id')
+                @error('passagers')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
@@ -90,7 +133,7 @@
                 <select name="status" id="status" required
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
                     @foreach($statuses as $key => $label)
-                    <option value="{{ $key }}" {{ $reservation->status == $key ? 'selected' : '' }}>
+                    <option value="{{ $key }}" {{ old('status', $reservation->status) == $key ? 'selected' : '' }}>
                         {{ $label }}
                     </option>
                     @endforeach
@@ -100,46 +143,31 @@
                 @enderror
             </div>
 
-            <!-- Dates -->
+            <!-- Informations client -->
             <div>
-                <label for="start_date" class="block text-sm font-medium text-gray-700">Date de début *</label>
-                <input type="date" name="start_date" id="start_date" required
-                    value="{{ old('start_date', $reservation->start_date->format('Y-m-d')) }}"
+                <label for="nom" class="block text-sm font-medium text-gray-700">Nom complet *</label>
+                <input type="text" name="nom" id="nom" required value="{{ old('nom', $reservation->nom) }}"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                @error('start_date')
+                @error('nom')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label for="end_date" class="block text-sm font-medium text-gray-700">Date de fin *</label>
-                <input type="date" name="end_date" id="end_date" required
-                    value="{{ old('end_date', $reservation->end_date->format('Y-m-d')) }}"
+                <label for="telephone" class="block text-sm font-medium text-gray-700">Téléphone *</label>
+                <input type="tel" name="telephone" id="telephone" required
+                    value="{{ old('telephone', $reservation->telephone) }}"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                @error('end_date')
+                @error('telephone')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
-            <!-- Heure de prise en charge -->
             <div>
-                <label for="pickup_time" class="block text-sm font-medium text-gray-700">Heure de prise en
-                    charge</label>
-                <input type="time" name="pickup_time" id="pickup_time"
-                    value="{{ old('pickup_time', $reservation->pickup_time ? $reservation->pickup_time->format('H:i') : '') }}"
+                <label for="email" class="block text-sm font-medium text-gray-700">Email *</label>
+                <input type="email" name="email" id="email" required value="{{ old('email', $reservation->email) }}"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                @error('pickup_time')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <!-- Nombre de passagers -->
-            <div>
-                <label for="passengers" class="block text-sm font-medium text-gray-700">Nombre de passagers</label>
-                <input type="number" name="passengers" id="passengers" min="1" max="20"
-                    value="{{ old('passengers', $reservation->passengers) }}"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                @error('passengers')
+                @error('email')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
@@ -164,37 +192,16 @@
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
-
-            <!-- Lieux -->
-            <div>
-                <label for="pickup_location" class="block text-sm font-medium text-gray-700">Lieu de prise en
-                    charge</label>
-                <input type="text" name="pickup_location" id="pickup_location"
-                    value="{{ old('pickup_location', $reservation->pickup_location) }}"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                @error('pickup_location')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div>
-                <label for="dropoff_location" class="block text-sm font-medium text-gray-700">Lieu de
-                    restitution/dépose</label>
-                <input type="text" name="dropoff_location" id="dropoff_location"
-                    value="{{ old('dropoff_location', $reservation->dropoff_location) }}"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                @error('dropoff_location')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
         </div>
 
-        <!-- Demandes spéciales -->
+        <!-- Instructions -->
         <div class="mt-6">
-            <label for="special_requests" class="block text-sm font-medium text-gray-700">Demandes spéciales</label>
-            <textarea name="special_requests" id="special_requests" rows="3"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">{{ old('special_requests', $reservation->special_requests) }}</textarea>
-            @error('special_requests')
+            <label for="instructions" class="block text-sm font-medium text-gray-700">Instructions
+                supplémentaires</label>
+            <textarea name="instructions" id="instructions" rows="3"
+                placeholder="Informations spécifiques pour le chauffeur..."
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">{{ old('instructions', $reservation->instructions) }}</textarea>
+            @error('instructions')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
         </div>
@@ -215,33 +222,17 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-    const typeSelect = document.getElementById('type');
-    const vehicleField = document.getElementById('vehicle-field');
-    const vehicleSelect = document.getElementById('vehicle_id');
+        // Validation des montants
+        const depositInput = document.getElementById('deposit_amount');
+        const totalInput = document.getElementById('total_amount');
 
-    function toggleVehicleField() {
-        if (typeSelect.value === 'location') {
-            vehicleField.style.display = 'block';
-            vehicleSelect.required = true;
-        } else {
-            vehicleField.style.display = 'block'; // Toujours affiché mais optionnel
-            vehicleSelect.required = false;
+        if (depositInput && totalInput) {
+            depositInput.addEventListener('input', function() {
+                if (parseFloat(this.value) > parseFloat(totalInput.value)) {
+                    this.value = totalInput.value;
+                }
+            });
         }
-    }
-
-    // Initial state
-    toggleVehicleField();
-
-    // Listen for changes
-    typeSelect.addEventListener('change', toggleVehicleField);
-
-    // Gestion de la date de fin
-    const startDateInput = document.getElementById('start_date');
-    const endDateInput = document.getElementById('end_date');
-
-    startDateInput.addEventListener('change', function() {
-        endDateInput.min = this.value;
     });
-});
 </script>
 @endsection

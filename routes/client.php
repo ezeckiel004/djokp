@@ -13,6 +13,10 @@ Route::middleware(['auth', 'can:access-client-dashboard'])->prefix('client')->na
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/stats', [DashboardController::class, 'getStats'])->name('dashboard.stats'); // Route AJOUTÉE
+    Route::get('/dashboard/recent-formations', [DashboardController::class, 'getRecentFormations'])->name('dashboard.recent-formations'); // Route AJOUTÉE
+    Route::get('/dashboard/recommended-formations', [DashboardController::class, 'getRecommendedFormations'])->name('dashboard.recommended-formations'); // Route AJOUTÉE
+    Route::get('/dashboard/recent-activity', [DashboardController::class, 'getRecentActivity'])->name('dashboard.recent-activity'); // Route AJOUTÉE
 
     // ==============================================
     // FORMATIONS - SYSTÈME COMPLET

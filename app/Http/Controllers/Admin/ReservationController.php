@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use App\Models\User;
-use App\Models\Vehicle;
-use App\Models\Role;
+use App\Models\VehicleCategory;
 use Illuminate\Http\Request;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReservationStatusUpdated;
+use Illuminate\Support\Str;
 
 class ReservationController extends Controller
 {
@@ -20,7 +21,9 @@ class ReservationController extends Controller
 
     public function index()
     {
-        $reservations = Reservation::with(['user', 'vehicle'])
+        $reservations = Reservation::with(['user', 'vehicleCategory'])
+            ->where('is_vtc_booking', true)
+            ->orWhere('type', 'vtc_transport')
             ->latest()
             ->paginate(15);
 
@@ -29,29 +32,8 @@ class ReservationController extends Controller
 
     public function create()
     {
-        // Récupérer l'ID du rôle "client"
-        $clientRole = Role::where('slug', 'client')
-            ->orWhere('name', 'client')
-            ->first();
-
-        if (!$clientRole) {
-            // Si le rôle client n'existe pas, créer le rôle
-            $clientRole = Role::create([
-                'name' => 'Client',
-                'slug' => 'client',
-                'description' => 'Utilisateur client',
-                'permissions' => []
-            ]);
-        }
-
-        // Récupérer les utilisateurs avec le rôle client
-        $users = User::where('role_id', $clientRole->id)
-            ->where('is_active', true)
-            ->get(['id', 'name', 'email']);
-
-        // Récupérer les véhicules disponibles
-        $vehicles = Vehicle::where('is_available', true)
-            ->get(['id', 'brand', 'model', 'registration', 'category']);
+        // Récupérer les catégories de véhicules actives
+        $vehicleCategories = VehicleCategory::where('actif', true)->get();
 
         $statuses = [
             'pending' => 'En attente',
@@ -61,80 +43,99 @@ class ReservationController extends Controller
             'cancelled' => 'Annulé'
         ];
 
-        $types = [
-            'location' => 'Location de véhicule',
-            'vtc_transport' => 'Service VTC/Transport',
-            'conciergerie' => 'Service Conciergerie'
+        $vtcServiceTypes = [
+            'transfert' => 'Transfert aéroport/gare',
+            'professionnel' => 'Déplacement professionnel',
+            'evenement' => 'Événement/mariage',
+            'mise_disposition' => 'Mise à disposition'
         ];
 
-        return view('admin.reservations.create', compact('users', 'vehicles', 'statuses', 'types'));
+        return view('admin.reservations.create', compact('vehicleCategories', 'statuses', 'vtcServiceTypes'));
     }
 
     public function store(Request $request)
     {
+        // Validation pour les réservations VTC
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'vehicle_id' => 'nullable|exists:vehicles,id',
-            'type' => 'required|in:location,vtc_transport,conciergerie',
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after:start_date',
-            'pickup_time' => 'nullable|date_format:H:i',
-            'pickup_location' => 'nullable|string|max:255',
-            'dropoff_location' => 'nullable|string|max:255',
-            'passengers' => 'nullable|integer|min:1|max:20',
+            'type_service' => 'required|in:transfert,professionnel,evenement,mise_disposition',
+            'depart' => 'required|string|max:255',
+            'arrivee' => 'required|string|max:255',
+            'date' => 'required|date|after_or_equal:today',
+            'heure' => 'required|date_format:H:i',
+            'vehicle_category_id' => 'required|exists:vehicle_categories,id',
+            'passagers' => 'required|in:1,2,3,4,5,6,7,8',
+            'nom' => 'required|string|max:255',
+            'telephone' => 'required|string|max:20',
+            'email' => 'required|email|max:255',
+            'instructions' => 'nullable|string|max:1000',
             'total_amount' => 'required|numeric|min:0',
             'deposit_amount' => 'nullable|numeric|min:0',
             'status' => 'required|in:pending,confirmed,in_progress,completed,cancelled',
-            'special_requests' => 'nullable|string',
         ]);
 
-        // Validation spécifique selon le type
-        if ($validated['type'] === 'location' && empty($validated['vehicle_id'])) {
-            return back()->withErrors(['vehicle_id' => 'Le véhicule est obligatoire pour une location.'])->withInput();
-        }
+        // Vérifier si l'utilisateur existe déjà par email
+        $user = User::where('email', $validated['email'])->first();
 
-        $reservation = Reservation::create($validated);
+        // Si pas d'utilisateur, utiliser user_id = null (réservation publique)
+        $userId = $user ? $user->id : null;
 
-        // Mettre à jour la disponibilité du véhicule si nécessaire
-        if ($reservation->vehicle_id && in_array($reservation->status, ['confirmed', 'in_progress'])) {
-            Vehicle::where('id', $reservation->vehicle_id)->update(['is_available' => false]);
+        // Récupérer la catégorie de véhicule
+        $vehicleCategory = VehicleCategory::findOrFail($validated['vehicle_category_id']);
+
+        // Convertir passagers en passengers
+        $passengers = (int) $validated['passagers'];
+
+        // Créer la réservation
+        $reservation = Reservation::create([
+            'user_id' => $userId,
+            'vehicle_category_id' => $vehicleCategory->id,
+            'type' => 'vtc_transport',
+            'start_date' => $validated['date'],
+            'end_date' => $validated['date'],
+            'pickup_time' => $validated['heure'],
+            'pickup_location' => $validated['depart'],
+            'dropoff_location' => $validated['arrivee'],
+            'passengers' => $passengers,
+            'total_amount' => $validated['total_amount'],
+            'deposit_amount' => $validated['deposit_amount'] ?? 0,
+            'status' => $validated['status'],
+            'special_requests' => $validated['instructions'] ?? null,
+            // Champs spécifiques VTC
+            'type_service' => $validated['type_service'],
+            'depart' => $validated['depart'],
+            'arrivee' => $validated['arrivee'],
+            'date' => $validated['date'],
+            'heure' => $validated['heure'],
+            'type_vehicule' => $vehicleCategory->display_name,
+            'passagers' => $validated['passagers'],
+            'nom' => $validated['nom'],
+            'telephone' => $validated['telephone'],
+            'email' => $validated['email'],
+            'instructions' => $validated['instructions'] ?? null,
+            'source' => $userId ? 'client' : 'public',
+            'reference' => 'RES' . strtoupper(Str::random(8)),
+            'is_vtc_booking' => true,
+        ]);
+
+        // Envoyer un email de confirmation si le statut est "confirmed"
+        if ($validated['status'] === 'confirmed') {
+            $this->sendStatusUpdateEmail($reservation);
         }
 
         return redirect()->route('admin.reservations.show', $reservation)
-            ->with('success', 'Réservation créée avec succès.');
+            ->with('success', 'Réservation VTC créée avec succès.');
     }
 
     public function show(Reservation $reservation)
     {
-        $reservation->load(['user', 'vehicle']);
+        $reservation->load(['user', 'vehicleCategory']);
         return view('admin.reservations.show', compact('reservation'));
     }
 
     public function edit(Reservation $reservation)
     {
-        // Récupérer l'ID du rôle "client"
-        $clientRole = Role::where('slug', 'client')
-            ->orWhere('name', 'client')
-            ->first();
-
-        if (!$clientRole) {
-            $clientRole = Role::create([
-                'name' => 'Client',
-                'slug' => 'client',
-                'description' => 'Utilisateur client',
-                'permissions' => []
-            ]);
-        }
-
-        // Récupérer les utilisateurs avec le rôle client
-        $users = User::where('role_id', $clientRole->id)
-            ->where('is_active', true)
-            ->get(['id', 'name', 'email']);
-
-        // Récupérer les véhicules disponibles OU le véhicule actuel de la réservation
-        $vehicles = Vehicle::where('is_available', true)
-            ->orWhere('id', $reservation->vehicle_id)
-            ->get(['id', 'brand', 'model', 'registration', 'category', 'is_available']);
+        // Récupérer les catégories de véhicules actives
+        $vehicleCategories = VehicleCategory::where('actif', true)->get();
 
         $statuses = [
             'pending' => 'En attente',
@@ -144,59 +145,95 @@ class ReservationController extends Controller
             'cancelled' => 'Annulé'
         ];
 
-        $types = [
-            'location' => 'Location de véhicule',
-            'vtc_transport' => 'Service VTC/Transport',
-            'conciergerie' => 'Service Conciergerie'
+        $vtcServiceTypes = [
+            'transfert' => 'Transfert aéroport/gare',
+            'professionnel' => 'Déplacement professionnel',
+            'evenement' => 'Événement/mariage',
+            'mise_disposition' => 'Mise à disposition'
         ];
 
-        return view('admin.reservations.edit', compact('reservation', 'users', 'vehicles', 'statuses', 'types'));
+        return view('admin.reservations.edit', compact(
+            'reservation',
+            'vehicleCategories',
+            'statuses',
+            'vtcServiceTypes'
+        ));
     }
 
     public function update(Request $request, Reservation $reservation)
     {
+        // Validation pour les réservations VTC
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'vehicle_id' => 'nullable|exists:vehicles,id',
-            'type' => 'required|in:location,vtc_transport,conciergerie',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
-            'pickup_time' => 'nullable|date_format:H:i',
-            'pickup_location' => 'nullable|string|max:255',
-            'dropoff_location' => 'nullable|string|max:255',
-            'passengers' => 'nullable|integer|min:1|max:20',
+            'type_service' => 'required|in:transfert,professionnel,evenement,mise_disposition',
+            'depart' => 'required|string|max:255',
+            'arrivee' => 'required|string|max:255',
+            'date' => 'required|date',
+            'heure' => 'required|date_format:H:i',
+            'vehicle_category_id' => 'required|exists:vehicle_categories,id',
+            'passagers' => 'required|in:1,2,3,4,5,6,7,8',
+            'nom' => 'required|string|max:255',
+            'telephone' => 'required|string|max:20',
+            'email' => 'required|email|max:255',
+            'instructions' => 'nullable|string|max:1000',
             'total_amount' => 'required|numeric|min:0',
             'deposit_amount' => 'nullable|numeric|min:0',
             'status' => 'required|in:pending,confirmed,in_progress,completed,cancelled',
-            'special_requests' => 'nullable|string',
         ]);
 
-        // Validation spécifique selon le type
-        if ($validated['type'] === 'location' && empty($validated['vehicle_id'])) {
-            return back()->withErrors(['vehicle_id' => 'Le véhicule est obligatoire pour une location.'])->withInput();
-        }
+        // Vérifier si l'utilisateur existe déjà par email
+        $user = User::where('email', $validated['email'])->first();
+        $userId = $user ? $user->id : null;
 
-        // Sauvegarder l'ancien statut et véhicule
+        // Récupérer la catégorie de véhicule
+        $vehicleCategory = VehicleCategory::findOrFail($validated['vehicle_category_id']);
+
+        // Convertir passagers en passengers
+        $passengers = (int) $validated['passagers'];
+
+        // Sauvegarder l'ancien statut
         $oldStatus = $reservation->status;
-        $oldVehicleId = $reservation->vehicle_id;
 
         // Mettre à jour la réservation
-        $reservation->update($validated);
+        $reservation->update([
+            'user_id' => $userId,
+            'vehicle_category_id' => $vehicleCategory->id,
+            'type' => 'vtc_transport',
+            'start_date' => $validated['date'],
+            'end_date' => $validated['date'],
+            'pickup_time' => $validated['heure'],
+            'pickup_location' => $validated['depart'],
+            'dropoff_location' => $validated['arrivee'],
+            'passengers' => $passengers,
+            'total_amount' => $validated['total_amount'],
+            'deposit_amount' => $validated['deposit_amount'] ?? 0,
+            'status' => $validated['status'],
+            'special_requests' => $validated['instructions'] ?? null,
+            // Champs spécifiques VTC
+            'type_service' => $validated['type_service'],
+            'depart' => $validated['depart'],
+            'arrivee' => $validated['arrivee'],
+            'date' => $validated['date'],
+            'heure' => $validated['heure'],
+            'type_vehicule' => $vehicleCategory->display_name,
+            'passagers' => $validated['passagers'],
+            'nom' => $validated['nom'],
+            'telephone' => $validated['telephone'],
+            'email' => $validated['email'],
+            'instructions' => $validated['instructions'] ?? null,
+            'source' => $userId ? 'client' : 'public',
+        ]);
 
-        // Gérer la disponibilité du véhicule
-        $this->handleVehicleAvailability($reservation, $oldStatus, $oldVehicleId);
+        // Envoyer un email si le statut a changé
+        if ($oldStatus !== $reservation->status) {
+            $this->sendStatusUpdateEmail($reservation);
+        }
 
         return redirect()->route('admin.reservations.show', $reservation)
-            ->with('success', 'Réservation mise à jour avec succès.');
+            ->with('success', 'Réservation VTC mise à jour avec succès.');
     }
 
     public function destroy(Reservation $reservation)
     {
-        // Libérer le véhicule si nécessaire
-        if ($reservation->vehicle_id && in_array($reservation->status, ['confirmed', 'in_progress'])) {
-            Vehicle::where('id', $reservation->vehicle_id)->update(['is_available' => true]);
-        }
-
         $reservation->delete();
 
         return redirect()->route('admin.reservations.index')
@@ -204,24 +241,18 @@ class ReservationController extends Controller
     }
 
     /**
-     * Gère la disponibilité du véhicule lors des mises à jour
+     * Envoie un email de mise à jour de statut
      */
-    private function handleVehicleAvailability(Reservation $reservation, $oldStatus, $oldVehicleId)
+    private function sendStatusUpdateEmail(Reservation $reservation)
     {
-        // Si le véhicule a changé, libérer l'ancien
-        if ($oldVehicleId && $oldVehicleId != $reservation->vehicle_id) {
-            Vehicle::where('id', $oldVehicleId)->update(['is_available' => true]);
-        }
+        try {
+            $email = $reservation->user_id ? $reservation->user->email : $reservation->email;
 
-        // Mettre à jour la disponibilité du nouveau véhicule
-        if ($reservation->vehicle_id) {
-            $isAvailable = true;
-
-            if (in_array($reservation->status, ['confirmed', 'in_progress'])) {
-                $isAvailable = false;
+            if ($email) {
+                Mail::to($email)->send(new ReservationStatusUpdated($reservation));
             }
-
-            Vehicle::where('id', $reservation->vehicle_id)->update(['is_available' => $isAvailable]);
+        } catch (\Exception $e) {
+            \Log::error('Erreur envoi email mise à jour statut: ' . $e->getMessage());
         }
     }
 
@@ -237,13 +268,9 @@ class ReservationController extends Controller
         $oldStatus = $reservation->status;
         $reservation->update(['status' => $request->status]);
 
-        // Mettre à jour la disponibilité du véhicule si nécessaire
-        if ($reservation->vehicle_id) {
-            $isAvailable = true;
-            if (in_array($request->status, ['confirmed', 'in_progress'])) {
-                $isAvailable = false;
-            }
-            Vehicle::where('id', $reservation->vehicle_id)->update(['is_available' => $isAvailable]);
+        // Envoyer un email de notification
+        if ($oldStatus !== $request->status) {
+            $this->sendStatusUpdateEmail($reservation);
         }
 
         return response()->json([

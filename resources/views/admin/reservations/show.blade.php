@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
-@section('title', 'Réservation #' . $reservation->id)
+@section('title', 'Réservation VTC #' . $reservation->id)
 
-@section('page-title', 'Détails de la réservation')
+@section('page-title', 'Détails de la réservation VTC')
 
 @section('content')
 <div class="bg-white shadow rounded-lg overflow-hidden">
@@ -11,18 +11,29 @@
         <div class="flex items-center justify-between">
             <div>
                 <h3 class="text-lg font-medium text-gray-900">
-                    Réservation #{{ $reservation->id }}
+                    Réservation VTC #{{ $reservation->id }}
                 </h3>
                 <p class="mt-1 text-sm text-gray-500">
                     Créée le {{ $reservation->created_at->format('d/m/Y à H:i') }}
                 </p>
+                <p class="mt-1 text-xs text-gray-400">
+                    Référence: {{ $reservation->reference }}
+                </p>
             </div>
             <div class="flex items-center space-x-3">
-                <span
-                    class="badge {{ $reservation->status == 'pending' ? 'badge-warning' : ($reservation->status == 'confirmed' ? 'badge-info' : ($reservation->status == 'in_progress' ? 'badge-primary' : ($reservation->status == 'completed' ? 'badge-success' : 'badge-danger'))) }}">
-                    {{ $reservation->status == 'pending' ? 'En attente' : ($reservation->status == 'confirmed' ?
-                    'Confirmé' : ($reservation->status == 'in_progress' ? 'En cours' : ($reservation->status ==
-                    'completed' ? 'Terminé' : 'Annulé'))) }}
+                @php
+                $statusConfig = [
+                'pending' => ['class' => 'badge-warning', 'label' => 'En attente'],
+                'confirmed' => ['class' => 'badge-info', 'label' => 'Confirmé'],
+                'in_progress' => ['class' => 'badge-primary', 'label' => 'En cours'],
+                'completed' => ['class' => 'badge-success', 'label' => 'Terminé'],
+                'cancelled' => ['class' => 'badge-danger', 'label' => 'Annulé']
+                ];
+                $config = $statusConfig[$reservation->status] ?? $statusConfig['pending'];
+                @endphp
+
+                <span class="badge {{ $config['class'] }}">
+                    {{ $config['label'] }}
                 </span>
                 <div class="flex space-x-2">
                     <a href="{{ route('admin.reservations.edit', $reservation) }}"
@@ -42,26 +53,20 @@
                 <div class="space-y-4">
                     <div>
                         <p class="text-sm font-medium text-gray-500">Nom complet</p>
-                        <p class="mt-1 text-sm text-gray-900">{{ $reservation->user->name }}</p>
+                        <p class="mt-1 text-sm text-gray-900">{{ $reservation->nom }}</p>
                     </div>
                     <div>
                         <p class="text-sm font-medium text-gray-500">Email</p>
-                        <p class="mt-1 text-sm text-gray-900">{{ $reservation->user->email }}</p>
+                        <p class="mt-1 text-sm text-gray-900">{{ $reservation->email }}</p>
                     </div>
                     <div>
                         <p class="text-sm font-medium text-gray-500">Téléphone</p>
-                        <p class="mt-1 text-sm text-gray-900">{{ $reservation->user->phone ?? 'Non renseigné' }}</p>
+                        <p class="mt-1 text-sm text-gray-900">{{ $reservation->telephone }}</p>
                     </div>
-                    @if($reservation->user->cni_number)
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">CNI</p>
-                        <p class="mt-1 text-sm text-gray-900">{{ $reservation->user->cni_number }}</p>
-                    </div>
-                    @endif
-                    @if($reservation->user->driver_license)
-                    <div>
-                        <p class="text-sm font-medium text-gray-500">Permis de conduire</p>
-                        <p class="mt-1 text-sm text-gray-900">{{ $reservation->user->driver_license }}</p>
+                    @if($reservation->user_id)
+                    <div class="mt-4 p-3 bg-blue-50 rounded border border-blue-200">
+                        <p class="text-sm font-medium text-blue-700">Client enregistré</p>
+                        <p class="text-xs text-blue-600">Cette réservation est liée à un compte client</p>
                     </div>
                     @endif
                 </div>
@@ -74,23 +79,23 @@
                     <div>
                         <p class="text-sm font-medium text-gray-500">Type de service</p>
                         <p class="mt-1 text-sm text-gray-900">
-                            @switch($reservation->type)
-                            @case('location')
-                            <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                                <i class="fas fa-car mr-1"></i>Location de véhicule
+                            @php
+                            $serviceConfig = [
+                            'transfert' => ['class' => 'bg-blue-100 text-blue-800', 'icon' => 'plane', 'label' =>
+                            'Transfert aéroport/gare'],
+                            'professionnel' => ['class' => 'bg-purple-100 text-purple-800', 'icon' => 'briefcase',
+                            'label' => 'Déplacement professionnel'],
+                            'evenement' => ['class' => 'bg-green-100 text-green-800', 'icon' => 'heart', 'label' =>
+                            'Événement/mariage'],
+                            'mise_disposition' => ['class' => 'bg-yellow-100 text-yellow-800', 'icon' => 'clock',
+                            'label' => 'Mise à disposition']
+                            ];
+                            $service = $serviceConfig[$reservation->type_service] ?? ['class' => 'bg-gray-100
+                            text-gray-800', 'icon' => 'question', 'label' => $reservation->type_service];
+                            @endphp
+                            <span class="px-2 py-1 text-xs rounded-full {{ $service['class'] }}">
+                                <i class="fas fa-{{ $service['icon'] }} mr-1"></i>{{ $service['label'] }}
                             </span>
-                            @break
-                            @case('vtc_transport')
-                            <span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">
-                                <i class="fas fa-taxi mr-1"></i>Service VTC/Transport
-                            </span>
-                            @break
-                            @case('conciergerie')
-                            <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                                <i class="fas fa-concierge-bell mr-1"></i>Service Conciergerie
-                            </span>
-                            @break
-                            @endswitch
                         </p>
                     </div>
                     <div>
@@ -98,36 +103,38 @@
                         <div class="mt-1 space-y-1">
                             <p class="text-sm text-gray-900">
                                 <i class="fas fa-calendar-alt mr-2 text-gray-400"></i>
-                                Du {{ $reservation->start_date->format('d/m/Y') }}
-                                au {{ $reservation->end_date->format('d/m/Y') }}
+                                Le {{ $reservation->date ? $reservation->date->format('d/m/Y') :
+                                ($reservation->start_date ? $reservation->start_date->format('d/m/Y') : 'Non spécifiée')
+                                }}
                             </p>
-                            @if($reservation->pickup_time)
                             <p class="text-sm text-gray-900">
                                 <i class="fas fa-clock mr-2 text-gray-400"></i>
-                                Heure: {{ \Carbon\Carbon::parse($reservation->pickup_time)->format('H:i') }}
+                                Heure: {{ $reservation->heure ?? ($reservation->pickup_time ?
+                                \Carbon\Carbon::parse($reservation->pickup_time)->format('H:i') : 'Non spécifiée') }}
                             </p>
-                            @endif
-                            @if($reservation->passengers > 1)
+                            @php
+                            $passagers = $reservation->passagers ?? $reservation->passengers;
+                            @endphp
+                            @if($passagers > 1)
                             <p class="text-sm text-gray-900">
                                 <i class="fas fa-users mr-2 text-gray-400"></i>
-                                {{ $reservation->passengers }} passagers
+                                {{ $passagers }} passagers
                             </p>
                             @endif
                         </div>
                     </div>
-                    @if($reservation->vehicle)
+                    @if($reservation->vehicleCategory)
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Véhicule réservé</p>
+                        <p class="text-sm font-medium text-gray-500">Véhicule demandé</p>
                         <div class="mt-1 space-y-1">
                             <p class="text-sm text-gray-900">
-                                {{ $reservation->vehicle->brand }} {{ $reservation->vehicle->model }}
-                            </p>
-                            <p class="text-sm text-gray-500">
-                                Immatriculation: {{ $reservation->vehicle->registration }}
+                                {{ $reservation->vehicleCategory->display_name }}
                             </p>
                             <p class="text-xs text-gray-500">
-                                Catégorie: {{ ucfirst($reservation->vehicle->category) }} |
-                                Année: {{ $reservation->vehicle->year }}
+                                Prise en charge: {{ number_format($reservation->vehicleCategory->prise_en_charge, 2,
+                                ',', ' ') }} € |
+                                Prix au km: {{ number_format($reservation->vehicleCategory->prix_au_km, 2, ',', ' ') }}
+                                €
                             </p>
                         </div>
                     </div>
@@ -136,31 +143,25 @@
             </div>
 
             <!-- Informations lieux -->
-            @if($reservation->pickup_location || $reservation->dropoff_location)
             <div class="bg-gray-50 rounded-lg p-6">
-                <h4 class="text-lg font-medium text-gray-900 mb-4">Lieux</h4>
+                <h4 class="text-lg font-medium text-gray-900 mb-4">Lieux du trajet</h4>
                 <div class="space-y-4">
-                    @if($reservation->pickup_location)
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Lieu de prise en charge</p>
+                        <p class="text-sm font-medium text-gray-500">Lieu de départ</p>
                         <p class="mt-1 text-sm text-gray-900">
                             <i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>
-                            {{ $reservation->pickup_location }}
+                            {{ $reservation->depart }}
                         </p>
                     </div>
-                    @endif
-                    @if($reservation->dropoff_location)
                     <div>
-                        <p class="text-sm font-medium text-gray-500">Lieu de restitution/dépose</p>
+                        <p class="text-sm font-medium text-gray-500">Lieu d'arrivée</p>
                         <p class="mt-1 text-sm text-gray-900">
                             <i class="fas fa-flag-checkered mr-2 text-gray-400"></i>
-                            {{ $reservation->dropoff_location }}
+                            {{ $reservation->arrivee }}
                         </p>
                     </div>
-                    @endif
                 </div>
             </div>
-            @endif
 
             <!-- Informations financières -->
             <div class="bg-gray-50 rounded-lg p-6">
@@ -183,15 +184,69 @@
                             $reservation->deposit_amount, 2) }} €</p>
                     </div>
                     @endif
+
+                    @if($reservation->calculated_price_ttc)
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <p class="text-sm font-medium text-gray-500 mb-2">Calcul du prix</p>
+                        <div class="space-y-1 text-sm">
+                            @if($reservation->calculated_prise_charge)
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Prise en charge:</span>
+                                <span class="text-gray-900">{{ number_format($reservation->calculated_prise_charge, 2)
+                                    }} €</span>
+                            </div>
+                            @endif
+                            @if($reservation->calculated_distance_price)
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Prix distance:</span>
+                                <span class="text-gray-900">{{ number_format($reservation->calculated_distance_price, 2)
+                                    }} €</span>
+                            </div>
+                            @endif
+                            @if($reservation->calculated_price_ht)
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Total HT:</span>
+                                <span class="text-gray-900">{{ number_format($reservation->calculated_price_ht, 2) }}
+                                    €</span>
+                            </div>
+                            @endif
+                            @if($reservation->calculated_tva)
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">TVA (10%):</span>
+                                <span class="text-gray-900">{{ number_format($reservation->calculated_tva, 2) }}
+                                    €</span>
+                            </div>
+                            @endif
+                            @if($reservation->calculated_price_ttc)
+                            <div class="flex justify-between font-medium">
+                                <span class="text-gray-800">Total TTC:</span>
+                                <span class="text-djok-yellow">{{ number_format($reservation->calculated_price_ttc, 2)
+                                    }} €</span>
+                            </div>
+                            @endif
+                            @if($reservation->calculated_distance_km)
+                            <div class="flex justify-between mt-2 pt-2 border-t border-gray-200">
+                                <span class="text-gray-600">Distance estimée:</span>
+                                <span class="text-gray-900">{{ number_format($reservation->calculated_distance_km, 1) }}
+                                    km</span>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
 
-            <!-- Demandes spéciales -->
-            @if($reservation->special_requests)
+            <!-- Demandes spéciales / Instructions -->
+            @if($reservation->instructions || $reservation->special_requests)
             <div class="md:col-span-2 bg-gray-50 rounded-lg p-6">
-                <h4 class="text-lg font-medium text-gray-900 mb-4">Demandes spéciales</h4>
+                <h4 class="text-lg font-medium text-gray-900 mb-4">Demandes spéciales / Instructions</h4>
                 <div class="bg-white rounded border p-4">
+                    @if($reservation->instructions)
+                    <p class="text-sm text-gray-900 whitespace-pre-line">{{ $reservation->instructions }}</p>
+                    @elseif($reservation->special_requests)
                     <p class="text-sm text-gray-900 whitespace-pre-line">{{ $reservation->special_requests }}</p>
+                    @endif
                 </div>
             </div>
             @endif
@@ -207,16 +262,20 @@
             </div>
             <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                 <!-- Bouton Facture -->
-                <button type="button"
+                @if($reservation->status == 'confirmed' || $reservation->status == 'completed')
+                <button type="button" onclick="generateInvoice({{ $reservation->id }})"
                     class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-djok-yellow">
                     <i class="fas fa-file-invoice mr-2"></i> Générer facture
                 </button>
+                @endif
 
                 <!-- Bouton Contrat -->
+                @if($reservation->status == 'confirmed')
                 <button type="button"
                     class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-djok-yellow">
-                    <i class="fas fa-file-contract mr-2"></i> Contrat de location
+                    <i class="fas fa-file-contract mr-2"></i> Contrat de transport
                 </button>
+                @endif
 
                 <!-- Bouton Supprimer -->
                 <form action="{{ route('admin.reservations.destroy', $reservation) }}" method="POST"
@@ -232,4 +291,11 @@
         </div>
     </div>
 </div>
+
+<script>
+    function generateInvoice(reservationId) {
+        // Rediriger vers une route de génération de facture
+        window.open(`/admin/reservations/${reservationId}/invoice`, '_blank');
+    }
+</script>
 @endsection

@@ -1,68 +1,111 @@
 @extends('layouts.admin')
 
-@section('title', 'Créer une réservation')
+@section('title', 'Créer une réservation VTC')
 
-@section('page-title', 'Nouvelle réservation')
+@section('page-title', 'Nouvelle réservation VTC')
 
 @section('content')
 <div class="bg-white shadow rounded-lg">
     <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
         <h3 class="text-lg font-medium text-gray-900">
-            Formulaire de création de réservation
+            Formulaire de création de réservation VTC
         </h3>
+        <p class="mt-1 text-sm text-gray-500">
+            Créez une nouvelle réservation de transport VTC
+        </p>
     </div>
 
     <form action="{{ route('admin.reservations.store') }}" method="POST" class="p-6">
         @csrf
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Client -->
+            <!-- Type de service VTC -->
             <div>
-                <label for="user_id" class="block text-sm font-medium text-gray-700">Client *</label>
-                <select name="user_id" id="user_id" required
+                <label for="type_service" class="block text-sm font-medium text-gray-700">Type de service *</label>
+                <select name="type_service" id="type_service" required
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                    <option value="">Sélectionner un client</option>
-                    @foreach($users as $user)
-                    <option value="{{ $user->id }}" {{ old('user_id')==$user->id ? 'selected' : '' }}>
-                        {{ $user->name }} ({{ $user->email }})
-                    </option>
+                    <option value="">Sélectionner un service</option>
+                    @foreach($vtcServiceTypes as $key => $label)
+                    <option value="{{ $key }}" {{ old('type_service')==$key ? 'selected' : '' }}>{{ $label }}</option>
                     @endforeach
                 </select>
-                @error('user_id')
+                @error('type_service')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
-            <!-- Type de réservation -->
+            <!-- Catégorie de véhicule -->
             <div>
-                <label for="type" class="block text-sm font-medium text-gray-700">Type de service *</label>
-                <select name="type" id="type" required
+                <label for="vehicle_category_id" class="block text-sm font-medium text-gray-700">Type de véhicule
+                    *</label>
+                <select name="vehicle_category_id" id="vehicle_category_id" required
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                    @foreach($types as $key => $label)
-                    <option value="{{ $key }}" {{ old('type')==$key ? 'selected' : '' }}>
-                        {{ $label }}
+                    <option value="">Choisir un véhicule</option>
+                    @foreach($vehicleCategories as $category)
+                    <option value="{{ $category->id }}" {{ old('vehicle_category_id')==$category->id ? 'selected' : ''
+                        }}>
+                        {{ $category->display_name }}
                     </option>
                     @endforeach
                 </select>
-                @error('type')
+                @error('vehicle_category_id')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
-            <!-- Véhicule (conditionnel) -->
-            <div id="vehicle-field">
-                <label for="vehicle_id" class="block text-sm font-medium text-gray-700">Véhicule *</label>
-                <select name="vehicle_id" id="vehicle_id"
+            <!-- Lieu de départ -->
+            <div>
+                <label for="depart" class="block text-sm font-medium text-gray-700">Lieu de départ *</label>
+                <input type="text" name="depart" id="depart" required value="{{ old('depart') }}"
+                    placeholder="Ex: 123 Avenue des Champs-Élysées, Paris"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                    <option value="">Sélectionner un véhicule</option>
-                    @foreach($vehicles as $vehicle)
-                    <option value="{{ $vehicle->id }}" {{ old('vehicle_id')==$vehicle->id ? 'selected' : '' }}>
-                        {{ $vehicle->brand }} {{ $vehicle->model }}
-                        ({{ $vehicle->registration }}) - {{ ucfirst($vehicle->category) }}
-                    </option>
-                    @endforeach
+                @error('depart')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Lieu d'arrivée -->
+            <div>
+                <label for="arrivee" class="block text-sm font-medium text-gray-700">Lieu d'arrivée *</label>
+                <input type="text" name="arrivee" id="arrivee" required value="{{ old('arrivee') }}"
+                    placeholder="Ex: Aéroport Charles de Gaulle, Paris"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
+                @error('arrivee')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Date -->
+            <div>
+                <label for="date" class="block text-sm font-medium text-gray-700">Date *</label>
+                <input type="date" name="date" id="date" required value="{{ old('date') }}" min="{{ date('Y-m-d') }}"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
+                @error('date')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Heure -->
+            <div>
+                <label for="heure" class="block text-sm font-medium text-gray-700">Heure *</label>
+                <input type="time" name="heure" id="heure" required value="{{ old('heure') }}"
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
+                @error('heure')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Nombre de passagers -->
+            <div>
+                <label for="passagers" class="block text-sm font-medium text-gray-700">Nombre de passagers *</label>
+                <select name="passagers" id="passagers" required
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
+                    <option value="">Nombre de personnes</option>
+                    @for($i = 1; $i <= 8; $i++) <option value="{{ $i }}" {{ old('passagers')==$i ? 'selected' : '' }}>{{
+                        $i }} personne{{ $i > 1 ? 's' : '' }}</option>
+                        @endfor
                 </select>
-                @error('vehicle_id')
+                @error('passagers')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
@@ -83,44 +126,30 @@
                 @enderror
             </div>
 
-            <!-- Dates -->
+            <!-- Informations client -->
             <div>
-                <label for="start_date" class="block text-sm font-medium text-gray-700">Date de début *</label>
-                <input type="date" name="start_date" id="start_date" required value="{{ old('start_date') }}"
-                    min="{{ date('Y-m-d') }}"
+                <label for="nom" class="block text-sm font-medium text-gray-700">Nom complet *</label>
+                <input type="text" name="nom" id="nom" required value="{{ old('nom') }}"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                @error('start_date')
+                @error('nom')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label for="end_date" class="block text-sm font-medium text-gray-700">Date de fin *</label>
-                <input type="date" name="end_date" id="end_date" required value="{{ old('end_date') }}"
+                <label for="telephone" class="block text-sm font-medium text-gray-700">Téléphone *</label>
+                <input type="tel" name="telephone" id="telephone" required value="{{ old('telephone') }}"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                @error('end_date')
+                @error('telephone')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
-            <!-- Heure de prise en charge -->
             <div>
-                <label for="pickup_time" class="block text-sm font-medium text-gray-700">Heure de prise en
-                    charge</label>
-                <input type="time" name="pickup_time" id="pickup_time" value="{{ old('pickup_time') }}"
+                <label for="email" class="block text-sm font-medium text-gray-700">Email *</label>
+                <input type="email" name="email" id="email" required value="{{ old('email') }}"
                     class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                @error('pickup_time')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <!-- Nombre de passagers -->
-            <div>
-                <label for="passengers" class="block text-sm font-medium text-gray-700">Nombre de passagers</label>
-                <input type="number" name="passengers" id="passengers" min="1" max="20"
-                    value="{{ old('passengers', 1) }}"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                @error('passengers')
+                @error('email')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
@@ -145,38 +174,16 @@
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
-
-            <!-- Lieux -->
-            <div>
-                <label for="pickup_location" class="block text-sm font-medium text-gray-700">Lieu de prise en
-                    charge</label>
-                <input type="text" name="pickup_location" id="pickup_location" value="{{ old('pickup_location') }}"
-                    placeholder="Adresse complète"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                @error('pickup_location')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div>
-                <label for="dropoff_location" class="block text-sm font-medium text-gray-700">Lieu de
-                    restitution/dépose</label>
-                <input type="text" name="dropoff_location" id="dropoff_location" value="{{ old('dropoff_location') }}"
-                    placeholder="Adresse complète"
-                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">
-                @error('dropoff_location')
-                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </div>
         </div>
 
-        <!-- Demandes spéciales -->
+        <!-- Instructions -->
         <div class="mt-6">
-            <label for="special_requests" class="block text-sm font-medium text-gray-700">Demandes spéciales</label>
-            <textarea name="special_requests" id="special_requests" rows="3"
-                placeholder="Informations supplémentaires, préférences, etc."
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">{{ old('special_requests') }}</textarea>
-            @error('special_requests')
+            <label for="instructions" class="block text-sm font-medium text-gray-700">Instructions
+                supplémentaires</label>
+            <textarea name="instructions" id="instructions" rows="3"
+                placeholder="Informations spécifiques pour le chauffeur..."
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-djok-yellow focus:ring-djok-yellow">{{ old('instructions') }}</textarea>
+            @error('instructions')
             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
             @enderror
         </div>
@@ -197,46 +204,31 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-    const typeSelect = document.getElementById('type');
-    const vehicleField = document.getElementById('vehicle-field');
-    const vehicleSelect = document.getElementById('vehicle_id');
-
-    function toggleVehicleField() {
-        if (typeSelect.value === 'location') {
-            vehicleField.style.display = 'block';
-            vehicleSelect.required = true;
-        } else {
-            vehicleField.style.display = 'block'; // Toujours affiché mais optionnel
-            vehicleSelect.required = false;
+        // Gestion de la date
+        const dateInput = document.getElementById('date');
+        if (dateInput) {
+            dateInput.min = new Date().toISOString().split('T')[0];
         }
-    }
 
-    // Initial state
-    toggleVehicleField();
+        // Validation des montants
+        const depositInput = document.getElementById('deposit_amount');
+        const totalInput = document.getElementById('total_amount');
 
-    // Listen for changes
-    typeSelect.addEventListener('change', toggleVehicleField);
+        if (depositInput && totalInput) {
+            depositInput.addEventListener('input', function() {
+                if (parseFloat(this.value) > parseFloat(totalInput.value)) {
+                    this.value = totalInput.value;
+                }
+            });
+        }
 
-    // Gestion de la date de fin
-    const startDateInput = document.getElementById('start_date');
-    const endDateInput = document.getElementById('end_date');
-
-    startDateInput.addEventListener('change', function() {
-        endDateInput.min = this.value;
-        if (endDateInput.value && endDateInput.value < this.value) {
-            endDateInput.value = this.value;
+        // Gestion de la date de fin (même que date de début pour VTC)
+        const dateField = document.getElementById('date');
+        if (dateField) {
+            dateField.addEventListener('change', function() {
+                // Pour VTC, start_date et end_date sont identiques
+            });
         }
     });
-
-    // Validation des montants
-    const totalAmountInput = document.getElementById('total_amount');
-    const depositAmountInput = document.getElementById('deposit_amount');
-
-    depositAmountInput.addEventListener('input', function() {
-        if (parseFloat(this.value) > parseFloat(totalAmountInput.value)) {
-            this.value = totalAmountInput.value;
-        }
-    });
-});
 </script>
 @endsection

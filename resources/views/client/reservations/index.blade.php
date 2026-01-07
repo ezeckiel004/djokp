@@ -172,130 +172,131 @@
     <div class="px-4 py-3 border-t border-gray-200 sm:px-6">
         {{ $reservations->links() }}
     </div>
-    @endif
+</div>
 
-    <!-- Stats -->
-    <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="px-4 py-5 sm:p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-yellow-100 rounded-md p-3">
-                        <i class="fas fa-clock text-yellow-600 text-xl"></i>
-                    </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">
-                                En attente
-                            </dt>
-                            <dd class="text-lg font-medium text-gray-900">
-                                {{ $reservations->where('status', 'pending')->count() }}
-                            </dd>
-                        </dl>
-                    </div>
+<!-- Stats -->
+<div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-4">
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0 bg-yellow-100 rounded-md p-3">
+                    <i class="fas fa-clock text-yellow-600 text-xl"></i>
                 </div>
-            </div>
-        </div>
-
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="px-4 py-5 sm:p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-green-100 rounded-md p-3">
-                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
-                    </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">
-                                Confirmées
-                            </dt>
-                            <dd class="text-lg font-medium text-gray-900">
-                                {{ $reservations->where('status', 'confirmed')->count() }}
-                            </dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="px-4 py-5 sm:p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-blue-100 rounded-md p-3">
-                        <i class="fas fa-spinner text-blue-600 text-xl"></i>
-                    </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">
-                                En cours
-                            </dt>
-                            <dd class="text-lg font-medium text-gray-900">
-                                {{ $reservations->where('status', 'in_progress')->count() }}
-                            </dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="px-4 py-5 sm:p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-gray-100 rounded-md p-3">
-                        <i class="fas fa-flag-checkered text-gray-600 text-xl"></i>
-                    </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">
-                                Terminées
-                            </dt>
-                            <dd class="text-lg font-medium text-gray-900">
-                                {{ $reservations->where('status', 'completed')->count() }}
-                            </dd>
-                        </dl>
-                    </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">
+                            En attente
+                        </dt>
+                        <dd class="text-lg font-medium text-gray-900">
+                            {{ $reservations->where('status', 'pending')->count() }}
+                        </dd>
+                    </dl>
                 </div>
             </div>
         </div>
     </div>
-    @endsection
 
-    @push('styles')
-    <style>
-        .pagination {
-            display: flex;
-            justify-content: center;
-            list-style: none;
-            padding: 0;
-        }
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0 bg-green-100 rounded-md p-3">
+                    <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">
+                            Confirmées
+                        </dt>
+                        <dd class="text-lg font-medium text-gray-900">
+                            {{ $reservations->where('status', 'confirmed')->count() }}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        .pagination li {
-            margin: 0 2px;
-        }
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0 bg-blue-100 rounded-md p-3">
+                    <i class="fas fa-spinner text-blue-600 text-xl"></i>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">
+                            En cours
+                        </dt>
+                        <dd class="text-lg font-medium text-gray-900">
+                            {{ $reservations->where('status', 'in_progress')->count() }}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        .pagination li a,
-        .pagination li span {
-            padding: 8px 12px;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
-            color: #374151;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0 bg-gray-100 rounded-md p-3">
+                    <i class="fas fa-flag-checkered text-gray-600 text-xl"></i>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">
+                            Terminées
+                        </dt>
+                        <dd class="text-lg font-medium text-gray-900">
+                            {{ $reservations->where('status', 'completed')->count() }}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
+@endsection
 
-        .pagination li a:hover {
-            background-color: #f3f4f6;
-            border-color: #d1d5db;
-        }
+@push('styles')
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        list-style: none;
+        padding: 0;
+    }
 
-        .pagination li.active span {
-            background-color: #f59e0b;
-            border-color: #f59e0b;
-            color: white;
-        }
+    .pagination li {
+        margin: 0 2px;
+    }
 
-        .pagination li.disabled span {
-            color: #9ca3af;
-            background-color: #f9fafb;
-            border-color: #e5e7eb;
-        }
-    </style>
-    @endpush
+    .pagination li a,
+    .pagination li span {
+        padding: 8px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        color: #374151;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .pagination li a:hover {
+        background-color: #f3f4f6;
+        border-color: #d1d5db;
+    }
+
+    .pagination li.active span {
+        background-color: #f59e0b;
+        border-color: #f59e0b;
+        color: white;
+    }
+
+    .pagination li.disabled span {
+        color: #9ca3af;
+        background-color: #f9fafb;
+        border-color: #e5e7eb;
+    }
+</style>
+@endpush
