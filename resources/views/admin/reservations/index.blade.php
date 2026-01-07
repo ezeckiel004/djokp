@@ -2,7 +2,7 @@
 
 @section('title', 'Gestion des réservations')
 
-@section('page-title', 'Réservations de véhicules')
+@section('page-title', 'Réservations VTC')
 
 @section('content')
 <div class="bg-white shadow rounded-lg overflow-hidden">
@@ -115,27 +115,73 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($reservations as $reservation)
+                @php
+                // LOGIQUE AMÉLIORÉE : Déterminer si c'est un client enregistré ou public
+                $hasUserRelation = $reservation->relationLoaded('user') && $reservation->user !== null;
+                $hasUserId = !is_null($reservation->user_id) && $reservation->user_id > 0;
+                $isRegisteredClient = $hasUserRelation || $hasUserId;
+
+                // Déterminer le nom du client (priorité aux champs de formulaire public)
+                $clientName = $reservation->nom ?? ($reservation->user->name ?? 'Client non enregistré');
+                $clientEmail = $reservation->email ?? ($reservation->user->email ?? 'N/A');
+                $clientPhone = $reservation->telephone ?? ($reservation->user->phone ?? null);
+
+                // Si le nom vient de l'utilisateur MAIS qu'on a des infos de formulaire public,
+                // c'est probablement une réservation publique
+                if ($reservation->nom && $reservation->email) {
+                // On a des données de formulaire public, donc c'est une réservation publique
+                $isRegisteredClient = false;
+                $clientName = $reservation->nom;
+                $clientEmail = $reservation->email;
+                $clientPhone = $reservation->telephone;
+                }
+
+                $initial = strtoupper(substr($clientName, 0, 1));
+
+                // Recherche textuelle pour le filtrage
+                $searchData = strtolower(
+                $clientName . ' ' .
+                $clientEmail . ' ' .
+                ($clientPhone ?? '') . ' ' .
+                ($reservation->vehicle ? $reservation->vehicle->registration : '') . ' ' .
+                $reservation->id
+                );
+                @endphp
+
                 <tr class="hover:bg-gray-50 reservation-row" data-status="{{ $reservation->status }}"
-                    data-type="{{ $reservation->type }}"
-                    data-search="{{ strtolower($reservation->user->name . ' ' . $reservation->user->email . ' ' . ($reservation->vehicle ? $reservation->vehicle->registration : '') . ' ' . $reservation->id) }}">
+                    data-type="{{ $reservation->type }}" data-search="{{ $searchData }}">
                     <!-- Client -->
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center">
                             <div class="h-10 w-10 rounded-full bg-djok-yellow flex items-center justify-center">
                                 <span class="text-white font-semibold">
-                                    {{ strtoupper(substr($reservation->user->name, 0, 1)) }}
+                                    {{ $initial }}
                                 </span>
                             </div>
                             <div class="ml-4">
                                 <div class="text-sm font-medium text-gray-900">
-                                    {{ $reservation->user->name }}
+                                    {{ $clientName }}
+                                    @if($isRegisteredClient)
+                                    <span class="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
+                                        <i class="fas fa-user-check mr-1"></i>Enregistré
+                                    </span>
+                                    @else
+                                    <span class="ml-2 text-xs bg-gray-100 text-gray-800 px-2 py-0.5 rounded-full">
+                                        <i class="fas fa-globe mr-1"></i>Public
+                                    </span>
+                                    @endif
                                 </div>
                                 <div class="text-sm text-gray-500">
-                                    {{ $reservation->user->email }}
+                                    {{ $clientEmail }}
                                 </div>
-                                @if($reservation->user->phone)
+                                @if($clientPhone)
                                 <div class="text-xs text-gray-400">
-                                    <i class="fas fa-phone mr-1"></i>{{ $reservation->user->phone }}
+                                    <i class="fas fa-phone mr-1"></i>{{ $clientPhone }}
+                                </div>
+                                @endif
+                                @if($reservation->user_id && $isRegisteredClient)
+                                <div class="text-xs text-blue-600 mt-1">
+                                    <i class="fas fa-id-card mr-1"></i>ID Client: {{ $reservation->user_id }}
                                 </div>
                                 @endif
                             </div>
@@ -151,6 +197,16 @@
                         <div class="text-sm text-gray-500">
                             {{ $reservation->vehicle->registration }}
                         </div>
+                        @elseif($reservation->type_service)
+                        <div class="text-sm font-medium text-gray-900">
+                            {{ ucfirst($reservation->type_service) }}
+                        </div>
+                        @if($reservation->depart && $reservation->arrivee)
+                        <div class="text-sm text-gray-500">
+                            <i class="fas fa-arrow-right mr-1"></i>
+                            {{ Str::limit($reservation->depart, 20) }} → {{ Str::limit($reservation->arrivee, 20) }}
+                        </div>
+                        @endif
                         @else
                         <span class="text-sm text-gray-500 italic">Service sans véhicule</span>
                         @endif
@@ -158,14 +214,25 @@
 
                     <!-- Dates -->
                     <td class="px-6 py-4 whitespace-nowrap">
+                        @if($reservation->date || $reservation->start_date)
                         <div class="text-sm text-gray-900">
                             <i class="fas fa-calendar-alt mr-1 text-gray-400"></i>
+                            @if($reservation->date)
+                            {{ \Carbon\Carbon::parse($reservation->date)->format('d/m/Y') }}
+                            @else
                             {{ $reservation->start_date->format('d/m/Y') }}
+                            @endif
                         </div>
                         <div class="text-xs text-gray-500">
+                            @if($reservation->end_date)
                             <i class="fas fa-arrow-right mr-1"></i>
                             {{ $reservation->end_date->format('d/m/Y') }}
+                            @elseif($reservation->heure)
+                            <i class="fas fa-clock mr-1"></i>
+                            {{ \Carbon\Carbon::parse($reservation->heure)->format('H:i') }}
+                            @endif
                         </div>
+                        @endif
                         @if($reservation->pickup_time)
                         <div class="text-xs text-gray-500 mt-1">
                             <i class="fas fa-clock mr-1"></i>
@@ -176,27 +243,28 @@
 
                     <!-- Type -->
                     <td class="px-6 py-4 whitespace-nowrap">
-                        @switch($reservation->type)
-                        @case('location')
-                        <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                            <i class="fas fa-car mr-1"></i>Location
-                        </span>
-                        @break
-                        @case('vtc_transport')
-                        <span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">
-                            <i class="fas fa-taxi mr-1"></i>VTC
-                        </span>
-                        @break
-                        @case('conciergerie')
-                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
-                            <i class="fas fa-concierge-bell mr-1"></i>Conciergerie
-                        </span>
-                        @break
-                        @endswitch
+                        @php
+                        $typeBadge = match($reservation->type) {
+                        'location' => ['color' => 'blue', 'icon' => 'car', 'label' => 'Location'],
+                        'vtc_transport' => ['color' => 'purple', 'icon' => 'taxi', 'label' => 'VTC'],
+                        'conciergerie' => ['color' => 'green', 'icon' => 'concierge-bell', 'label' => 'Conciergerie'],
+                        default => ['color' => 'gray', 'icon' => 'question', 'label' => $reservation->type_service ??
+                        'Non spécifié'],
+                        };
+                        @endphp
 
-                        @if($reservation->passengers > 1)
+                        <span
+                            class="px-2 py-1 text-xs rounded-full bg-{{ $typeBadge['color'] }}-100 text-{{ $typeBadge['color'] }}-800">
+                            <i class="fas fa-{{ $typeBadge['icon'] }} mr-1"></i>{{ $typeBadge['label'] }}
+                        </span>
+
+                        @php
+                        $passagers = $reservation->passagers ?? $reservation->passengers;
+                        @endphp
+
+                        @if($passagers > 1)
                         <div class="text-xs text-gray-500 mt-1">
-                            <i class="fas fa-users mr-1"></i>{{ $reservation->passengers }} pers.
+                            <i class="fas fa-users mr-1"></i>{{ $passagers }} pers.
                         </div>
                         @endif
                     </td>
@@ -219,51 +287,32 @@
                         <div class="flex flex-col space-y-2">
                             <!-- Badge actuel -->
                             @php
-                            $statusClasses = [
-                            'pending' => 'bg-yellow-100 text-yellow-800 border-yellow-200',
-                            'confirmed' => 'bg-blue-100 text-blue-800 border-blue-200',
-                            'in_progress' => 'bg-purple-100 text-purple-800 border-purple-200',
-                            'completed' => 'bg-green-100 text-green-800 border-green-200',
-                            'cancelled' => 'bg-red-100 text-red-800 border-red-200'
+                            $statusConfig = [
+                            'pending' => ['class' => 'yellow', 'icon' => 'clock', 'label' => 'En attente'],
+                            'confirmed' => ['class' => 'blue', 'icon' => 'check-circle', 'label' => 'Confirmé'],
+                            'in_progress' => ['class' => 'purple', 'icon' => 'car', 'label' => 'En cours'],
+                            'completed' => ['class' => 'green', 'icon' => 'flag-checkered', 'label' => 'Terminé'],
+                            'cancelled' => ['class' => 'red', 'icon' => 'ban', 'label' => 'Annulé']
                             ];
 
-                            $statusIcons = [
-                            'pending' => 'fa-clock',
-                            'confirmed' => 'fa-check-circle',
-                            'in_progress' => 'fa-car',
-                            'completed' => 'fa-flag-checkered',
-                            'cancelled' => 'fa-ban'
-                            ];
-
-                            $statusLabels = [
-                            'pending' => 'En attente',
-                            'confirmed' => 'Confirmé',
-                            'in_progress' => 'En cours',
-                            'completed' => 'Terminé',
-                            'cancelled' => 'Annulé'
-                            ];
+                            $currentStatus = $statusConfig[$reservation->status] ?? $statusConfig['pending'];
                             @endphp
 
                             <span id="status-badge-{{ $reservation->id }}"
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border {{ $statusClasses[$reservation->status] }}">
-                                <i class="fas {{ $statusIcons[$reservation->status] }} mr-1"></i>
-                                {{ $statusLabels[$reservation->status] }}
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border bg-{{ $currentStatus['class'] }}-100 text-{{ $currentStatus['class'] }}-800 border-{{ $currentStatus['class'] }}-200">
+                                <i class="fas fa-{{ $currentStatus['icon'] }} mr-1"></i>
+                                {{ $currentStatus['label'] }}
                             </span>
 
                             <!-- Sélecteur de statut (visible au survol) -->
                             <div class="hidden group-hover:block">
                                 <select data-reservation-id="{{ $reservation->id }}"
                                     class="status-select mt-1 block w-full pl-3 pr-10 py-1 text-xs border-gray-300 focus:outline-none focus:ring-djok-yellow focus:border-djok-yellow rounded-md">
-                                    <option value="pending" {{ $reservation->status == 'pending' ? 'selected' : '' }}>En
-                                        attente</option>
-                                    <option value="confirmed" {{ $reservation->status == 'confirmed' ? 'selected' : ''
-                                        }}>Confirmé</option>
-                                    <option value="in_progress" {{ $reservation->status == 'in_progress' ? 'selected' :
-                                        '' }}>En cours</option>
-                                    <option value="completed" {{ $reservation->status == 'completed' ? 'selected' : ''
-                                        }}>Terminé</option>
-                                    <option value="cancelled" {{ $reservation->status == 'cancelled' ? 'selected' : ''
-                                        }}>Annulé</option>
+                                    @foreach($statusConfig as $key => $config)
+                                    <option value="{{ $key }}" {{ $reservation->status == $key ? 'selected' : '' }}>
+                                        {{ $config['label'] }}
+                                    </option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -286,12 +335,14 @@
                                 <i class="fas fa-edit"></i>
                             </a>
 
-                            <!-- Bouton Facture -->
-                            <button type="button"
+                            <!-- Bouton Facture (si applicable) -->
+                            @if($reservation->status == 'confirmed' || $reservation->status == 'completed')
+                            <button type="button" onclick="generateInvoice({{ $reservation->id }})"
                                 class="text-gray-400 hover:text-green-600 transition-colors duration-200"
                                 title="Générer facture">
                                 <i class="fas fa-file-invoice"></i>
                             </button>
+                            @endif
 
                             <!-- Bouton Supprimer -->
                             <form action="{{ route('admin.reservations.destroy', $reservation) }}" method="POST"
@@ -483,6 +534,12 @@
         row.classList.add('group');
     });
 });
+
+// Fonction pour générer une facture
+function generateInvoice(reservationId) {
+    // Rediriger vers une route de génération de facture
+    window.open(`/admin/reservations/${reservationId}/invoice`, '_blank');
+}
 </script>
 @endpush
 

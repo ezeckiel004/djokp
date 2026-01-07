@@ -17,8 +17,8 @@ use App\Http\Controllers\Admin\NewsletterController as AdminNewsletterController
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\Admin\ParticipantController as AdminParticipantController;
+use App\Http\Controllers\Admin\VehicleCategoryController as AdminVehicleCategoryController;
 use App\Http\Controllers\ProgrammePdfController;
-
 
 Route::middleware(['auth', 'can:access-admin-dashboard'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
@@ -65,6 +65,9 @@ Route::middleware(['auth', 'can:access-admin-dashboard'])->prefix('admin')->name
 
     // Gestion des articles du blog
     Route::resource('articles', AdminArticleController::class);
+
+    // Gestion des catégories de véhicules
+    Route::resource('vehicle-categories', AdminVehicleCategoryController::class);
 
     // Profil admin
     Route::prefix('profile')->name('profile.')->group(function () {

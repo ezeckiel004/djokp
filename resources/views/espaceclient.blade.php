@@ -84,6 +84,16 @@
         .tab-transition {
             transition: all 0.3s ease-in-out;
         }
+
+        /* Style pour l'œil du mot de passe */
+        .password-toggle {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: #3b82f6;
+        }
     </style>
 </head>
 
@@ -134,11 +144,17 @@
                     </div>
 
                     <!-- Mot de passe -->
-                    <div>
-                        <x-input-label for="password" value="Mot de passe" />
-                        <x-text-input id="password" type="password" name="password"
-                            class="block mt-1 w-full text-lg py-4 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent form-input"
-                            required autocomplete="current-password" />
+                    <div class="relative">
+                        <x-input-label for="password_login" value="Mot de passe" />
+                        <div class="relative">
+                            <x-text-input id="password_login" type="password" name="password"
+                                class="block mt-1 w-full text-lg py-4 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent form-input pr-12"
+                                required autocomplete="current-password" />
+                            <button type="button" onclick="togglePassword('password_login', 'eye-icon-login')"
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 password-toggle">
+                                <i id="eye-icon-login" class="far fa-eye text-gray-500 text-lg"></i>
+                            </button>
+                        </div>
                         <x-input-error :messages="$errors->get('password')" class="mt-2" />
                     </div>
 
@@ -217,18 +233,32 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
+                        <div class="relative">
                             <x-input-label for="password" value="Mot de passe *" />
-                            <x-text-input id="password" type="password" name="password"
-                                class="block mt-1 w-full text-lg py-4 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent form-input"
-                                required autocomplete="new-password" />
+                            <div class="relative">
+                                <x-text-input id="password" type="password" name="password"
+                                    class="block mt-1 w-full text-lg py-4 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent form-input pr-12"
+                                    required autocomplete="new-password" />
+                                <button type="button" onclick="togglePassword('password', 'eye-icon-password')"
+                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 password-toggle">
+                                    <i id="eye-icon-password" class="far fa-eye text-gray-500 text-lg"></i>
+                                </button>
+                            </div>
                             <x-input-error :messages="$errors->get('password')" class="mt-2" />
                         </div>
-                        <div>
+
+                        <div class="relative">
                             <x-input-label for="password_confirmation" value="Confirmation *" />
-                            <x-text-input id="password_confirmation" type="password" name="password_confirmation"
-                                class="block mt-1 w-full text-lg py-4 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent form-input"
-                                required autocomplete="new-password" />
+                            <div class="relative">
+                                <x-text-input id="password_confirmation" type="password" name="password_confirmation"
+                                    class="block mt-1 w-full text-lg py-4 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent form-input pr-12"
+                                    required autocomplete="new-password" />
+                                <button type="button"
+                                    onclick="togglePassword('password_confirmation', 'eye-icon-confirm')"
+                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 password-toggle">
+                                    <i id="eye-icon-confirm" class="far fa-eye text-gray-500 text-lg"></i>
+                                </button>
+                            </div>
                             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                         </div>
                     </div>
@@ -386,6 +416,24 @@
                 element.style.animationDelay = `${index * 0.2}s`;
             });
         });
+
+        // Fonction pour basculer l'affichage du mot de passe
+        function togglePassword(inputId, iconId) {
+            const passwordInput = document.getElementById(inputId);
+            const eyeIcon = document.getElementById(iconId);
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+                eyeIcon.classList.add('text-blue-500');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.remove('text-blue-500');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
     </script>
 </body>
 

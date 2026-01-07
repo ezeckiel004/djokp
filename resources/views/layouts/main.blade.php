@@ -112,7 +112,7 @@
             animation: fadeIn 1s ease-out forwards;
         }
 
-        /* Styles pour les boutons flottants - Style sobre */
+        /* Styles pour les boutons flottants */
         .floating-buttons-container {
             position: fixed;
             bottom: 30px;
@@ -127,21 +127,23 @@
         .certification-btn {
             background: rgba(var(--gold-rgb), 0.9);
             color: black;
-            padding: 14px 24px;
-            border-radius: 8px;
+            padding: 14px;
+            border-radius: 50%;
             font-weight: 600;
             font-size: 14px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(var(--gold-rgb), 0.5);
-            cursor: not-allowed;
+            cursor: pointer;
             opacity: 0.9;
             transition: all 0.3s ease;
             white-space: nowrap;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 55px;
+            width: 60px;
+            height: 60px;
             backdrop-filter: blur(10px);
+            position: relative;
         }
 
         .certification-btn:hover {
@@ -151,44 +153,53 @@
         }
 
         .certification-btn i {
-            margin-right: 10px;
-            font-size: 18px;
+            font-size: 24px;
         }
 
-        .icon-buttons-container {
-            display: flex;
-            gap: 15px;
-        }
-
-        .icon-btn {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            cursor: not-allowed;
-            opacity: 0.9;
+        .certification-text {
+            position: absolute;
+            background: rgba(var(--gold-rgb), 0.95);
+            color: black;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            visibility: hidden;
             transition: all 0.3s ease;
-            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(var(--gold-rgb), 0.5);
             backdrop-filter: blur(10px);
+            z-index: 1;
         }
 
-        .icon-btn:hover {
+        /* Quand le texte est activé par double clic */
+        .certification-text.active {
             opacity: 1;
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            visibility: visible;
+            transform: translateY(-50%);
         }
 
-        .whatsapp-btn {
-            background: rgba(37, 211, 102, 0.9);
+        /* Quand on survole le bouton (comportement d'origine) */
+        .certification-btn:hover .certification-text:not(.active) {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(-50%);
         }
 
-        .contact-btn {
-            background: rgba(var(--gold-rgb), 0.9);
+        .certification-text:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -8px;
+            transform: translateY(-50%);
+            border-left: 8px solid rgba(var(--gold-rgb), 0.95);
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
         }
 
         /* Responsive pour les boutons flottants */
@@ -197,36 +208,6 @@
                 display: none !important;
                 /* Cacher sur mobile */
             }
-
-            /* Conserver les anciens styles pour référence */
-            /*
-            .floating-buttons-container {
-                bottom: 20px;
-                right: 15px;
-                gap: 10px;
-            }
-
-            .certification-btn {
-                padding: 12px 18px;
-                font-size: 12px;
-                min-height: 50px;
-            }
-
-            .certification-btn i {
-                font-size: 16px;
-                margin-right: 8px;
-            }
-
-            .icon-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 20px;
-            }
-
-            .icon-buttons-container {
-                gap: 10px;
-            }
-            */
         }
 
         @media (min-width: 769px) {
@@ -244,20 +225,19 @@
             }
 
             .certification-btn {
-                padding: 10px 16px;
-                font-size: 11px;
-                min-height: 45px;
+                width: 50px;
+                height: 50px;
+                padding: 12px;
             }
 
             .certification-btn i {
-                font-size: 15px;
-                margin-right: 6px;
+                font-size: 20px;
             }
 
-            .icon-buttons-container {
-                width: 100%;
-                justify-content: flex-end;
-                gap: 10px;
+            .certification-text {
+                padding: 10px 16px;
+                font-size: 12px;
+                right: 60px;
             }
         }
 
@@ -265,30 +245,29 @@
             .floating-buttons-container {
                 bottom: 15px;
                 right: 10px;
-                gap: 8px;
             }
 
             .certification-btn {
-                padding: 8px 12px;
-                font-size: 10px;
-                min-height: 40px;
-                border-radius: 6px;
-            }
-
-            .certification-btn span {
-                white-space: normal;
-                line-height: 1.2;
+                width: 45px;
+                height: 45px;
+                padding: 10px;
             }
 
             .certification-btn i {
-                font-size: 14px;
-                margin-right: 5px;
+                font-size: 18px;
             }
 
-            .icon-btn {
-                width: 45px;
-                height: 45px;
-                font-size: 18px;
+            .certification-text {
+                padding: 8px 12px;
+                font-size: 11px;
+                right: 50px;
+            }
+
+            .certification-text:after {
+                right: -6px;
+                border-left: 6px solid rgba(var(--gold-rgb), 0.95);
+                border-top: 6px solid transparent;
+                border-bottom: 6px transparent;
             }
 
             .section-title {
@@ -329,33 +308,26 @@
     @include('layouts.newsletter-section')
     @include('layouts.footer')
 
-    <!-- Boutons flottants - Cachés sur mobile avec hidden md:flex -->
+    <!-- Bouton flottant unique - Caché sur mobile avec hidden md:flex -->
     <div class="floating-buttons-container hidden md:flex">
-        <!-- Bouton Certification -->
-        <button class="certification-btn" disabled
-            title="Téléchargez notre certification officielle (Disponible prochainement)">
+        <!-- Bouton Certification unique -->
+        <button class="certification-btn" title="Téléchargez notre certification officielle">
             <i class="fas fa-download"></i>
-            <span>Téléchargez notre certification</span>
+            <div class="certification-text" id="certificationText">
+                Téléchargez notre certification
+            </div>
         </button>
-
-        <!-- Conteneur pour les icônes -->
-        <div class="icon-buttons-container">
-            <!-- WhatsApp -->
-            <button class="icon-btn whatsapp-btn" disabled title="WhatsApp (Disponible prochainement)">
-                <i class="fab fa-whatsapp"></i>
-            </button>
-
-            <!-- Contact -->
-            <a href="{{ route('contact') }}" class="icon-btn contact-btn" title="Contactez-nous">
-                <i class="fas fa-address-book"></i>
-            </a>
-        </div>
     </div>
 
     <script>
         // Scripts pour les boutons flottants
         document.addEventListener('DOMContentLoaded', function() {
             const floatingButtons = document.querySelector('.floating-buttons-container');
+            const certificationBtn = document.querySelector('.certification-btn');
+            const certificationText = document.getElementById('certificationText');
+
+            // Variable pour suivre l'état d'affichage du texte
+            let isTextVisible = false;
 
             // Fonction pour ajuster la position selon la taille de l'écran
             function adjustButtonPosition() {
@@ -397,6 +369,45 @@
                     }, 100);
                 }
             }, 500);
+
+            // Gestion du double clic sur le bouton certification
+            if (certificationBtn) {
+                let clickCount = 0;
+                let clickTimer;
+
+                certificationBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    clickCount++;
+
+                    if (clickCount === 1) {
+                        // Premier clic - on attend le second
+                        clickTimer = setTimeout(function() {
+                            // Si un seul clic - RIEN (alerte enlevée)
+                            clickCount = 0;
+                        }, 300); // Délai pour double clic
+                    } else if (clickCount === 2) {
+                        // Double clic - afficher/masquer le texte
+                        clearTimeout(clickTimer);
+                        toggleTextVisibility();
+                        clickCount = 0;
+                    }
+                });
+            }
+
+            // Fonction pour basculer la visibilité du texte
+            function toggleTextVisibility() {
+                if (certificationText) {
+                    isTextVisible = !isTextVisible;
+
+                    if (isTextVisible) {
+                        // Activer le texte
+                        certificationText.classList.add('active');
+                    } else {
+                        // Désactiver le texte
+                        certificationText.classList.remove('active');
+                    }
+                }
+            }
 
             // Gestion du slider avec style sobre (si présent)
             const slides = document.querySelectorAll('.hero-slide');

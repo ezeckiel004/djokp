@@ -37,6 +37,9 @@
 
             // Compteur paiements (AJOUTÉ)
             $pendingPaiementsCount = \App\Models\Paiement::where('status', 'pending')->count();
+
+            // Compteur réservations en attente (AJOUTÉ)
+            $pendingReservationsCount = \App\Models\Reservation::where('status', 'pending')->count();
             @endphp
 
             <!-- Dashboard -->
@@ -143,19 +146,44 @@
                 @endif
             </a>
 
-            <!-- Véhicules -->
-            <a href="{{ route('admin.vehicles.index') }}"
-                class="flex items-center py-3 px-4 rounded-lg hover:bg-gray-700 {{ str_starts_with($currentRoute, 'admin.vehicles') ? 'bg-gray-700' : '' }} mb-2">
-                <i class="fas fa-car w-5 mr-3 text-center"></i>
-                <span>Véhicules</span>
-            </a>
+            <!-- SECTION VÉHICULES -->
+            <div class="mb-4 mt-4 pt-4 border-t border-gray-700">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-4">Véhicules</p>
 
-            <!-- Réservations Location (NOUVEAU) -->
-            <a href="{{ route('admin.location-reservations.index') }}"
-                class="flex items-center py-3 px-4 rounded-lg hover:bg-gray-700 {{ str_starts_with($currentRoute, 'admin.location-reservations') ? 'bg-gray-700' : '' }} mb-2">
-                <i class="fas fa-calendar-check w-5 mr-3 text-center"></i>
-                <span>Réservations Location</span>
-            </a>
+                <!-- Véhicules -->
+                <a href="{{ route('admin.vehicles.index') }}"
+                    class="flex items-center py-3 px-4 rounded-lg hover:bg-gray-700 {{ str_starts_with($currentRoute, 'admin.vehicles') ? 'bg-gray-700' : '' }} mb-2">
+                    <i class="fas fa-car w-5 mr-3 text-center"></i>
+                    <span>Véhicules</span>
+                </a>
+
+                <!-- Catégories de véhicules -->
+                <a href="{{ route('admin.vehicle-categories.index') }}"
+                    class="flex items-center py-3 px-4 rounded-lg hover:bg-gray-700 {{ str_starts_with($currentRoute, 'admin.vehicle-categories') ? 'bg-gray-700' : '' }} mb-2">
+                    <i class="fas fa-tags w-5 mr-3 text-center"></i>
+                    <span>Catégories véhicules</span>
+                </a>
+
+                <!-- Réservations Location -->
+                <a href="{{ route('admin.location-reservations.index') }}"
+                    class="flex items-center py-3 px-4 rounded-lg hover:bg-gray-700 {{ str_starts_with($currentRoute, 'admin.location-reservations') ? 'bg-gray-700' : '' }} mb-2">
+                    <i class="fas fa-calendar-check w-5 mr-3 text-center"></i>
+                    <span>Réservations Location</span>
+                </a>
+
+                <!-- RÉSERVATIONS VTC - NOUVEAU LIEN -->
+                <a href="{{ route('admin.reservations.index') }}"
+                    class="flex items-center py-3 px-4 rounded-lg hover:bg-gray-700 {{ str_starts_with($currentRoute, 'admin.reservations') ? 'bg-gray-700' : '' }} mb-2">
+                    <i class="fas fa-taxi w-5 mr-3 text-center"></i>
+                    <span class="flex-1">Réservations VTC</span>
+                    @if($pendingReservationsCount > 0)
+                    <span
+                        class="bg-yellow-500 text-white text-xs rounded-full px-2 py-1 min-w-6 text-center animate-pulse">
+                        {{ $pendingReservationsCount }}
+                    </span>
+                    @endif
+                </a>
+            </div>
 
             <!-- NEWSLETTER - SECTION AJOUTÉE -->
             <div class="mb-4 mt-4 pt-4 border-t border-gray-700">
@@ -316,6 +344,9 @@
 
             // Compteur paiements pour mobile (AJOUTÉ)
             $pendingPaiementsCount = \App\Models\Paiement::where('status', 'pending')->count();
+
+            // Compteur réservations pour mobile (AJOUTÉ)
+            $pendingReservationsCount = \App\Models\Reservation::where('status', 'pending')->count();
             @endphp
 
             <!-- Les mêmes liens que le sidebar desktop -->
@@ -428,20 +459,40 @@
                 @endif
             </a>
 
-            <a href="{{ route('admin.vehicles.index') }}"
-                class="flex items-center py-3 px-4 rounded-lg hover:bg-gray-700 {{ str_starts_with($currentRoute, 'admin.vehicles') ? 'bg-gray-700' : '' }} mb-2"
-                @click="sidebarOpen = false">
-                <i class="fas fa-car w-5 mr-3 text-center"></i>
-                <span>Véhicules</span>
-            </a>
+            <!-- SECTION VÉHICULES MOBILE -->
+            <div class="mb-4 mt-4 pt-4 border-t border-gray-700">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 px-4">Véhicules</p>
 
-            <!-- Réservations Location (NOUVEAU - Mobile) -->
-            <a href="{{ route('admin.location-reservations.index') }}"
-                class="flex items-center py-3 px-4 rounded-lg hover:bg-gray-700 {{ str_starts_with($currentRoute, 'admin.location-reservations') ? 'bg-gray-700' : '' }} mb-2"
-                @click="sidebarOpen = false">
-                <i class="fas fa-calendar-check w-5 mr-3 text-center"></i>
-                <span>Réservations Location</span>
-            </a>
+                <!-- Véhicules Mobile -->
+                <a href="{{ route('admin.vehicles.index') }}"
+                    class="flex items-center py-3 px-4 rounded-lg hover:bg-gray-700 {{ str_starts_with($currentRoute, 'admin.vehicles') ? 'bg-gray-700' : '' }} mb-2"
+                    @click="sidebarOpen = false">
+                    <i class="fas fa-car w-5 mr-3 text-center"></i>
+                    <span>Véhicules</span>
+                </a>
+
+                <!-- Réservations Location Mobile -->
+                <a href="{{ route('admin.location-reservations.index') }}"
+                    class="flex items-center py-3 px-4 rounded-lg hover:bg-gray-700 {{ str_starts_with($currentRoute, 'admin.location-reservations') ? 'bg-gray-700' : '' }} mb-2"
+                    @click="sidebarOpen = false">
+                    <i class="fas fa-calendar-check w-5 mr-3 text-center"></i>
+                    <span>Réservations Location</span>
+                </a>
+
+                <!-- RÉSERVATIONS VTC MOBILE - NOUVEAU LIEN -->
+                <a href="{{ route('admin.reservations.index') }}"
+                    class="flex items-center py-3 px-4 rounded-lg hover:bg-gray-700 {{ str_starts_with($currentRoute, 'admin.reservations') ? 'bg-gray-700' : '' }} mb-2"
+                    @click="sidebarOpen = false">
+                    <i class="fas fa-taxi w-5 mr-3 text-center"></i>
+                    <span class="flex-1">Réservations VTC</span>
+                    @if($pendingReservationsCount > 0)
+                    <span
+                        class="bg-yellow-500 text-white text-xs rounded-full px-2 py-1 min-w-6 text-center animate-pulse">
+                        {{ $pendingReservationsCount }}
+                    </span>
+                    @endif
+                </a>
+            </div>
 
             <!-- NEWSLETTER MOBILE - SECTION AJOUTÉE -->
             <div class="mb-4 mt-4 pt-4 border-t border-gray-700">

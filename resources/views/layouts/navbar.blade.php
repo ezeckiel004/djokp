@@ -5,6 +5,14 @@
         <div class="phone">
             <i class="fa-solid fa-phone"></i> 06.99.16.44.55
         </div>
+        <div class="social-top">
+            <i class="fa-brands fa-facebook-f"></i>
+            <i class="fa-brands fa-instagram"></i>
+            <i class="fa-brands fa-youtube"></i>
+            <!-- X personnalisé au lieu de Font Awesome -->
+            <span class="custom-x-icon">𝕏</span>
+            <i class="fa-brands fa-tiktok"></i>
+        </div>
     </div>
 
     <!-- Logo -->
@@ -63,12 +71,12 @@
         <div class="auth-links">
             @auth
             <a href="{{ url('/user/dashboard') }}" class="dashboard-link">
-                <i class="fas fa-tachometer-alt"></i> DASHBOARD
+                <i class="fa-solid fa-tachometer-alt"></i> DASHBOARD
             </a>
             @else
             @if (Route::has('register'))
             <a href="{{ route('espaceclient') }}" class="client-btn">
-                <i class="fas fa-user-shield"></i> ESPACE CLIENT
+                <i class="fa-solid fa-user-shield"></i> ESPACE CLIENT
             </a>
             @endif
             @endauth
@@ -78,19 +86,29 @@
 
     <!-- Mobile Menu Button -->
     <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu mobile">
-        <i class="fas fa-bars"></i>
+        <i class="fa-solid fa-bars"></i>
     </button>
 
     <!-- Mobile Menu -->
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-content">
+            <!-- Social Icons in Mobile Menu -->
+            <div class="mobile-social-top">
+                <i class="fa-brands fa-facebook-f"></i>
+                <i class="fa-brands fa-instagram"></i>
+                <i class="fa-brands fa-youtube"></i>
+                <!-- X personnalisé pour mobile -->
+                <span class="custom-x-icon">𝕏</span>
+                <i class="fa-brands fa-tiktok"></i>
+            </div>
+
             <a href="{{ url('/') }}" class="mobile-link">ACCUEIL</a>
             <a href="{{ route('about') }}" class="mobile-link">A PROPOS</a>
 
             <!-- Formations Mobile -->
             <div class="mobile-dropdown">
                 <button class="mobile-dropdown-btn" data-target="formations-dropdown">
-                    FORMATIONS <i class="fas fa-chevron-down"></i>
+                    FORMATIONS <i class="fa-solid fa-chevron-down"></i>
                 </button>
                 <div class="mobile-dropdown-content" id="formations-dropdown">
                     <a href="{{ route('formation') }}" class="mobile-sub-link">Formation VTC</a>
@@ -102,7 +120,7 @@
             <!-- Services Mobile -->
             <div class="mobile-dropdown">
                 <button class="mobile-dropdown-btn" data-target="services-dropdown">
-                    NOS SERVICES <i class="fas fa-chevron-down"></i>
+                    NOS SERVICES <i class="fa-solid fa-chevron-down"></i>
                 </button>
                 <div class="mobile-dropdown-content" id="services-dropdown">
                     <a href="{{ route('reservation') }}" class="mobile-sub-link">VTC & Transport</a>
@@ -118,11 +136,11 @@
             <div class="mobile-auth">
                 @auth
                 <a href="{{ url('/user/dashboard') }}" class="mobile-dashboard">
-                    <i class="fas fa-tachometer-alt"></i> DASHBOARD
+                    <i class="fa-solid fa-tachometer-alt"></i> DASHBOARD
                 </a>
                 @else
                 <a href="{{ route('espaceclient') }}" class="mobile-client-btn">
-                    <i class="fas fa-user-shield"></i> ESPACE CLIENT
+                    <i class="fa-solid fa-user-shield"></i> ESPACE CLIENT
                 </a>
                 @endauth
             </div>
@@ -159,7 +177,7 @@
     /* Header Top */
     .header-top {
         display: flex;
-        justify-content: flex-start;
+        justify-content: space-between;
         align-items: center;
         width: 100%;
     }
@@ -175,6 +193,81 @@
         display: flex;
         align-items: center;
         gap: 8px;
+    }
+
+    /* Social Icons Top */
+    .social-top {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .social-top i,
+    .social-top .custom-x-icon {
+        color: #caa24d;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+    }
+
+    .social-top i:hover,
+    .social-top .custom-x-icon:hover {
+        opacity: 0.7;
+        transform: translateY(-2px);
+    }
+
+    /* X personnalisé - Style élégant */
+    .custom-x-icon {
+        font-family: "Segoe UI", "Arial", sans-serif;
+        font-weight: 600;
+        font-size: 18px !important;
+        color: #caa24d;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        line-height: 1;
+        transform: translateY(-1px);
+    }
+
+    /* Mobile Social Icons */
+    .mobile-social-top {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .mobile-social-top i,
+    .mobile-social-top .custom-x-icon {
+        color: #caa24d;
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+    }
+
+    .mobile-social-top i:hover,
+    .mobile-social-top .custom-x-icon:hover {
+        opacity: 0.7;
+    }
+
+    /* X personnalisé pour mobile */
+    .mobile-social-top .custom-x-icon {
+        font-size: 22px !important;
+        font-weight: 600;
     }
 
     /* Logo Container */
@@ -237,7 +330,7 @@
         background: #caa24d;
     }
 
-    /* Desktop Dropdown - CORRECTIONS */
+    /* Desktop Dropdown */
     .dropdown {
         position: relative;
         z-index: 1002;
@@ -275,7 +368,6 @@
         pointer-events: auto;
     }
 
-    /* Garder le dropdown ouvert quand on est dessus */
     .dropdown-menu:hover {
         opacity: 1 !important;
         visibility: visible !important;
@@ -562,7 +654,8 @@
     @media (max-width: 768px) {
 
         .desktop-nav,
-        .auth-section {
+        .auth-section,
+        .social-top {
             display: none;
         }
 
@@ -589,6 +682,10 @@
         .mobile-menu-content {
             padding: 100px 20px 30px;
         }
+
+        .mobile-social-top {
+            display: flex;
+        }
     }
 
     @media (max-width: 640px) {
@@ -610,6 +707,15 @@
             right: 15px;
             width: 40px;
             height: 40px;
+        }
+
+        .mobile-social-top {
+            gap: 15px;
+        }
+
+        .mobile-social-top i,
+        .mobile-social-top .custom-x-icon {
+            font-size: 18px;
         }
     }
 
@@ -637,27 +743,15 @@
         .mobile-menu-btn i {
             font-size: 20px;
         }
-    }
 
-    /* Correction pour les dropdowns qui se ferment trop vite */
-    .dropdown-menu {
-        pointer-events: auto;
-    }
+        .mobile-social-top {
+            gap: 12px;
+        }
 
-    /* Ajouter une marge entre le dropdown et le lien parent */
-    .dropdown-toggle::after {
-        display: none;
-    }
-
-    /* Assurer que le dropdown reste ouvert pendant la transition */
-    .dropdown-menu::before {
-        content: '';
-        position: absolute;
-        top: -10px;
-        left: 0;
-        right: 0;
-        height: 10px;
-        background: transparent;
+        .mobile-social-top i,
+        .mobile-social-top .custom-x-icon {
+            font-size: 16px;
+        }
     }
 </style>
 
@@ -726,129 +820,25 @@
         });
     });
 
-    // Fermer le menu mobile en cliquant en dehors
-    mobileMenu.addEventListener('click', function(e) {
-        if (e.target === mobileMenu) {
-            mobileMenu.classList.remove('active');
-            mobileMenuIcon.classList.remove('fa-times');
-            mobileMenuIcon.classList.add('fa-bars');
-            document.body.style.overflow = '';
-        }
-    });
+    // Gestion des icônes sociales (clics)
+    const socialIcons = document.querySelectorAll('.social-top i, .social-top .custom-x-icon, .mobile-social-top i, .mobile-social-top .custom-x-icon');
+    socialIcons.forEach(icon => {
+        icon.addEventListener('click', function() {
+            let url = '#';
 
-    // Fermer le menu mobile avec la touche Échap
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
-            mobileMenu.classList.remove('active');
-            mobileMenuIcon.classList.remove('fa-times');
-            mobileMenuIcon.classList.add('fa-bars');
-            document.body.style.overflow = '';
-        }
-    });
-
-    // Gestion améliorée des dropdowns desktop
-    dropdowns.forEach(dropdown => {
-        const dropdownMenu = dropdown.querySelector('.dropdown-menu');
-        const dropdownToggle = dropdown.querySelector('.dropdown-toggle');
-
-        // Ouvrir le dropdown au survol
-        dropdown.addEventListener('mouseenter', function() {
-            // Annuler tout timer de fermeture en cours
-            if (dropdownCloseTimeout) {
-                clearTimeout(dropdownCloseTimeout);
-                dropdownCloseTimeout = null;
+            if (this.classList.contains('fa-facebook-f')) {
+                url = 'https://facebook.com/';
+            } else if (this.classList.contains('fa-instagram')) {
+                url = 'https://instagram.com/';
+            } else if (this.classList.contains('fa-youtube')) {
+                url = 'https://youtube.com/';
+            } else if (this.classList.contains('custom-x-icon') || this.classList.contains('fa-x-twitter')) {
+                url = 'https://twitter.com/';
+            } else if (this.classList.contains('fa-tiktok')) {
+                url = 'https://tiktok.com/';
             }
 
-            // Ouvrir le dropdown
-            dropdownMenu.style.opacity = '1';
-            dropdownMenu.style.visibility = 'visible';
-            dropdownMenu.style.transform = 'translateY(0)';
-        });
-
-        // Fermer le dropdown avec un délai
-        dropdown.addEventListener('mouseleave', function() {
-            // Mettre un délai avant de fermer
-            dropdownCloseTimeout = setTimeout(function() {
-                dropdownMenu.style.opacity = '0';
-                dropdownMenu.style.visibility = 'hidden';
-                dropdownMenu.style.transform = 'translateY(-10px)';
-            }, 300); // 300ms de délai
-        });
-
-        // Garder le dropdown ouvert si la souris est dessus
-        dropdownMenu.addEventListener('mouseenter', function() {
-            // Annuler le timer de fermeture
-            if (dropdownCloseTimeout) {
-                clearTimeout(dropdownCloseTimeout);
-                dropdownCloseTimeout = null;
-            }
-
-            // Garder ouvert
-            dropdownMenu.style.opacity = '1';
-            dropdownMenu.style.visibility = 'visible';
-            dropdownMenu.style.transform = 'translateY(0)';
-        });
-
-        // Fermer le dropdown quand on quitte le menu
-        dropdownMenu.addEventListener('mouseleave', function() {
-            dropdownCloseTimeout = setTimeout(function() {
-                dropdownMenu.style.opacity = '0';
-                dropdownMenu.style.visibility = 'hidden';
-                dropdownMenu.style.transform = 'translateY(-10px)';
-            }, 200);
-        });
-
-        // Gérer le clic sur mobile (pour les écrans tactiles)
-        if (window.innerWidth <= 768) {
-            dropdownToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                const isActive = dropdownMenu.style.opacity === '1';
-
-                // Fermer tous les autres dropdowns
-                dropdowns.forEach(otherDropdown => {
-                    if (otherDropdown !== dropdown) {
-                        const otherMenu = otherDropdown.querySelector('.dropdown-menu');
-                        otherMenu.style.opacity = '0';
-                        otherMenu.style.visibility = 'hidden';
-                        otherMenu.style.transform = 'translateY(-10px)';
-                    }
-                });
-
-                // Basculer l'état actuel
-                if (isActive) {
-                    dropdownMenu.style.opacity = '0';
-                    dropdownMenu.style.visibility = 'hidden';
-                    dropdownMenu.style.transform = 'translateY(-10px)';
-                } else {
-                    dropdownMenu.style.opacity = '1';
-                    dropdownMenu.style.visibility = 'visible';
-                    dropdownMenu.style.transform = 'translateY(0)';
-                }
-            });
-        }
-    });
-
-    // Fermer tous les dropdowns desktop quand on clique ailleurs
-    document.addEventListener('click', function(e) {
-        if (window.innerWidth <= 768) {
-            const isDropdown = e.target.closest('.dropdown');
-            if (!isDropdown) {
-                dropdownMenus.forEach(menu => {
-                    menu.style.opacity = '0';
-                    menu.style.visibility = 'hidden';
-                    menu.style.transform = 'translateY(-10px)';
-                });
-            }
-        }
-    });
-
-    // Réinitialiser les timers quand la souris entre dans un dropdown
-    dropdownMenus.forEach(menu => {
-        menu.addEventListener('mouseenter', function() {
-            if (dropdownCloseTimeout) {
-                clearTimeout(dropdownCloseTimeout);
-                dropdownCloseTimeout = null;
-            }
+            window.open(url, '_blank');
         });
     });
 });

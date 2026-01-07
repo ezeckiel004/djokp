@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Vehicle;
+use App\Models\VehicleCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,7 +18,8 @@ class VehicleController extends Controller
 
     public function index()
     {
-        $vehicles = Vehicle::latest()
+        $vehicles = Vehicle::with('vehicleCategory')
+            ->latest()
             ->paginate(15);
 
         return view('admin.vehicles.index', compact('vehicles'));
@@ -25,7 +27,11 @@ class VehicleController extends Controller
 
     public function create()
     {
-        return view('admin.vehicles.create');
+        $categories = VehicleCategory::where('actif', true)
+            ->orderBy('display_name')
+            ->get();
+
+        return view('admin.vehicles.create', compact('categories'));
     }
 
     public function store(Request $request)
@@ -37,7 +43,7 @@ class VehicleController extends Controller
             'model' => 'required|string|max:100',
             'year' => 'required|integer|min:2000|max:' . (date('Y') + 1),
             'color' => 'required|string|max:50',
-            'category' => 'required|in:eco,business,prestige,van',
+            'vehicle_category_id' => 'required|exists:vehicle_categories,id',
             'fuel_type' => 'required|in:essence,diesel,hybrid,electric',
             'seats' => 'required|integer|min:1|max:20',
             'features' => 'nullable|string',
@@ -73,12 +79,17 @@ class VehicleController extends Controller
 
     public function show(Vehicle $vehicle)
     {
+        $vehicle->load('vehicleCategory');
         return view('admin.vehicles.show', compact('vehicle'));
     }
 
     public function edit(Vehicle $vehicle)
     {
-        return view('admin.vehicles.edit', compact('vehicle'));
+        $categories = VehicleCategory::where('actif', true)
+            ->orderBy('display_name')
+            ->get();
+
+        return view('admin.vehicles.edit', compact('vehicle', 'categories'));
     }
 
     public function update(Request $request, Vehicle $vehicle)
@@ -90,7 +101,7 @@ class VehicleController extends Controller
             'model' => 'required|string|max:100',
             'year' => 'required|integer|min:2000|max:' . (date('Y') + 1),
             'color' => 'required|string|max:50',
-            'category' => 'required|in:eco,business,prestige,van',
+            'vehicle_category_id' => 'required|exists:vehicle_categories,id',
             'fuel_type' => 'required|in:essence,diesel,hybrid,electric',
             'seats' => 'required|integer|min:1|max:20',
             'features' => 'nullable|string',

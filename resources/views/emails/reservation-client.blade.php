@@ -104,6 +104,31 @@
             margin: 15px 0;
             border-left: 4px solid #f59e0b;
         }
+
+        .price-breakdown {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .price-total {
+            font-weight: bold;
+            font-size: 18px;
+            color: #f59e0b;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid #f59e0b;
+        }
     </style>
 </head>
 
@@ -123,17 +148,14 @@
                 <h3 style="margin-top: 0; color: #92400e;">Détails de votre réservation :</h3>
 
                 <div class="detail-item">
+                    <div class="detail-label">Référence :</div>
+                    <div class="detail-value">{{ $data['reference'] }}</div>
+                </div>
+
+                <div class="detail-item">
                     <div class="detail-label">Type de service :</div>
                     <div class="detail-value">
-                        @php
-                        $serviceTypes = [
-                        'transfert' => 'Transfert aéroport/gare',
-                        'professionnel' => 'Déplacement professionnel',
-                        'evenement' => 'Événement/mariage',
-                        'mise_disposition' => 'Mise à disposition'
-                        ];
-                        @endphp
-                        {{ $serviceTypes[$data['type_service']] ?? $data['type_service'] }}
+                        {{ $data['type_service_label'] ?? $data['type_service'] }}
                     </div>
                 </div>
 
@@ -155,14 +177,7 @@
                 <div class="detail-item">
                     <div class="detail-label">Véhicule :</div>
                     <div class="detail-value">
-                        @php
-                        $vehicleTypes = [
-                        'eco' => 'Véhicule Éco',
-                        'business' => 'Véhicule Business',
-                        'prestige' => 'Véhicule Prestige'
-                        ];
-                        @endphp
-                        {{ $vehicleTypes[$data['type_vehicule']] ?? $data['type_vehicule'] }}
+                        {{ $data['type_vehicule'] ?? $data['vehicle_category_name'] }}
                     </div>
                 </div>
 
@@ -177,11 +192,56 @@
                     <div class="detail-value">{{ $data['instructions'] }}</div>
                 </div>
                 @endif
+
+                @if(isset($data['calculated_prices']) && isset($data['formatted_prices']))
+                <div class="price-breakdown">
+                    <h4 style="margin-top: 0; color: #92400e;">Détail du prix :</h4>
+
+                    <div class="price-item">
+                        <span>Distance estimée :</span>
+                        <span>{{ $data['formatted_prices']['distance_km'] ?? '0,0' }} km</span>
+                    </div>
+
+                    <div class="price-item">
+                        <span>Prise en charge :</span>
+                        <span>{{ $data['formatted_prices']['prise_charge'] ?? '0,00' }} €</span>
+                    </div>
+
+                    <div class="price-item">
+                        <span>Distance (× prix au km) :</span>
+                        <span>{{ $data['formatted_prices']['distance_price'] ?? '0,00' }} €</span>
+                    </div>
+
+                    <div class="price-item">
+                        <span>Sous-total HT :</span>
+                        <span>{{ $data['formatted_prices']['price_ht'] ?? '0,00' }} €</span>
+                    </div>
+
+                    <div class="price-item">
+                        <span>× Nombre de passagers :</span>
+                        <span>{{ $data['calculated_prices']['passengers'] ?? 1 }}</span>
+                    </div>
+
+                    <div class="price-item">
+                        <span>Total HT :</span>
+                        <span>{{ $data['formatted_prices']['price_ht'] ?? '0,00' }} €</span>
+                    </div>
+
+                    <div class="price-item">
+                        <span>TVA (10%) :</span>
+                        <span>{{ $data['formatted_prices']['tva'] ?? '0,00' }} €</span>
+                    </div>
+
+                    <div class="price-total">
+                        <span>Total TTC :</span>
+                        <span>{{ $data['formatted_prices']['price_ttc'] ?? '0,00' }} €</span>
+                    </div>
+                </div>
+                @endif
             </div>
 
             <div class="highlight">
-                <p><strong>🚗 Votre numéro de réservation :</strong> RES{{ strtoupper(substr(md5($data['email'] .
-                    time()), 0, 8)) }}</p>
+                <p><strong>🚗 Votre numéro de réservation :</strong> {{ $data['reference'] }}</p>
                 <p><small>Conservez ce numéro pour toute communication avec notre service.</small></p>
             </div>
 

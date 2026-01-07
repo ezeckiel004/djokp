@@ -230,46 +230,67 @@
 </section>
 
 <!-- Notre flotte de véhicules premium - Style sobre -->
+<!-- Notre flotte de véhicules premium - Version DYNAMIQUE -->
 <section id="flotte" class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Notre flotte de véhicules
-                premium</h2>
-            <p class="text-gray-400 max-w-3xl mx-auto">Catégories de véhicules disponibles</p>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">
+                Notre flotte de véhicules premium
+            </h2>
+            <p class="text-gray-400 max-w-3xl mx-auto">
+                Découvrez toutes nos catégories de véhicules disponibles à la location
+            </p>
         </div>
 
-        <!-- Véhicules économiques -->
+        @forelse($allCategories as $category)
+        @php
+        $categoryData = $vehiclesByCategory[$category->categorie] ?? null;
+        $vehicles = $categoryData['vehicles'] ?? collect();
+        @endphp
+
         <div class="mb-16">
-            <h3 class="mb-8 text-2xl md:text-3xl font-semibold text-center" style="color: white;">Véhicules économiques
+            <!-- Titre et description dynamiques -->
+            <h3 class="mb-8 text-2xl md:text-3xl font-semibold text-center" style="color: white;">
+                {{ $category->display_name }}
             </h3>
+
+            @if($category->description ?? false)
             <p class="text-center text-gray-400 mb-8 max-w-2xl mx-auto">
-                Idéal pour les nouveaux chauffeurs ou les petits budgets.
+                {{ $category->description }}
             </p>
+            @endif
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                @forelse($ecoVehicles as $vehicle)
+                @forelse($vehicles as $vehicle)
                 <div class="p-4 md:p-6" style="background: #1a1a1a; border: 1px solid #333;">
                     <div class="w-full h-48 md:h-56 overflow-hidden rounded mb-4">
                         @if($vehicle->image_url)
                         <img src="{{ $vehicle->image_url }}" alt="{{ $vehicle->full_name }}"
                             class="w-full h-full object-cover">
                         @else
+                        <!-- Image par défaut selon la catégorie (optionnel) -->
                         <div class="default-car-image">
-                            <img src="https://images.unsplash.com/photo-1621135802920-133df287f89c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80"
-                                alt="Voiture économique" class="w-full h-full object-cover">
+                            <img src="{{ $category->default_image ?? 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80' }}"
+                                alt="{{ $category->display_name }}" class="w-full h-full object-cover">
                         </div>
                         @endif
                     </div>
+
                     <div>
-                        <h4 class="text-lg md:text-xl font-bold mb-2" style="color: white;">{{ $vehicle->full_name }}
+                        <h4 class="text-lg md:text-xl font-bold mb-2" style="color: white;">
+                            {{ $vehicle->full_name }}
                         </h4>
-                        <p class="text-gray-400 mb-3 text-sm">{{ $vehicle->category_fr }} • {{ $vehicle->fuel_type_fr }}
+                        <p class="text-gray-400 mb-3 text-sm">
+                            {{ $vehicle->category_fr }} • {{ $vehicle->fuel_type_fr }}
                         </p>
+
                         <div class="mb-4">
-                            <span class="text-xl md:text-2xl font-bold" style="color: var(--gold);">{{
-                                $vehicle->weekly_rate_formatted }}</span>
+                            <span class="text-xl md:text-2xl font-bold" style="color: var(--gold);">
+                                {{ $vehicle->weekly_rate_formatted }}
+                            </span>
                             <span class="text-gray-500">/semaine</span>
                         </div>
+
                         <div class="flex gap-3">
                             <button onclick="selectVehicle({{ $vehicle->id }}, '{{ addslashes($vehicle->full_name) }}')"
                                 class="flex-1 inline-flex items-center justify-center px-4 py-2 md:py-3 font-semibold transition-all duration-300"
@@ -290,133 +311,26 @@
                         style="background: #1a1a1a; border: 1px solid #333;">
                         <i class="fas fa-car" style="color: #666; font-size: 1.5rem;"></i>
                     </div>
-                    <h4 class="text-lg font-medium mb-2" style="color: white;">Aucun véhicule disponible</h4>
-                    <p class="text-gray-400">Aucun véhicule économique n'est disponible pour le moment.</p>
+                    <h4 class="text-lg font-medium mb-2" style="color: white;">
+                        Aucun véhicule disponible
+                    </h4>
+                    <p class="text-gray-400">
+                        Aucun véhicule dans la catégorie {{ $category->display_name }} pour le moment.
+                    </p>
                 </div>
                 @endforelse
             </div>
         </div>
 
-        <!-- Véhicules confort / business -->
-        <div class="mb-16">
-            <h3 class="mb-8 text-2xl md:text-3xl font-semibold text-center" style="color: white;">Véhicules confort /
-                business</h3>
-            <p class="text-center text-gray-400 mb-8 max-w-2xl mx-auto">
-                Parfait pour les VTC expérimentés ou les transferts professionnels.
+        @empty
+        <div class="text-center py-20">
+            <p class="text-gray-400 text-lg">
+                Aucune catégorie de véhicule n'est actuellement disponible.
             </p>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                @forelse($businessVehicles as $vehicle)
-                <div class="p-4 md:p-6" style="background: #1a1a1a; border: 1px solid #333;">
-                    <div class="w-full h-48 md:h-56 overflow-hidden rounded mb-4">
-                        @if($vehicle->image_url)
-                        <img src="{{ $vehicle->image_url }}" alt="{{ $vehicle->full_name }}"
-                            class="w-full h-full object-cover">
-                        @else
-                        <div class="default-car-image">
-                            <img src="https://images.unsplash.com/photo-1617814076666-1dedaf7c4cbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80"
-                                alt="Voiture business" class="w-full h-full object-cover">
-                        </div>
-                        @endif
-                    </div>
-                    <div>
-                        <h4 class="text-lg md:text-xl font-bold mb-2" style="color: white;">{{ $vehicle->full_name }}
-                        </h4>
-                        <p class="text-gray-400 mb-3 text-sm">{{ $vehicle->category_fr }} • {{ $vehicle->fuel_type_fr }}
-                        </p>
-                        <div class="mb-4">
-                            <span class="text-xl md:text-2xl font-bold" style="color: var(--gold);">{{
-                                $vehicle->weekly_rate_formatted }}</span>
-                            <span class="text-gray-500">/semaine</span>
-                        </div>
-                        <div class="flex gap-3">
-                            <button onclick="selectVehicle({{ $vehicle->id }}, '{{ addslashes($vehicle->full_name) }}')"
-                                class="flex-1 inline-flex items-center justify-center px-4 py-2 md:py-3 font-semibold transition-all duration-300"
-                                style="background: var(--gold); color: black;">
-                                Sélectionner
-                            </button>
-                            <a href="{{ route('vehicle.details', $vehicle->id) }}"
-                                class="flex-1 inline-flex items-center justify-center px-4 py-2 md:py-3 font-semibold transition-all duration-300"
-                                style="background: #111; color: white; border: 1px solid #333;">
-                                Détails
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                @empty
-                <div class="col-span-3 text-center py-12">
-                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
-                        style="background: #1a1a1a; border: 1px solid #333;">
-                        <i class="fas fa-car" style="color: #666; font-size: 1.5rem;"></i>
-                    </div>
-                    <h4 class="text-lg font-medium mb-2" style="color: white;">Aucun véhicule disponible</h4>
-                    <p class="text-gray-400">Aucun véhicule business n'est disponible pour le moment.</p>
-                </div>
-                @endforelse
-            </div>
         </div>
-
-        <!-- Véhicules prestige -->
-        <div class="mb-16">
-            <h3 class="mb-8 text-2xl md:text-3xl font-semibold text-center" style="color: white;">Véhicules prestige
-            </h3>
-            <p class="text-center text-gray-400 mb-8 max-w-2xl mx-auto">
-                Le luxe à portée de main.
-            </p>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                @forelse($prestigeVehicles as $vehicle)
-                <div class="p-4 md:p-6" style="background: #1a1a1a; border: 1px solid #333;">
-                    <div class="w-full h-48 md:h-56 overflow-hidden rounded mb-4">
-                        @if($vehicle->image_url)
-                        <img src="{{ $vehicle->image_url }}" alt="{{ $vehicle->full_name }}"
-                            class="w-full h-full object-cover">
-                        @else
-                        <div class="default-car-image">
-                            <img src="https://images.unsplash.com/photo-1563720223485-8d84e8a6e9e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80"
-                                alt="Voiture prestige" class="w-full h-full object-cover">
-                        </div>
-                        @endif
-                    </div>
-                    <div>
-                        <h4 class="text-lg md:text-xl font-bold mb-2" style="color: white;">{{ $vehicle->full_name }}
-                        </h4>
-                        <p class="text-gray-400 mb-3 text-sm">{{ $vehicle->category_fr }} • {{ $vehicle->fuel_type_fr }}
-                        </p>
-                        <div class="mb-4">
-                            <span class="text-xl md:text-2xl font-bold" style="color: var(--gold);">{{
-                                $vehicle->weekly_rate_formatted }}</span>
-                            <span class="text-gray-500">/semaine</span>
-                        </div>
-                        <div class="flex gap-3">
-                            <button onclick="selectVehicle({{ $vehicle->id }}, '{{ addslashes($vehicle->full_name) }}')"
-                                class="flex-1 inline-flex items-center justify-center px-4 py-2 md:py-3 font-semibold transition-all duration-300"
-                                style="background: var(--gold); color: black;">
-                                Sélectionner
-                            </button>
-                            <a href="{{ route('vehicle.details', $vehicle->id) }}"
-                                class="flex-1 inline-flex items-center justify-center px-4 py-2 md:py-3 font-semibold transition-all duration-300"
-                                style="background: #111; color: white; border: 1px solid #333;">
-                                Détails
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                @empty
-                <div class="col-span-3 text-center py-12">
-                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4"
-                        style="background: #1a1a1a; border: 1px solid #333;">
-                        <i class="fas fa-car" style="color: #666; font-size: 1.5rem;"></i>
-                    </div>
-                    <h4 class="text-lg font-medium mb-2" style="color: white;">Aucun véhicule disponible</h4>
-                    <p class="text-gray-400">Aucun véhicule prestige n'est disponible pour le moment.</p>
-                </div>
-                @endforelse
-            </div>
-        </div>
+        @endforelse
     </div>
 </section>
-
 <!-- Services inclus - Style sobre -->
 <section class="py-16" style="background: #000;">
     <div class="container mx-auto px-4 md:px-6">

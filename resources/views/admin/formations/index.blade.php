@@ -124,6 +124,31 @@
                                     </span>
                                     @endif
                                 </div>
+                                <!-- Indicateurs d'associations -->
+                                @php
+                                $paidPaiementsCount = $formation->paiements()->where('status', 'paid')->count();
+                                $activeUserFormationsCount = $formation->userFormations()->where('status',
+                                'active')->count();
+                                $totalPaiementsCount = $formation->paiements()->count();
+                                $totalUserFormationsCount = $formation->userFormations()->count();
+                                @endphp
+
+                                @if($paidPaiementsCount > 0 || $activeUserFormationsCount > 0)
+                                <div class="text-xs text-amber-600 flex items-center space-x-2 mt-1">
+                                    @if($paidPaiementsCount > 0)
+                                    <span class="flex items-center">
+                                        <i class="fas fa-euro-sign mr-1 text-xs"></i>
+                                        {{ $paidPaiementsCount }} paiement(s)
+                                    </span>
+                                    @endif
+                                    @if($activeUserFormationsCount > 0)
+                                    <span class="flex items-center">
+                                        <i class="fas fa-users mr-1 text-xs"></i>
+                                        {{ $activeUserFormationsCount }} inscrit(s)
+                                    </span>
+                                    @endif
+                                </div>
+                                @endif
                             </div>
                         </div>
                     </td>
@@ -264,15 +289,24 @@
                             </a>
                             @endif
 
-                            <!-- Supprimer -->
+                            <!-- Supprimer avec confirmation améliorée -->
                             <form action="{{ route('admin.formations.destroy', $formation) }}" method="POST"
-                                class="inline"
-                                onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette formation ?');">
+                                class="inline" onsubmit="return confirmDeleteFormation({{
+                                    json_encode([
+                                        'id' => $formation->id,
+                                        'title' => $formation->title,
+                                        'paid_paiements_count' => $formation->paiements()->where('status', 'paid')->count(),
+                                        'total_paiements_count' => $formation->paiements()->count(),
+                                        'active_user_formations_count' => $formation->userFormations()->where('status', 'active')->count(),
+                                        'total_user_formations_count' => $formation->userFormations()->count(),
+                                        'media_count' => $formation->media()->count()
+                                    ])
+                                }}, event)">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"
                                     class="text-red-600 hover:text-red-900 transition-colors duration-200 group p-2 rounded-lg bg-red-50 hover:bg-red-100"
-                                    title="Supprimer">
+                                    title="Supprimer définitivement">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
@@ -369,6 +403,48 @@
                 user_type: 'admin'
             })
         }).catch(error => console.log('Tracking error:', error));
+    }
+
+    function confirmDeleteFormation(formationData, event) {
+        event.preventDefault();
+
+        // Message de base
+        let message = `Êtes-vous sûr de vouloir supprimer la formation "${formationData.title}" ?\n\n`;
+
+        // Ajouter les détails des données associées
+        if (formationData.paid_paiements_count > 0 || formationData.active_user_formations_count > 0) {
+            message += "⚠️ ATTENTION : Cette formation a des données associées :\n\n";
+
+            if (formationData.paid_paiements_count > 0) {
+                message += `• ${formationData.paid_paiements_count} paiement(s) validé(s)\n`;
+            }
+            if (formationData.active_user_formations_count > 0) {
+                message += `• ${formationData.active_user_formations_count} utilisateur(s) inscrit(s)\n`;
+            }
+            if (formationData.total_paiements_count > 0) {
+                message += `• ${formationData.total_paiements_count} paiement(s) au total\n`;
+            }
+            if (formationData.total_user_formations_count > 0) {
+                message += `• ${formationData.total_user_formations_count} inscription(s) au total\n`;
+            }
+            if (formationData.media_count > 0) {
+                message += `• ${formationData.media_count} média(s) (fichiers PDF/vidéos)\n`;
+            }
+
+            message += "\n🔴 TOUTES CES DONNÉES SERONT SUPPRIMÉES DÉFINITIVEMENT !\n\n";
+            message += "Cette action est IRREVERSIBLE.\n\n";
+            message += "Êtes-vous ABSOLUMENT SÛR de vouloir continuer ?";
+        } else {
+            message += "Cette action est irréversible.\n\nConfirmez-vous la suppression ?";
+        }
+
+        // Demander confirmation
+        if (confirm(message)) {
+            // Si confirmation, soumettre le formulaire
+            event.target.closest('form').submit();
+        }
+
+        return false;
     }
 </script>
 @endpush

@@ -146,21 +146,20 @@
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Catégorisation</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="category" class="block text-sm font-medium text-gray-700">
+                                <label for="vehicle_category_id" class="block text-sm font-medium text-gray-700">
                                     Catégorie *
                                 </label>
-                                <select name="category" id="category" required
+                                <select name="vehicle_category_id" id="vehicle_category_id" required
                                     class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-djok-yellow focus:border-djok-yellow sm:text-sm">
-                                    <option value="eco" {{ old('category', $vehicle->category) == 'eco' ? 'selected' :
-                                        '' }}>Éco</option>
-                                    <option value="business" {{ old('category', $vehicle->category) == 'business' ?
-                                        'selected' : '' }}>Business</option>
-                                    <option value="prestige" {{ old('category', $vehicle->category) == 'prestige' ?
-                                        'selected' : '' }}>Prestige</option>
-                                    <option value="van" {{ old('category', $vehicle->category) == 'van' ? 'selected' :
-                                        '' }}>Van</option>
+                                    <option value="">Sélectionnez une catégorie</option>
+                                    @foreach($categories as $category)
+                                    <option value="{{ $category->id }}" {{ old('vehicle_category_id', $vehicle->
+                                        vehicle_category_id) == $category->id ? 'selected' : '' }}>
+                                        {{ $category->display_name }} ({{ $category->categorie }})
+                                    </option>
+                                    @endforeach
                                 </select>
-                                @error('category')
+                                @error('vehicle_category_id')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
@@ -278,36 +277,36 @@
 @push('scripts')
 <script>
     // Aperçu de la nouvelle image
-document.getElementById('image').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        const previewDiv = document.querySelector('.w-48.h-32');
+    document.getElementById('image').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            const previewDiv = document.querySelector('.w-48.h-32');
 
-        reader.onload = function(e) {
+            reader.onload = function(e) {
+                previewDiv.innerHTML = `
+                    <img src="${e.target.result}" alt="Nouvelle image"
+                         class="w-full h-full object-cover">
+                `;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Réinitialiser l'aperçu si on coche "supprimer l'image"
+    document.getElementById('remove_image').addEventListener('change', function() {
+        if (this.checked) {
+            const previewDiv = document.querySelector('.w-48.h-32');
             previewDiv.innerHTML = `
-                <img src="${e.target.result}" alt="Nouvelle image"
-                     class="w-full h-full object-cover">
+                <div class="w-full h-full flex items-center justify-center">
+                    <div class="text-center">
+                        <i class="fas fa-car text-gray-400 text-3xl mb-2"></i>
+                        <p class="text-xs text-gray-500">Image sera supprimée</p>
+                    </div>
+                </div>
             `;
         }
-        reader.readAsDataURL(file);
-    }
-});
-
-// Réinitialiser l'aperçu si on coche "supprimer l'image"
-document.getElementById('remove_image').addEventListener('change', function() {
-    if (this.checked) {
-        const previewDiv = document.querySelector('.w-48.h-32');
-        previewDiv.innerHTML = `
-            <div class="w-full h-full flex items-center justify-center">
-                <div class="text-center">
-                    <i class="fas fa-car text-gray-400 text-3xl mb-2"></i>
-                    <p class="text-xs text-gray-500">Image sera supprimée</p>
-                </div>
-            </div>
-        `;
-    }
-});
+    });
 </script>
 @endpush
 @endsection

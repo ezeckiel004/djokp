@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Vehicle extends Model
 {
@@ -13,7 +14,7 @@ class Vehicle extends Model
         'model',
         'year',
         'color',
-        'category',
+        'vehicle_category_id',
         'fuel_type',
         'seats',
         'features',
@@ -36,6 +37,22 @@ class Vehicle extends Model
     ];
 
     /**
+     * Relation avec la catégorie du véhicule
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(VehicleCategory::class, 'vehicle_category_id');
+    }
+
+    /**
+     * Alias pour la relation category (pour compatibilité)
+     */
+    public function vehicleCategory(): BelongsTo
+    {
+        return $this->belongsTo(VehicleCategory::class, 'vehicle_category_id');
+    }
+
+    /**
      * Relation avec les réservations de location
      */
     public function locationReservations(): HasMany
@@ -56,13 +73,33 @@ class Vehicle extends Model
      */
     public function getCategoryFrAttribute(): string
     {
-        return match ($this->category) {
-            'eco' => 'Économique',
-            'business' => 'Business / Confort',
-            'prestige' => 'Prestige',
-            'van' => 'Van / Utilitaire',
-            default => ucfirst($this->category),
-        };
+        // Vérifier si la relation est chargée et accessible
+        if ($this->relationLoaded('category')) {
+            $categoryRelation = $this->getRelation('category');
+            if ($categoryRelation instanceof VehicleCategory) {
+                return $categoryRelation->display_name;
+            }
+        }
+
+        // Sinon, retourner une valeur par défaut basée sur l'ID de catégorie
+        return $this->getCategoryDisplayNameFromId();
+    }
+
+    /**
+     * Getter pour le nom de la catégorie (code)
+     */
+    public function getCategoryNameAttribute(): ?string
+    {
+        // Vérifier si la relation est chargée et accessible
+        if ($this->relationLoaded('category')) {
+            $categoryRelation = $this->getRelation('category');
+            if ($categoryRelation instanceof VehicleCategory) {
+                return $categoryRelation->categorie;
+            }
+        }
+
+        // Sinon, essayer de déterminer le nom basé sur l'ID
+        return $this->getCategoryCodeFromId();
     }
 
     /**
@@ -134,11 +171,12 @@ class Vehicle extends Model
      */
     public function getCategoryColorAttribute(): string
     {
-        return match ($this->category) {
-            'eco' => 'bg-blue-100 text-blue-800',
-            'business' => 'bg-purple-100 text-purple-800',
-            'prestige' => 'bg-yellow-100 text-yellow-800',
-            'van' => 'bg-gray-100 text-gray-800',
+        // Utiliser directement l'ID de catégorie pour éviter les références circulaires
+        return match ($this->vehicle_category_id) {
+            1 => 'bg-blue-100 text-blue-800', // eco
+            2 => 'bg-purple-100 text-purple-800', // business
+            3 => 'bg-yellow-100 text-yellow-800', // prestige
+            4 => 'bg-gray-100 text-gray-800', // van
             default => 'bg-gray-100 text-gray-800',
         };
     }
@@ -152,15 +190,15 @@ class Vehicle extends Model
             return asset('storage/' . $this->image);
         }
 
-        // Images par défaut par catégorie
+        // Images par défaut par ID de catégorie (éviter les références circulaires)
         $defaultImages = [
-            'eco' => 'https://images.unsplash.com/photo-1621135802920-133df287f89c?w=600&h=400&fit=crop',
-            'business' => 'https://images.unsplash.com/photo-1617814076666-1dedaf7c4cbe?w=600&h=400&fit=crop',
-            'prestige' => 'https://images.unsplash.com/photo-1563720223485-8d84e8a6e9e7?w=600&h=400&fit=crop',
-            'van' => 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&h=400&fit=crop',
+            1 => 'https://images.unsplash.com/photo-1621135802920-133df287f89c?w=600&h=400&fit=crop', // eco
+            2 => 'https://images.unsplash.com/photo-1617814076666-1dedaf7c4cbe?w=600&h=400&fit=crop', // business
+            3 => 'https://images.unsplash.com/photo-1563720223485-8d84e8a6e9e7?w=600&h=400&fit=crop', // prestige
+            4 => 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&h=400&fit=crop', // van
         ];
 
-        return $defaultImages[$this->category] ?? $defaultImages['eco'];
+        return $defaultImages[$this->vehicle_category_id] ?? $defaultImages[1];
     }
 
     /**
@@ -180,11 +218,27 @@ class Vehicle extends Model
     }
 
     /**
-     * Scope pour les véhicules par catégorie
+     * Scope pour les véhicules par catégorie (via ID ou nom)
      */
     public function scopeByCategory($query, $category)
     {
-        return $query->where('category', $category);
+        // Si c'est un ID, on filtre directement
+        if (is_numeric($category)) {
+            return $query->where('vehicle_category_id', $category);
+        }
+
+        // Si c'est un nom de catégorie, on fait une jointure
+        return $query->whereHas('category', function ($q) use ($category) {
+            $q->where('categorie', $category);
+        });
+    }
+
+    /**
+     * Scope pour les véhicules par ID de catégorie
+     */
+    public function scopeByCategoryId($query, $categoryId)
+    {
+        return $query->where('vehicle_category_id', $categoryId);
     }
 
     /**
@@ -192,7 +246,9 @@ class Vehicle extends Model
      */
     public function scopeEconomiques($query)
     {
-        return $query->where('category', 'eco');
+        return $query->whereHas('category', function ($q) {
+            $q->where('categorie', 'eco');
+        });
     }
 
     /**
@@ -200,7 +256,9 @@ class Vehicle extends Model
      */
     public function scopeBusiness($query)
     {
-        return $query->where('category', 'business');
+        return $query->whereHas('category', function ($q) {
+            $q->where('categorie', 'business');
+        });
     }
 
     /**
@@ -208,7 +266,19 @@ class Vehicle extends Model
      */
     public function scopePrestige($query)
     {
-        return $query->where('category', 'prestige');
+        return $query->whereHas('category', function ($q) {
+            $q->where('categorie', 'prestige');
+        });
+    }
+
+    /**
+     * Scope pour les véhicules vans
+     */
+    public function scopeVans($query)
+    {
+        return $query->whereHas('category', function ($q) {
+            $q->where('categorie', 'van');
+        });
     }
 
     /**
@@ -359,8 +429,6 @@ class Vehicle extends Model
         return $modelsMapping[$key] ?? $this->full_name;
     }
 
-    // Dans app/Models/Vehicle.php
-
     /**
      * Getter pour les features formatées en chaîne
      */
@@ -379,5 +447,117 @@ class Vehicle extends Model
         }
 
         return '';
+    }
+
+    /**
+     * Getter pour les tarifs de catégorie
+     */
+    public function getCategoryPricingAttribute(): ?array
+    {
+        // Ne pas essayer d'accéder à la relation ici pour éviter les références circulaires
+        return null;
+    }
+
+    /**
+     * Accessor pour l'ancienne colonne category (lecture seule)
+     * NE PAS UTILISER CET ACCESSOR - DÉPRÉCIÉ
+     * Cette méthode est délicate car elle surcharge la relation
+     */
+    public function getCategoryAttribute()
+    {
+        // Si quelqu'un essaye d'accéder à la relation, retourner la relation
+        if ($this->relationLoaded('category')) {
+            return $this->getRelation('category');
+        }
+
+        // Sinon, pour compatibilité avec l'ancien code, retourner le code de catégorie
+        return $this->getCategoryCodeFromId();
+    }
+
+    /**
+     * Méthode pour obtenir les véhicules similaires
+     */
+    public function similarVehicles($limit = 3)
+    {
+        return self::with('category')
+            ->available()
+            ->where('vehicle_category_id', $this->vehicle_category_id)
+            ->where('id', '!=', $this->id)
+            ->inRandomOrder()
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * Vérifier si le véhicule a une catégorie
+     */
+    public function hasCategory(): bool
+    {
+        return !is_null($this->vehicle_category_id);
+    }
+
+    /**
+     * Obtenir le nom de la marque avec formatage
+     */
+    public function getBrandFormattedAttribute(): string
+    {
+        $brands = [
+            'toyota' => 'Toyota',
+            'peugeot' => 'Peugeot',
+            'renault' => 'Renault',
+            'mercedes' => 'Mercedes-Benz',
+            'volkswagen' => 'Volkswagen',
+            'audi' => 'Audi',
+            'tesla' => 'Tesla',
+            'bmw' => 'BMw',
+        ];
+
+        $brandLower = strtolower($this->brand);
+        return $brands[$brandLower] ?? ucfirst($this->brand);
+    }
+
+    /**
+     * Obtenir l'année du modèle
+     */
+    public function getModelYearAttribute(): string
+    {
+        return $this->year . ' - ' . ($this->year + 1);
+    }
+
+    /**
+     * Méthode helper pour obtenir le nom d'affichage d'une catégorie depuis l'ID
+     */
+    private function getCategoryDisplayNameFromId(): string
+    {
+        return match ($this->vehicle_category_id) {
+            1 => 'Économique',
+            2 => 'Business / Confort',
+            3 => 'Prestige',
+            4 => 'Van / Utilitaire',
+            default => 'Non catégorisé',
+        };
+    }
+
+    /**
+     * Méthode helper pour obtenir le code de catégorie depuis l'ID
+     */
+    private function getCategoryCodeFromId(): ?string
+    {
+        return match ($this->vehicle_category_id) {
+            1 => 'eco',
+            2 => 'business',
+            3 => 'prestige',
+            4 => 'van',
+            default => null,
+        };
+    }
+
+    /**
+     * Pour éviter les problèmes, on peut aussi désactiver complètement l'accessor category
+     * en utilisant une méthode différente
+     */
+    public function getLegacyCategoryAttribute(): ?string
+    {
+        return $this->getCategoryCodeFromId();
     }
 }

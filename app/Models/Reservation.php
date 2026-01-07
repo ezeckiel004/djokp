@@ -10,6 +10,7 @@ class Reservation extends Model
     protected $fillable = [
         'user_id',
         'vehicle_id',
+        'vehicle_category_id',
         'type',
         'start_date',
         'end_date',
@@ -35,7 +36,18 @@ class Reservation extends Model
         'instructions',
         'source',
         'reference',
-        'is_vtc_booking'
+        'is_vtc_booking',
+        // Nouveaux champs pour les calculs
+        'depart_lat',
+        'depart_lng',
+        'arrivee_lat',
+        'arrivee_lng',
+        'calculated_prise_charge',
+        'calculated_distance_price',
+        'calculated_price_ht',
+        'calculated_tva',
+        'calculated_price_ttc',
+        'calculated_distance_km',
     ];
 
     protected $casts = [
@@ -47,6 +59,17 @@ class Reservation extends Model
         'deposit_amount' => 'decimal:2',
         'passengers' => 'integer',
         'is_vtc_booking' => 'boolean',
+        // Nouveaux casts
+        'depart_lat' => 'decimal:8',
+        'depart_lng' => 'decimal:8',
+        'arrivee_lat' => 'decimal:8',
+        'arrivee_lng' => 'decimal:8',
+        'calculated_prise_charge' => 'decimal:2',
+        'calculated_distance_price' => 'decimal:2',
+        'calculated_price_ht' => 'decimal:2',
+        'calculated_tva' => 'decimal:2',
+        'calculated_price_ttc' => 'decimal:2',
+        'calculated_distance_km' => 'decimal:2',
     ];
 
     /**
@@ -82,6 +105,11 @@ class Reservation extends Model
         return $this->belongsTo(Vehicle::class);
     }
 
+    public function vehicleCategory()
+    {
+        return $this->belongsTo(VehicleCategory::class);
+    }
+
     /**
      * Scope pour les réservations publiques
      */
@@ -113,6 +141,14 @@ class Reservation extends Model
     public function scopeWithoutAccount($query)
     {
         return $query->whereNull('user_id');
+    }
+
+    /**
+     * Scope pour les réservations avec catégorie de véhicule
+     */
+    public function scopeWithVehicleCategory($query)
+    {
+        return $query->whereNotNull('vehicle_category_id');
     }
 
     /**
@@ -174,5 +210,92 @@ class Reservation extends Model
     public function getIsFromClientAttribute()
     {
         return $this->source === 'client';
+    }
+
+    /**
+     * Get formatted total amount
+     */
+    public function getFormattedTotalAmountAttribute()
+    {
+        return number_format($this->total_amount, 2, ',', ' ') . ' €';
+    }
+
+    /**
+     * Get formatted calculated price HT
+     */
+    public function getFormattedPriceHtAttribute()
+    {
+        return $this->calculated_price_ht
+            ? number_format($this->calculated_price_ht, 2, ',', ' ') . ' €'
+            : null;
+    }
+
+    /**
+     * Get formatted calculated price TTC
+     */
+    public function getFormattedPriceTtcAttribute()
+    {
+        return $this->calculated_price_ttc
+            ? number_format($this->calculated_price_ttc, 2, ',', ' ') . ' €'
+            : null;
+    }
+
+    /**
+     * Get formatted distance
+     */
+    public function getFormattedDistanceAttribute()
+    {
+        return $this->calculated_distance_km
+            ? number_format($this->calculated_distance_km, 1, ',', ' ') . ' km'
+            : null;
+    }
+
+    /**
+     * Get price calculation details
+     */
+    public function getPriceDetailsAttribute()
+    {
+        if (!$this->calculated_price_ht) {
+            return null;
+        }
+
+        return [
+            'prise_charge' => $this->calculated_prise_charge
+                ? number_format($this->calculated_prise_charge, 2, ',', ' ') . ' €'
+                : '0,00 €',
+            'distance_price' => $this->calculated_distance_price
+                ? number_format($this->calculated_distance_price, 2, ',', ' ') . ' €'
+                : '0,00 €',
+            'price_ht' => $this->formatted_price_ht,
+            'tva' => $this->calculated_tva
+                ? number_format($this->calculated_tva, 2, ',', ' ') . ' €'
+                : '0,00 €',
+            'price_ttc' => $this->formatted_price_ttc,
+            'distance_km' => $this->formatted_distance,
+        ];
+    }
+
+    /**
+     * Get full address for departure
+     */
+    public function getFullDepartAddressAttribute()
+    {
+        $address = $this->depart;
+        if ($this->depart_lat && $this->depart_lng) {
+            $address .= " (GPS: {$this->depart_lat}, {$this->depart_lng})";
+        }
+        return $address;
+    }
+
+    /**
+     * Get full address for arrival
+     */
+    public function getFullArriveeAddressAttribute()
+    {
+        $address = $this->arrivee;
+        if ($this->arrivee_lat && $this->arrivee_lng) {
+            $address .= " (GPS: {$this->arrivee_lat}, {$this->arrivee_lng})";
+        }
+        return $address;
     }
 }

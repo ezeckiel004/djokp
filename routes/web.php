@@ -63,9 +63,13 @@ Route::post('/formation-internationale', [FormationInternationaleController::cla
 Route::post('/conciergerie', [ConciergerieController::class, 'store'])->name('conciergerie.store');
 Route::get('/conciergerie/suivi/{reference}', [ConciergerieController::class, 'suivi'])->name('conciergerie.suivi');
 
-// Réservations publiques
+// Réservations VTC - Routes principales
 Route::get('/reservation', [ReservationController::class, 'index'])->name('reservation');
 Route::post('/reservation', [ReservationController::class, 'submit'])->name('reservation.submit');
+
+// API pour calculer le prix (AJAX)
+Route::post('/reservation/calculate-price', [ReservationController::class, 'calculatePriceApi'])
+    ->name('reservation.calculate-price');
 
 // Réservations location
 Route::get('/reservation-location', [LocationReservationController::class, 'create'])

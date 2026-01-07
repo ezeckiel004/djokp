@@ -125,20 +125,20 @@
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Catégorisation</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label for="category" class="block text-sm font-medium text-gray-700">
+                                <label for="vehicle_category_id" class="block text-sm font-medium text-gray-700">
                                     Catégorie *
                                 </label>
-                                <select name="category" id="category" required
+                                <select name="vehicle_category_id" id="vehicle_category_id" required
                                     class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-djok-yellow focus:border-djok-yellow sm:text-sm">
                                     <option value="">Sélectionnez une catégorie</option>
-                                    <option value="eco" {{ old('category')=='eco' ? 'selected' : '' }}>Éco</option>
-                                    <option value="business" {{ old('category')=='business' ? 'selected' : '' }}>
-                                        Business</option>
-                                    <option value="prestige" {{ old('category')=='prestige' ? 'selected' : '' }}>
-                                        Prestige</option>
-                                    <option value="van" {{ old('category')=='van' ? 'selected' : '' }}>Van</option>
+                                    @foreach($categories as $category)
+                                    <option value="{{ $category->id }}" {{ old('vehicle_category_id')==$category->id ?
+                                        'selected' : '' }}>
+                                        {{ $category->display_name }} ({{ $category->categorie }})
+                                    </option>
+                                    @endforeach
                                 </select>
-                                @error('category')
+                                @error('vehicle_category_id')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>

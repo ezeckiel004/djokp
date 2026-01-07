@@ -355,16 +355,15 @@
             personnels
         </p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-16">
             <!-- VTC & Location -->
-            <div class="flex flex-col md:flex-row bg-white text-black min-h-[260px] border-2"
-                style="border-color: var(--gold);">
-                <div class="md:w-1/2 h-56 md:h-auto">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2" style="border-color: var(--gold);">
+                <div class="h-48">
                     <img src="https://images.pexels.com/photos/125779/pexels-photo-125779.jpeg" alt="VTC & Location"
                         class="w-full h-full object-cover">
                 </div>
-                <div class="md:w-1/2 p-8 flex flex-col justify-center text-center">
-                    <h3 class="text-2xl font-bold mb-3">VTC & Location</h3>
+                <div class="p-6 flex flex-col justify-center text-center flex-grow">
+                    <h3 class="text-2xl font-bold mb-3">Reservation VTC</h3>
                     <p class="text-gray-700 mb-6">
                         Services de véhicules haut de gamme, déplacements professionnels et personnels avec chauffeurs
                         expérimentés.
@@ -377,18 +376,39 @@
                             Réserver maintenant
                         </button>
                     </a>
+                </div>
+            </div>
 
+            <!-- Location (Nouvelle carte) -->
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2" style="border-color: var(--gold);">
+                <div class="h-48">
+                    <img src="https://images.pexels.com/photos/164634/pexels-photo-164634.jpeg" alt="Location"
+                        class="w-full h-full object-cover">
+                </div>
+                <div class="p-6 flex flex-col justify-center text-center flex-grow">
+                    <h3 class="text-2xl font-bold mb-3">Location</h3>
+                    <p class="text-gray-700 mb-6">
+                        Location de véhicules de prestige pour vos événements spéciaux, mariages, cérémonies ou
+                        besoins professionnels. Parc varié de luxe.
+                    </p>
+                    <a href="{{ route('location') }}">
+                        <button class="px-8 py-3 font-semibold transition-all duration-300 self-center"
+                            style="background: var(--gold); color: black; border: 2px solid black;"
+                            onmouseover="this.style.background='black'; this.style.color='var(--gold)'; this.style.borderColor='var(--gold)'"
+                            onmouseout="this.style.background='var(--gold)'; this.style.color='black'; this.style.borderColor='black'">
+                            Louer un véhicule
+                        </button>
+                    </a>
                 </div>
             </div>
 
             <!-- Formations -->
-            <div class="flex flex-col md:flex-row bg-white text-black min-h-[260px] border-2"
-                style="border-color: var(--gold);">
-                <div class="md:w-1/2 h-56 md:h-auto">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2" style="border-color: var(--gold);">
+                <div class="h-48">
                     <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg" alt="Formations"
                         class="w-full h-full object-cover">
                 </div>
-                <div class="md:w-1/2 p-8 flex flex-col justify-center text-center">
+                <div class="p-6 flex flex-col justify-center text-center flex-grow">
                     <h3 class="text-2xl font-bold mb-3">Formations</h3>
                     <p class="text-gray-700 mb-6">
                         Formations professionnelles certifiantes pour développer vos compétences et booster votre
@@ -405,17 +425,17 @@
                 </div>
             </div>
 
-            <!-- Entrepreneuriat Afrique -->
-            <div class="flex flex-col md:flex-row bg-white text-black min-h-[260px] border-2"
-                style="border-color: var(--gold);">
-                <div class="md:w-1/2 h-56 md:h-auto">
+            <!-- Formation Internationale -->
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2" style="border-color: var(--gold);">
+                <div class="h-48">
                     <img src="https://images.pexels.com/photos/210182/pexels-photo-210182.jpeg"
                         alt="Formation Internationale" class="w-full h-full object-cover">
                 </div>
-                <div class="md:w-1/2 p-8 flex flex-col justify-center text-center">
+                <div class="p-6 flex flex-col justify-center text-center flex-grow">
                     <h3 class="text-2xl font-bold mb-3">Formation Internationale</h3>
                     <p class="text-gray-700 mb-6">
-                        Formations ouvertes à l’international, combinant expertise mondiale et adaptation aux réalités locales.
+                        Formations ouvertes à l' international, combinant expertise mondiale et adaptation aux réalités
+                        locales.
                     </p>
                     <a href="{{ route('formation.international') }}">
                         <button class="px-8 py-3 font-semibold transition-all duration-300 self-center"
@@ -425,18 +445,39 @@
                             Découvrir
                         </button>
                     </a>
+                </div>
+            </div>
 
+            <!-- Conciergerie (Nouvelle carte) -->
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2" style="border-color: var(--gold);">
+                <div class="h-48">
+                    <img src="https://images.pexels.com/photos/5273464/pexels-photo-5273464.jpeg" alt="Conciergerie"
+                        class="w-full h-full object-cover">
+                </div>
+                <div class="p-6 flex flex-col justify-center text-center flex-grow">
+                    <h3 class="text-2xl font-bold mb-3">Conciergerie</h3>
+                    <p class="text-gray-700 mb-6">
+                        Service de conciergerie personnalisé : réservation de restaurants, organisation d'événements,
+                        assistance personnelle et bien plus encore.
+                    </p>
+                    <a href="{{ route('conciergerie') }}">
+                        <button class="px-8 py-3 font-semibold transition-all duration-300 self-center"
+                            style="background: var(--gold); color: black; border: 2px solid black;"
+                            onmouseover="this.style.background='black'; this.style.color='var(--gold)'; this.style.borderColor='var(--gold)'"
+                            onmouseout="this.style.background='var(--gold)'; this.style.color='black'; this.style.borderColor='black'">
+                            Découvrir nos services
+                        </button>
+                    </a>
                 </div>
             </div>
 
             <!-- Espace Client -->
-            <div class="flex flex-col md:flex-row bg-white text-black min-h-[260px] border-2"
-                style="border-color: var(--gold);">
-                <div class="md:w-1/2 h-56 md:h-auto">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2" style="border-color: var(--gold);">
+                <div class="h-48">
                     <img src="https://images.pexels.com/photos/3768916/pexels-photo-3768916.jpeg" alt="Espace Client"
                         class="w-full h-full object-cover">
                 </div>
-                <div class="md:w-1/2 p-8 flex flex-col justify-center text-center">
+                <div class="p-6 flex flex-col justify-center text-center flex-grow">
                     <h3 class="text-2xl font-bold mb-3">Espace Client</h3>
                     <p class="text-gray-700 mb-6">
                         Connectez-vous à votre espace personnel pour gérer vos réservations, formations et séminaires.
@@ -449,13 +490,11 @@
                             Se connecter
                         </button>
                     </a>
-
                 </div>
             </div>
         </div>
     </div>
 </section>
-
 <!-- Statistics Section -->
 <section id="stats" class="py-20 text-white bg-dark">
     <div class="px-4 mx-auto max-w-7xl">

@@ -14,7 +14,100 @@
         opacity: 1;
         transform: translateY(0);
     }
+
+    .pac-container {
+        z-index: 1051 !important;
+    }
+
+    .price-calculation {
+        background: #1a1a1a;
+        border: 1px solid var(--gold);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        display: none;
+    }
+
+    .price-calculation.show {
+        display: block;
+        animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .price-detail {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid #333;
+    }
+
+    .price-total {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: var(--gold);
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 2px solid var(--gold);
+    }
+
+    .price-note {
+        font-size: 0.875rem;
+        color: #888;
+        margin-top: 0.5rem;
+        font-style: italic;
+    }
+
+    .distance-info {
+        background: #111;
+        padding: 0.75rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--gold);
+    }
+
+    .loading-indicator {
+        display: none;
+        color: var(--gold);
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+
+    .required-field {
+        border: 1px solid #444;
+        transition: border-color 0.3s;
+    }
+
+    .required-field.error {
+        border-color: #f87171;
+    }
+
+    .required-field.valid {
+        border-color: #10b981;
+    }
+
+    .address-hint {
+        font-size: 0.75rem;
+        color: #888;
+        margin-top: 0.25rem;
+    }
 </style>
+
+<!-- Google Maps API -->
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-rvuKIwW9A6E4V8ks-Bj0YoyXII-TsU8&libraries=places&language=fr&region=FR&callback=initAutocomplete">
+</script>
 
 <!-- Hero Section - Style sobre -->
 <header class="relative min-h-screen flex items-center" style="background: #000;">
@@ -334,57 +427,28 @@
             <table class="w-full" style="background: #111; border: 1px solid #333;">
                 <thead>
                     <tr style="background: #000;">
-                        <th class="py-3 px-4 md:px-6 text-left text-white">Trajet</th>
-                        <th class="py-3 px-4 md:px-6 text-center text-white">Éco</th>
-                        <th class="py-3 px-4 md:px-6 text-center text-white">Business</th>
-                        <th class="py-3 px-4 md:px-6 text-center text-white">Prestige</th>
+                        <th class="py-3 px-4 md:px-6 text-left text-white">Catégorie</th>
+                        <th class="py-3 px-4 md:px-6 text-center text-white">Prise en charge</th>
+                        <th class="py-3 px-4 md:px-6 text-center text-white">Prix au km</th>
+                        <th class="py-3 px-4 md:px-6 text-center text-white">Prix minimum</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($vehicleCategories as $category)
+                    @if($category->actif)
                     <tr class="border-b" style="border-color: #333; color: white;">
-                        <td class="py-3 px-4 md:px-6 font-semibold">Paris → Orly</td>
-                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">45 €</td>
-                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">65 €</td>
-                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">90 €</td>
+                        <td class="py-3 px-4 md:px-6 font-semibold">{{ $category->display_name }}</td>
+                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">{{
+                            number_format($category->prise_en_charge, 2, ',', ' ') }} €</td>
+                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">{{
+                            number_format($category->prix_au_km, 2, ',', ' ') }} €</td>
+                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">{{
+                            number_format($category->prix_minimum, 2, ',', ' ') }} €</td>
                     </tr>
-                    <tr class="border-b" style="border-color: #333; color: white;">
-                        <td class="py-3 px-4 md:px-6 font-semibold">Paris → CDG</td>
-                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">60 €</td>
-                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">80 €</td>
-                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">110 €</td>
-                    </tr>
-                    <tr class="border-b" style="border-color: #333; color: white;">
-                        <td class="py-3 px-4 md:px-6 font-semibold">Paris → La Défense</td>
-                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">40 €</td>
-                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">60 €</td>
-                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">85 €</td>
-                    </tr>
-                    <tr style="color: white;">
-                        <td class="py-3 px-4 md:px-6 font-semibold">Paris → Versailles</td>
-                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">55 €</td>
-                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">75 €</td>
-                        <td class="py-3 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">100 €</td>
-                    </tr>
+                    @endif
+                    @endforeach
                 </tbody>
             </table>
-        </div>
-
-        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="p-4 md:p-6 rounded" style="background: #111; border: 1px solid #333;">
-                <h4 class="text-lg font-bold mb-2" style="color: white;">Véhicule Éco</h4>
-                <p class="text-sm text-gray-400 mb-4">Toyota Prius, Renault Talisman</p>
-                <p class="text-gray-300">Idéal pour les déplacements quotidiens</p>
-            </div>
-            <div class="p-4 md:p-6 rounded" style="background: #111; border: 1px solid #333;">
-                <h4 class="text-lg font-bold mb-2" style="color: white;">Véhicule Business</h4>
-                <p class="text-sm text-gray-400 mb-4">Mercedes Classe C, Audi A4</p>
-                <p class="text-gray-300">Parfait pour les rendez-vous professionnels</p>
-            </div>
-            <div class="p-4 md:p-6 rounded" style="background: #111; border: 1px solid #333;">
-                <h4 class="text-lg font-bold mb-2" style="color: white;">Véhicule Prestige</h4>
-                <p class="text-sm text-gray-400 mb-4">Mercedes Classe E, BMW Série 5</p>
-                <p class="text-gray-300">Pour les événements spéciaux et VIP</p>
-            </div>
         </div>
     </div>
 </section>
@@ -440,15 +504,15 @@
                     </div>
                     @endif
 
-                    <form action="{{ route('reservation.submit') }}" method="POST">
+                    <form action="{{ route('reservation.submit') }}" method="POST" id="reservation-form">
                         @csrf
 
                         <div class="space-y-6">
                             <!-- Type de service -->
                             <div>
                                 <label class="block mb-2 font-medium" style="color: #ddd;">Type de service *</label>
-                                <select name="type_service" required class="w-full px-4 py-3 rounded"
-                                    style="background: #111; border: 1px solid #444; color: white;">
+                                <select name="type_service" required class="w-full px-4 py-3 rounded required-field"
+                                    style="background: #111; color: white;">
                                     <option value="" style="color: #666;">Sélectionnez un service</option>
                                     <option value="transfert" {{ old('type_service')=='transfert' ? 'selected' : '' }}
                                         style="color: white;">
@@ -466,21 +530,46 @@
                             </div>
 
                             <!-- Informations du trajet -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                            <div class="space-y-4">
                                 <div>
                                     <label class="block mb-2 font-medium" style="color: #ddd;">Lieu de départ *</label>
-                                    <input type="text" name="depart" required value="{{ old('depart') }}"
-                                        class="w-full px-4 py-3 rounded"
-                                        style="background: #111; border: 1px solid #444; color: white;"
-                                        placeholder="Adresse, aéroport ou gare">
+                                    <input type="text" id="depart" name="depart" required value="{{ old('depart') }}"
+                                        class="w-full px-4 py-3 rounded required-field autocomplete"
+                                        style="background: #111; color: white;"
+                                        placeholder="Ex: 123 Avenue des Champs-Élysées, Paris">
+                                    <input type="hidden" id="depart_lat" name="depart_lat"
+                                        value="{{ old('depart_lat') }}">
+                                    <input type="hidden" id="depart_lng" name="depart_lng"
+                                        value="{{ old('depart_lng') }}">
+                                    <div class="address-hint">Utilisez l'autocomplete pour une meilleure précision</div>
                                 </div>
 
                                 <div>
                                     <label class="block mb-2 font-medium" style="color: #ddd;">Lieu d'arrivée *</label>
-                                    <input type="text" name="arrivee" required value="{{ old('arrivee') }}"
-                                        class="w-full px-4 py-3 rounded"
-                                        style="background: #111; border: 1px solid #444; color: white;"
-                                        placeholder="Adresse, aéroport ou gare">
+                                    <input type="text" id="arrivee" name="arrivee" required value="{{ old('arrivee') }}"
+                                        class="w-full px-4 py-3 rounded required-field autocomplete"
+                                        style="background: #111; color: white;"
+                                        placeholder="Ex: Aéroport Charles de Gaulle, Paris">
+                                    <input type="hidden" id="arrivee_lat" name="arrivee_lat"
+                                        value="{{ old('arrivee_lat') }}">
+                                    <input type="hidden" id="arrivee_lng" name="arrivee_lng"
+                                        value="{{ old('arrivee_lng') }}">
+                                    <div class="address-hint">Utilisez l'autocomplete pour une meilleure précision</div>
+                                </div>
+
+                                <!-- Information distance -->
+                                <div id="distance-info" class="distance-info" style="display: none;">
+                                    <div class="flex justify-between items-center">
+                                        <span style="color: white;">Distance estimée :</span>
+                                        <span id="distance-text" class="font-bold" style="color: var(--gold);"></span>
+                                    </div>
+                                    <div class="flex justify-between items-center mt-2">
+                                        <span style="color: white;">Durée estimée :</span>
+                                        <span id="duration-text" class="font-bold" style="color: var(--gold);"></span>
+                                    </div>
+                                    <div id="loading-distance" class="loading-indicator">
+                                        <i class="fas fa-spinner fa-spin mr-2"></i>Calcul de la distance...
+                                    </div>
                                 </div>
                             </div>
 
@@ -489,16 +578,15 @@
                                 <div>
                                     <label class="block mb-2 font-medium" style="color: #ddd;">Date *</label>
                                     <input type="date" name="date" required value="{{ old('date') }}"
-                                        class="w-full px-4 py-3 rounded"
-                                        style="background: #111; border: 1px solid #444; color: white;"
-                                        min="{{ date('Y-m-d') }}">
+                                        class="w-full px-4 py-3 rounded required-field"
+                                        style="background: #111; color: white;" min="{{ date('Y-m-d') }}">
                                 </div>
 
                                 <div>
                                     <label class="block mb-2 font-medium" style="color: #ddd;">Heure *</label>
                                     <input type="time" name="heure" required value="{{ old('heure') }}"
-                                        class="w-full px-4 py-3 rounded"
-                                        style="background: #111; border: 1px solid #444; color: white;">
+                                        class="w-full px-4 py-3 rounded required-field"
+                                        style="background: #111; color: white;">
                                 </div>
                             </div>
 
@@ -507,26 +595,31 @@
                                 <div>
                                     <label class="block mb-2 font-medium" style="color: #ddd;">Type de véhicule
                                         *</label>
-                                    <select name="type_vehicule" required class="w-full px-4 py-3 rounded"
-                                        style="background: #111; border: 1px solid #444; color: white;">
+                                    <select name="vehicle_category_id" id="vehicle_category_id" required
+                                        class="w-full px-4 py-3 rounded required-field"
+                                        style="background: #111; color: white;">
                                         <option value="" style="color: #666;">Choisir un véhicule</option>
-                                        <option value="eco" {{ old('type_vehicule')=='eco' ? 'selected' : '' }}
+                                        @foreach($vehicleCategories as $category)
+                                        @if($category->actif)
+                                        <option value="{{ $category->id }}"
+                                            data-prise-charge="{{ $category->prise_en_charge }}"
+                                            data-prix-km="{{ $category->prix_au_km }}"
+                                            data-prix-min="{{ $category->prix_minimum }}" {{
+                                            old('vehicle_category_id')==$category->id ? 'selected' : '' }}
                                             style="color: white;">
-                                            Véhicule Éco</option>
-                                        <option value="business" {{ old('type_vehicule')=='business' ? 'selected' : ''
-                                            }} style="color: white;">
-                                            Véhicule Business</option>
-                                        <option value="prestige" {{ old('type_vehicule')=='prestige' ? 'selected' : ''
-                                            }} style="color: white;">
-                                            Véhicule Prestige</option>
+                                            {{ $category->display_name }}
+                                        </option>
+                                        @endif
+                                        @endforeach
                                     </select>
                                 </div>
 
                                 <div>
                                     <label class="block mb-2 font-medium" style="color: #ddd;">Nombre de passagers
                                         *</label>
-                                    <select name="passagers" required class="w-full px-4 py-3 rounded"
-                                        style="background: #111; border: 1px solid #444; color: white;">
+                                    <select name="passagers" id="passagers" required
+                                        class="w-full px-4 py-3 rounded required-field"
+                                        style="background: #111; color: white;">
                                         <option value="" style="color: #666;">Nombre de personnes</option>
                                         <option value="1" {{ old('passagers')=='1' ? 'selected' : '' }}
                                             style="color: white;">
@@ -540,11 +633,82 @@
                                         <option value="4" {{ old('passagers')=='4' ? 'selected' : '' }}
                                             style="color: white;">
                                             4 personnes</option>
-                                        <option value="5+" {{ old('passagers')=='5+' ? 'selected' : '' }}
+                                        <option value="5" {{ old('passagers')=='5' ? 'selected' : '' }}
                                             style="color: white;">
-                                            5+ personnes</option>
+                                            5 personnes</option>
+                                        <option value="6" {{ old('passagers')=='6' ? 'selected' : '' }}
+                                            style="color: white;">
+                                            6 personnes</option>
+                                        <option value="7" {{ old('passagers')=='7' ? 'selected' : '' }}
+                                            style="color: white;">
+                                            7 personnes</option>
+                                        <option value="8" {{ old('passagers')=='8' ? 'selected' : '' }}
+                                            style="color: white;">
+                                            8 personnes</option>
                                     </select>
                                 </div>
+                            </div>
+
+                            <!-- Simulation de prix -->
+                            <div id="price-calculation" class="price-calculation">
+                                <h4 class="font-bold mb-4" style="color: var(--gold);">Simulation du prix</h4>
+
+                                <div class="mb-4 p-3 rounded" style="background: #111; border: 1px solid #333;">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span style="color: #ddd;">Distance estimée :</span>
+                                        <span id="simulation-distance" style="color: white;">0,0 km</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span style="color: #ddd;">Nombre de passagers :</span>
+                                        <span id="simulation-passagers" style="color: white;">1</span>
+                                    </div>
+                                </div>
+
+                                <div class="price-detail">
+                                    <span style="color: #ddd;">Prise en charge :</span>
+                                    <span id="prise-charge" style="color: white;">0,00 €</span>
+                                </div>
+
+                                <div class="price-detail">
+                                    <span style="color: #ddd;">Distance (× prix au km) :</span>
+                                    <span id="prix-distance" style="color: white;">0,00 €</span>
+                                </div>
+
+                                <div class="price-detail">
+                                    <span style="color: #ddd;">Sous-total HT :</span>
+                                    <span id="prix-ht" style="color: white;">0,00 €</span>
+                                </div>
+
+                                <div class="price-detail">
+                                    <span style="color: #ddd;">× Nombre de passagers :</span>
+                                    <span id="multiplicateur-passagers" style="color: white;">1</span>
+                                </div>
+
+                                <div class="price-detail">
+                                    <span style="color: #ddd;">Total HT (après passagers) :</span>
+                                    <span id="prix-ht-total" style="color: white;">0,00 €</span>
+                                </div>
+
+                                <div class="price-detail">
+                                    <span style="color: #ddd;">TVA (10%) :</span>
+                                    <span id="tva" style="color: white;">0,00 €</span>
+                                </div>
+
+                                <div class="price-total">
+                                    <span>Total TTC :</span>
+                                    <span id="prix-ttc">0,00 €</span>
+                                </div>
+
+                                <div class="price-detail">
+                                    <span style="color: #ddd;">Prix minimum garanti :</span>
+                                    <span id="prix-minimum" style="color: var(--gold);">0,00 €</span>
+                                </div>
+
+                                <p class="price-note">
+                                    * Le prix final peut varier en fonction du trafic et de l'itinéraire réel
+                                    <br>
+                                    * Supplément pour siège bébé/réhausseur : 10 €
+                                </p>
                             </div>
 
                             <!-- Informations personnelles -->
@@ -552,30 +716,30 @@
                                 <div>
                                     <label class="block mb-2 font-medium" style="color: #ddd;">Nom complet *</label>
                                     <input type="text" name="nom" required value="{{ old('nom') }}"
-                                        class="w-full px-4 py-3 rounded"
-                                        style="background: #111; border: 1px solid #444; color: white;">
+                                        class="w-full px-4 py-3 rounded required-field"
+                                        style="background: #111; color: white;">
                                 </div>
 
                                 <div>
                                     <label class="block mb-2 font-medium" style="color: #ddd;">Téléphone *</label>
                                     <input type="tel" name="telephone" required value="{{ old('telephone') }}"
-                                        class="w-full px-4 py-3 rounded"
-                                        style="background: #111; border: 1px solid #444; color: white;">
+                                        class="w-full px-4 py-3 rounded required-field"
+                                        style="background: #111; color: white;">
                                 </div>
                             </div>
 
                             <div>
                                 <label class="block mb-2 font-medium" style="color: #ddd;">Email *</label>
                                 <input type="email" name="email" required value="{{ old('email') }}"
-                                    class="w-full px-4 py-3 rounded"
-                                    style="background: #111; border: 1px solid #444; color: white;">
+                                    class="w-full px-4 py-3 rounded required-field"
+                                    style="background: #111; color: white;">
                             </div>
 
                             <div>
                                 <label class="block mb-2 font-medium" style="color: #ddd;">Instructions
                                     supplémentaires</label>
                                 <textarea name="instructions" rows="3" class="w-full px-4 py-3 rounded"
-                                    style="background: #111; border: 1px solid #444; color: white;"
+                                    style="background: #111; color: white;"
                                     placeholder="Informations spécifiques pour le chauffeur...">{{ old('instructions') }}</textarea>
                             </div>
 
@@ -690,137 +854,520 @@
 </section>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Animation au scroll
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, {
-            threshold: 0.1
-        });
+    // Variables globales
+let autocompleteDepart, autocompleteArrivee;
+let directionsService;
+let geocoder;
+let currentDistance = 0;
+let currentCategoryData = null;
+let currentPassengers = 1;
+let calculationTimeout = null;
+let isGoogleMapsLoaded = false;
 
-        document.querySelectorAll('.fade-in').forEach(el => {
-            observer.observe(el);
-        });
+function initAutocomplete() {
+    console.log('Initialisation Google Maps...');
 
-        // Auto-hide du message de succès
-        const successMessage = document.querySelector('[class*="bg-green"]');
-        if (successMessage) {
-            setTimeout(() => {
-                successMessage.style.display = 'none';
-            }, 8000);
+    try {
+        if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            console.error('Google Maps API non chargée');
+            return;
         }
 
-        // Auto-hide du message d'erreur
-        const errorMessage = document.querySelector('[class*="bg-red"]');
-        if (errorMessage) {
-            setTimeout(() => {
-                errorMessage.style.display = 'none';
-            }, 10000);
-        }
+        isGoogleMapsLoaded = true;
 
-        // Smooth scroll pour les ancres
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+        // Options pour l'autocomplete (limité à la France)
+        const options = {
+            componentRestrictions: { country: 'fr' },
+            types: ['geocode', 'establishment'],
+            fields: ['formatted_address', 'geometry', 'name']
+        };
+
+        // Initialiser l'autocomplete pour le départ
+        const departInput = document.getElementById('depart');
+        if (departInput) {
+            autocompleteDepart = new google.maps.places.Autocomplete(departInput, options);
+            autocompleteDepart.addListener('place_changed', function() {
+                const place = autocompleteDepart.getPlace();
+                if (place.geometry) {
+                    document.getElementById('depart_lat').value = place.geometry.location.lat();
+                    document.getElementById('depart_lng').value = place.geometry.location.lng();
+                    departInput.classList.add('valid');
+                    triggerPriceCalculation();
                 }
-            });
-        });
-
-        // Set minimum date for date input
-        const dateInput = document.querySelector('input[name="date"]');
-        if (dateInput) {
-            const today = new Date().toISOString().split('T')[0];
-            dateInput.setAttribute('min', today);
-        }
-
-        // Form validation enhancement
-        const form = document.querySelector('form');
-        if (form) {
-            form.addEventListener('submit', function(e) {
-                const requiredFields = form.querySelectorAll('[required]');
-                let isValid = true;
-
-                requiredFields.forEach(field => {
-                    if (!field.value.trim()) {
-                        isValid = false;
-                        field.style.borderColor = '#f87171';
-                    } else {
-                        field.style.borderColor = '#444';
-                    }
-                });
-
-                // Validation spécifique pour l'email
-                const emailField = form.querySelector('input[name="email"]');
-                if (emailField && emailField.value) {
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(emailField.value)) {
-                        isValid = false;
-                        emailField.style.borderColor = '#f87171';
-                    }
-                }
-
-                // Validation de la date
-                const dateField = form.querySelector('input[name="date"]');
-                if (dateField && dateField.value) {
-                    const selectedDate = new Date(dateField.value);
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-
-                    if (selectedDate < today) {
-                        isValid = false;
-                        dateField.style.borderColor = '#f87171';
-                        alert('La date doit être aujourd\'hui ou une date future.');
-                    }
-                }
-
-                // Validation de l'heure
-                const timeField = form.querySelector('input[name="heure"]');
-                if (timeField && timeField.value) {
-                    const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
-                    if (!timeRegex.test(timeField.value)) {
-                        isValid = false;
-                        timeField.style.borderColor = '#f87171';
-                    }
-                }
-
-                if (!isValid) {
-                    e.preventDefault();
-
-                    // Scroll to first error
-                    const firstError = form.querySelector('[style*="border-color: #f87171"]');
-                    if (firstError) {
-                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        firstError.focus();
-                    }
-                }
-            });
-
-            // Reset field styles on input
-            form.querySelectorAll('input, select, textarea').forEach(field => {
-                field.addEventListener('input', function() {
-                    this.style.borderColor = '#444';
-                });
             });
         }
 
-        // Auto-format du téléphone (optionnel)
-        const phoneInput = document.querySelector('input[name="telephone"]');
-        if (phoneInput) {
-            phoneInput.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                e.target.value = value;
+        // Initialiser l'autocomplete pour l'arrivée
+        const arriveeInput = document.getElementById('arrivee');
+        if (arriveeInput) {
+            autocompleteArrivee = new google.maps.places.Autocomplete(arriveeInput, options);
+            autocompleteArrivee.addListener('place_changed', function() {
+                const place = autocompleteArrivee.getPlace();
+                if (place.geometry) {
+                    document.getElementById('arrivee_lat').value = place.geometry.location.lat();
+                    document.getElementById('arrivee_lng').value = place.geometry.location.lng();
+                    arriveeInput.classList.add('valid');
+                    triggerPriceCalculation();
+                }
             });
+        }
+
+        // Écouter les changements sur le sélecteur de véhicule
+        const vehicleSelect = document.getElementById('vehicle_category_id');
+        if (vehicleSelect) {
+            vehicleSelect.addEventListener('change', function() {
+                this.classList.add('valid');
+                updateCategoryData();
+                triggerPriceCalculation();
+            });
+        }
+
+        // Écouter les changements sur le nombre de passagers
+        const passengersSelect = document.getElementById('passagers');
+        if (passengersSelect) {
+            passengersSelect.addEventListener('change', function() {
+                this.classList.add('valid');
+                currentPassengers = parseInt(this.value) || 1;
+                updatePassengersDisplay();
+                triggerPriceCalculation();
+            });
+        }
+
+        // Initialiser les données de catégorie
+        updateCategoryData();
+
+        console.log('Google Maps Autocomplete initialisé avec succès');
+
+    } catch (error) {
+        console.error('Erreur lors de l\'initialisation de Google Maps:', error);
+    }
+}
+
+function updateCategoryData() {
+    const select = document.getElementById('vehicle_category_id');
+    const selectedOption = select.options[select.selectedIndex];
+
+    if (selectedOption && selectedOption.value) {
+        currentCategoryData = {
+            priseCharge: parseFloat(selectedOption.getAttribute('data-prise-charge')) || 0,
+            prixKm: parseFloat(selectedOption.getAttribute('data-prix-km')) || 0,
+            prixMin: parseFloat(selectedOption.getAttribute('data-prix-min')) || 0
+        };
+    } else {
+        currentCategoryData = null;
+    }
+}
+
+function updatePassengersDisplay() {
+    document.getElementById('simulation-passagers').textContent = currentPassengers;
+    document.getElementById('multiplicateur-passagers').textContent = currentPassengers;
+}
+
+function triggerPriceCalculation() {
+    // Annuler le timeout précédent s'il existe
+    if (calculationTimeout) {
+        clearTimeout(calculationTimeout);
+    }
+
+    // Définir un nouveau timeout pour éviter des calculs trop fréquents
+    calculationTimeout = setTimeout(() => {
+        if (validateFormForCalculation()) {
+            calculateRoute();
+        } else {
+            hidePriceCalculation();
+        }
+    }, 800);
+}
+
+function validateFormForCalculation() {
+    const depart = document.getElementById('depart').value;
+    const arrivee = document.getElementById('arrivee').value;
+    const vehicleSelect = document.getElementById('vehicle_category_id');
+    const passengersSelect = document.getElementById('passagers');
+
+    return depart && depart.length > 3 &&
+           arrivee && arrivee.length > 3 &&
+           vehicleSelect && vehicleSelect.value &&
+           passengersSelect && passengersSelect.value;
+}
+
+function calculateRoute() {
+    const departInput = document.getElementById('depart').value;
+    const arriveeInput = document.getElementById('arrivee').value;
+    const departLat = document.getElementById('depart_lat').value;
+    const departLng = document.getElementById('depart_lng').value;
+    const arriveeLat = document.getElementById('arrivee_lat').value;
+    const arriveeLng = document.getElementById('arrivee_lng').value;
+
+    // Afficher l'indicateur de chargement
+    const loadingElement = document.getElementById('loading-distance');
+    const distanceInfo = document.getElementById('distance-info');
+
+    if (loadingElement) {
+        loadingElement.style.display = 'block';
+    }
+
+    if (distanceInfo) {
+        distanceInfo.style.display = 'block';
+        distanceInfo.innerHTML = '<div id="loading-distance" class="loading-indicator"><i class="fas fa-spinner fa-spin mr-2"></i>Calcul de la distance...</div>';
+    }
+
+    // Vérifier si Google Maps est disponible
+    if (!isGoogleMapsLoaded || typeof google === 'undefined') {
+        console.log('Google Maps non disponible, utilisation du calcul simplifié');
+        setTimeout(() => {
+            simulateDistanceCalculation(departInput, arriveeInput);
+        }, 1000);
+        return;
+    }
+
+    // Utiliser les coordonnées si disponibles, sinon utiliser les adresses textuelles
+    let origin, destination;
+
+    if (departLat && departLng) {
+        origin = { lat: parseFloat(departLat), lng: parseFloat(departLng) };
+    } else {
+        origin = departInput + ', France';
+    }
+
+    if (arriveeLat && arriveeLng) {
+        destination = { lat: parseFloat(arriveeLat), lng: parseFloat(arriveeLng) };
+    } else {
+        destination = arriveeInput + ', France';
+    }
+
+    // Initialiser le service Distance Matrix
+    if (typeof google.maps.DistanceMatrixService === 'undefined') {
+        simulateDistanceCalculation(departInput, arriveeInput);
+        return;
+    }
+
+    const service = new google.maps.DistanceMatrixService();
+
+    service.getDistanceMatrix({
+        origins: [origin],
+        destinations: [destination],
+        travelMode: google.maps.TravelMode.DRIVING,
+        unitSystem: google.maps.UnitSystem.METRIC,
+        avoidHighways: false,
+        avoidTolls: false
+    }, function(response, status) {
+        // Masquer l'indicateur de chargement
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+        }
+
+        if (status === 'OK' && response.rows[0].elements[0].status === 'OK') {
+            const distance = response.rows[0].elements[0].distance.value; // en mètres
+            const duration = response.rows[0].elements[0].duration.text;
+
+            currentDistance = distance;
+
+            // Convertir en kilomètres
+            const distanceKm = (distance / 1000).toFixed(1);
+
+            // Mettre à jour l'affichage
+            if (distanceInfo) {
+                distanceInfo.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span style="color: white;">Distance estimée :</span>
+                        <span id="distance-text" class="font-bold" style="color: var(--gold);">${distanceKm} km</span>
+                    </div>
+                    <div class="flex justify-between items-center mt-2">
+                        <span style="color: white;">Durée estimée :</span>
+                        <span id="duration-text" class="font-bold" style="color: var(--gold);">${duration}</span>
+                    </div>
+                `;
+                distanceInfo.style.display = 'block';
+            }
+
+            document.getElementById('simulation-distance').textContent = distanceKm + ' km';
+
+            // Calculer le prix
+            calculatePrice();
+        } else {
+            console.warn('Erreur calcul d\'itinéraire:', status);
+
+            // Essayer le calcul simplifié
+            simulateDistanceCalculation(departInput, arriveeInput);
         }
     });
+}
+
+function simulateDistanceCalculation(depart, arrivee) {
+    // Calcul simplifié basé sur des distances approximatives pour la France
+    // Cette fonction est utilisée en fallback si Google Maps échoue
+
+    const loadingElement = document.getElementById('loading-distance');
+    if (loadingElement) {
+        loadingElement.style.display = 'none';
+    }
+
+    const distanceInfo = document.getElementById('distance-info');
+
+    // Distance moyenne approximative pour un trajet en France
+    const approxDistanceKm = 50; // Valeur par défaut
+    const approxDuration = "1 heure";
+
+    currentDistance = approxDistanceKm * 1000; // Convertir en mètres
+
+    if (distanceInfo) {
+        distanceInfo.innerHTML = `
+            <div class="flex justify-between items-center">
+                <span style="color: white;">Distance estimée :</span>
+                <span id="distance-text" class="font-bold" style="color: var(--gold);">${approxDistanceKm} km</span>
+            </div>
+            <div class="flex justify-between items-center mt-2">
+                <span style="color: white;">Durée estimée :</span>
+                <span id="duration-text" class="font-bold" style="color: var(--gold);">${approxDuration}</span>
+            </div>
+            <div class="mt-2 text-xs" style="color: #888;">
+                <i class="fas fa-info-circle mr-1"></i>Distance approximative
+            </div>
+        `;
+        distanceInfo.style.display = 'block';
+    }
+
+    document.getElementById('simulation-distance').textContent = approxDistanceKm + ' km (approx.)';
+
+    // Calculer le prix
+    calculatePrice();
+}
+
+function calculatePrice() {
+    if (!currentCategoryData || currentDistance === 0) {
+        hidePriceCalculation();
+        return;
+    }
+
+    // Convertir la distance en kilomètres
+    const distanceKm = currentDistance / 1000;
+
+    // Calcul du prix de base (sans passagers)
+    const priseCharge = currentCategoryData.priseCharge;
+    const prixDistance = distanceKm * currentCategoryData.prixKm;
+    let prixHTBase = priseCharge + prixDistance;
+
+    // Appliquer le prix minimum
+    if (prixHTBase < currentCategoryData.prixMin) {
+        prixHTBase = currentCategoryData.prixMin;
+    }
+
+    // Multiplier par le nombre de passagers
+    const prixHTTotal = prixHTBase * currentPassengers;
+
+    // Calcul de la TVA (10%)
+    const tva = prixHTTotal * 0.1;
+    const prixTTC = prixHTTotal + tva;
+
+    // Mettre à jour l'affichage avec un formatage approprié
+    const formatPrice = (price) => {
+        return price.toFixed(2).replace('.', ',') + ' €';
+    };
+
+    document.getElementById('prise-charge').textContent = formatPrice(priseCharge);
+    document.getElementById('prix-distance').textContent = formatPrice(prixDistance);
+    document.getElementById('prix-ht').textContent = formatPrice(prixHTBase);
+    document.getElementById('prix-ht-total').textContent = formatPrice(prixHTTotal);
+    document.getElementById('tva').textContent = formatPrice(tva);
+    document.getElementById('prix-ttc').textContent = formatPrice(prixTTC);
+    document.getElementById('prix-minimum').textContent = formatPrice(currentCategoryData.prixMin * currentPassengers);
+
+    // Afficher la section de calcul
+    const priceSection = document.getElementById('price-calculation');
+    if (priceSection) {
+        priceSection.classList.add('show');
+    }
+
+    // Ajouter les données calculées au formulaire (pour l'envoi)
+    addCalculatedDataToForm(priseCharge, prixDistance, prixHTBase, prixHTTotal, tva, prixTTC, distanceKm);
+}
+
+function addCalculatedDataToForm(priseCharge, prixDistance, prixHTBase, prixHTTotal, tva, prixTTC, distanceKm) {
+    // Créer ou mettre à jour les champs cachés
+    let fields = [
+        { name: 'calculated_prise_charge', value: priseCharge.toFixed(2) },
+        { name: 'calculated_distance_price', value: prixDistance.toFixed(2) },
+        { name: 'calculated_price_ht_base', value: prixHTBase.toFixed(2) },
+        { name: 'calculated_price_ht_total', value: prixHTTotal.toFixed(2) },
+        { name: 'calculated_tva', value: tva.toFixed(2) },
+        { name: 'calculated_price_ttc', value: prixTTC.toFixed(2) },
+        { name: 'calculated_distance_km', value: distanceKm.toFixed(1) },
+        { name: 'calculated_passengers', value: currentPassengers.toString() }
+    ];
+
+    const form = document.getElementById('reservation-form');
+    if (!form) return;
+
+    fields.forEach(field => {
+        let input = document.querySelector(`input[name="${field.name}"]`);
+        if (!input) {
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = field.name;
+            form.appendChild(input);
+        }
+        input.value = field.value;
+    });
+}
+
+function hidePriceCalculation() {
+    const priceSection = document.getElementById('price-calculation');
+    if (priceSection) {
+        priceSection.classList.remove('show');
+    }
+}
+
+// Initialisation lorsque la page est chargée
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page chargée, initialisation en cours...');
+
+    // Animation au scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, {
+        threshold: 0.1
+    });
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Smooth scroll pour les ancres
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Set minimum date for date input
+    const dateInput = document.querySelector('input[name="date"]');
+    if (dateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+
+        // Si aucune date n'est définie, mettre aujourd'hui par défaut
+        if (!dateInput.value) {
+            dateInput.value = today;
+        }
+    }
+
+    // Form validation enhancement
+    const form = document.getElementById('reservation-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const requiredFields = form.querySelectorAll('.required-field');
+            let isValid = true;
+
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add('error');
+                    field.classList.remove('valid');
+                } else {
+                    field.classList.remove('error');
+                }
+            });
+
+            // Validation spécifique pour l'email
+            const emailField = form.querySelector('input[name="email"]');
+            if (emailField && emailField.value) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(emailField.value)) {
+                    isValid = false;
+                    emailField.classList.add('error');
+                    emailField.classList.remove('valid');
+                }
+            }
+
+            // Validation de la date
+            const dateField = form.querySelector('input[name="date"]');
+            if (dateField && dateField.value) {
+                const selectedDate = new Date(dateField.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (selectedDate < today) {
+                    isValid = false;
+                    dateField.classList.add('error');
+                    dateField.classList.remove('valid');
+                    alert('La date doit être aujourd\'hui ou une date future.');
+                }
+            }
+
+            // Validation de l'heure
+            const timeField = form.querySelector('input[name="heure"]');
+            if (timeField && timeField.value) {
+                const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+                if (!timeRegex.test(timeField.value)) {
+                    isValid = false;
+                    timeField.classList.add('error');
+                    timeField.classList.remove('valid');
+                }
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+
+                // Scroll to first error
+                const firstError = form.querySelector('.error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstError.focus();
+                }
+            }
+        });
+
+        // Reset field styles on input
+        form.querySelectorAll('input, select, textarea').forEach(field => {
+            field.addEventListener('input', function() {
+                if (this.classList.contains('error')) {
+                    this.classList.remove('error');
+                }
+                if (this.value.trim()) {
+                    this.classList.add('valid');
+                }
+
+                // Pour les champs d'adresse, déclencher le calcul après un délai
+                if (this.id === 'depart' || this.id === 'arrivee') {
+                    if (this.value.length > 5) {
+                        triggerPriceCalculation();
+                    }
+                }
+            });
+        });
+    }
+
+    // Initialiser le nombre de passagers
+    const passengersSelect = document.getElementById('passagers');
+    if (passengersSelect && passengersSelect.value) {
+        currentPassengers = parseInt(passengersSelect.value) || 1;
+        updatePassengersDisplay();
+    }
+
+    // Vérifier si des valeurs existent déjà (après une erreur de soumission)
+    setTimeout(() => {
+        const departVal = document.getElementById('depart').value;
+        const arriveeVal = document.getElementById('arrivee').value;
+        const vehicleVal = document.getElementById('vehicle_category_id').value;
+        const passengersVal = document.getElementById('passagers').value;
+
+        if (departVal && arriveeVal && vehicleVal && passengersVal) {
+            console.log('Valeurs existantes détectées, déclenchement du calcul...');
+            triggerPriceCalculation();
+        }
+    }, 1500);
+});
 </script>
 @endsection

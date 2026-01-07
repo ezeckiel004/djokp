@@ -6,10 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Models\Formation;
 use App\Models\FormationMedia;
 use App\Models\Paiement;
+use App\Models\UserFormation;
+use App\Models\Participant;
+use App\Models\Inscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class FormationController extends Controller
 {
@@ -29,6 +33,9 @@ class FormationController extends Controller
         $formations = Formation::withCount('media')
             ->withCount(['paiements' => function ($query) {
                 $query->where('status', 'paid');
+            }])
+            ->withCount(['userFormations' => function ($query) {
+                $query->where('status', 'active');
             }])
             ->latest()
             ->paginate(15);
@@ -559,54 +566,100 @@ class FormationController extends Controller
         Log::info('Titre: ' . $formation->title);
 
         try {
-            // Vérifier si la formation a des inscriptions ou des paiements
-            Log::info('Vérification des paiements associés...');
-            if ($formation->paiements()->exists()) {
-                Log::warning('Impossible de supprimer - paiements associés existent');
-                return redirect()->route('admin.formations.index')
-                    ->with('error', 'Impossible de supprimer cette formation car elle a des paiements associés.');
-            }
-
-            Log::info('Vérification des inscriptions utilisateurs...');
-            if ($formation->userFormations()->exists()) {
-                Log::warning('Impossible de supprimer - utilisateurs inscrits existent');
-                return redirect()->route('admin.formations.index')
-                    ->with('error', 'Impossible de supprimer cette formation car elle a des utilisateurs inscrits.');
-            }
-
-            // Supprimer tous les fichiers multimédias
+            // Compter les associations avant suppression pour le log
+            $paidPaiementsCount = $formation->paiements()->where('status', 'paid')->count();
+            $totalPaiementsCount = $formation->paiements()->count();
+            $activeUserFormationsCount = $formation->userFormations()->where('status', 'active')->count();
+            $totalUserFormationsCount = $formation->userFormations()->count();
+            $participantsCount = $formation->inscriptions()->count();
             $mediaCount = $formation->media()->count();
-            Log::info('Suppression des ' . $mediaCount . ' fichier(s) multimédia(s)...');
 
-            foreach ($formation->media as $media) {
-                Log::info('Suppression fichier: ' . $media->file_path);
-                Storage::disk('public')->delete($media->file_path);
+            Log::info('Statistiques avant suppression:');
+            Log::info('- Paiements payés: ' . $paidPaiementsCount);
+            Log::info('- Paiements totaux: ' . $totalPaiementsCount);
+            Log::info('- Inscriptions actives: ' . $activeUserFormationsCount);
+            Log::info('- Inscriptions totales: ' . $totalUserFormationsCount);
+            Log::info('- Participants: ' . $participantsCount);
+            Log::info('- Médias: ' . $mediaCount);
 
-                // Supprimer la miniature si elle existe
-                if ($media->thumbnail_path) {
-                    Log::info('Suppression miniature: ' . $media->thumbnail_path);
-                    Storage::disk('public')->delete($media->thumbnail_path);
+            // Utiliser une transaction pour s'assurer que tout est supprimé ou rien
+            DB::beginTransaction();
+
+            try {
+                // 1. Supprimer d'abord les paiements associés
+                Log::info('Suppression des paiements associés...');
+                $paiementsDeleted = $formation->paiements()->delete();
+                Log::info('Paiements supprimés: ' . $paiementsDeleted);
+
+                // 2. Supprimer les inscriptions utilisateur (UserFormation)
+                Log::info('Suppression des inscriptions utilisateur...');
+                $userFormationsDeleted = $formation->userFormations()->delete();
+                Log::info('Inscriptions utilisateur supprimées: ' . $userFormationsDeleted);
+
+                // 3. Supprimer les participants
+                Log::info('Suppression des participants...');
+                $participantsDeleted = $formation->inscriptions()->delete();
+                Log::info('Participants supprimés: ' . $participantsDeleted);
+
+                // 4. Supprimer tous les fichiers multimédias
+                Log::info('Suppression des ' . $mediaCount . ' fichier(s) multimédia(s)...');
+
+                foreach ($formation->media as $media) {
+                    Log::info('Suppression fichier: ' . $media->file_path);
+                    Storage::disk('public')->delete($media->file_path);
+
+                    // Supprimer la miniature si elle existe
+                    if ($media->thumbnail_path) {
+                        Log::info('Suppression miniature: ' . $media->thumbnail_path);
+                        Storage::disk('public')->delete($media->thumbnail_path);
+                    }
                 }
+
+                // 5. Supprimer les entrées médias de la base de données
+                $mediaDeleted = $formation->media()->delete();
+                Log::info('Entrées médias supprimées: ' . $mediaDeleted);
+
+                // 6. Supprimer le dossier de la formation
+                $formationFolder = "formations/{$formation->id}";
+                if (Storage::disk('public')->exists($formationFolder)) {
+                    Log::info('Suppression du dossier: ' . $formationFolder);
+                    Storage::disk('public')->deleteDirectory($formationFolder);
+                } else {
+                    Log::info('Dossier non trouvé: ' . $formationFolder);
+                }
+
+                // 7. Supprimer le PDF programme s'il existe
+                if ($formation->programme_pdf && Storage::disk('public')->exists($formation->programme_pdf)) {
+                    Log::info('Suppression du PDF programme: ' . $formation->programme_pdf);
+                    Storage::disk('public')->delete($formation->programme_pdf);
+                }
+
+                // 8. Enfin, supprimer la formation elle-même
+                $formationTitle = $formation->title;
+                $formation->delete();
+
+                // Valider la transaction
+                DB::commit();
+
+                Log::info('=== FIN FormationController@destroy - SUCCÈS ===');
+                Log::info('Formation "' . $formationTitle . '" supprimée avec succès');
+                Log::info('Suppressions effectuées:');
+                Log::info('- Paiements: ' . $totalPaiementsCount);
+                Log::info('- Inscriptions utilisateur: ' . $totalUserFormationsCount);
+                Log::info('- Participants: ' . $participantsCount);
+                Log::info('- Médias: ' . $mediaCount);
+
+                return redirect()->route('admin.formations.index')
+                    ->with('success', 'Formation et toutes ses données associées ont été supprimées avec succès. (' .
+                        $totalPaiementsCount . ' paiement(s), ' .
+                        $totalUserFormationsCount . ' inscription(s), ' .
+                        $participantsCount . ' participant(s) et ' .
+                        $mediaCount . ' média(s) supprimé(s)).');
+            } catch (\Exception $e) {
+                // En cas d'erreur, annuler la transaction
+                DB::rollBack();
+                throw $e;
             }
-
-            // Supprimer le dossier de la formation
-            $formationFolder = "formations/{$formation->id}";
-            if (Storage::disk('public')->exists($formationFolder)) {
-                Log::info('Suppression du dossier: ' . $formationFolder);
-                Storage::disk('public')->deleteDirectory($formationFolder);
-            } else {
-                Log::info('Dossier non trouvé: ' . $formationFolder);
-            }
-
-            // Supprimer la formation
-            $formationTitle = $formation->title;
-            $formation->delete();
-
-            Log::info('=== FIN FormationController@destroy - SUCCÈS ===');
-            Log::info('Formation "' . $formationTitle . '" supprimée avec succès');
-
-            return redirect()->route('admin.formations.index')
-                ->with('success', 'Formation supprimée avec succès.');
         } catch (\Exception $e) {
             Log::error('=== ERREUR DANS DESTROY ===');
             Log::error('Message: ' . $e->getMessage());
@@ -1128,9 +1181,6 @@ class FormationController extends Controller
 
     /**
      * Afficher les détails d'un paiement
-     */
-    /**
-     * Afficher les détails d'un paiement (gère utilisateurs avec/sans compte)
      */
     public function paiementsShow(Paiement $paiement)
     {

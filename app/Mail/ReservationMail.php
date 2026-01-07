@@ -33,7 +33,9 @@ class ReservationMail extends Mailable
         if ($this->recipientType === 'client') {
             $subject = 'Confirmation de votre réservation DJOK PRESTIGE';
         } else {
-            $subject = 'Nouvelle réservation - ' . $this->getServiceType($this->reservationData['type_service']);
+            $subject = 'Nouvelle réservation - ' .
+                ($this->reservationData['type_service_label'] ??
+                    $this->getServiceType($this->reservationData['type_service'] ?? ''));
         }
 
         return new Envelope(
@@ -81,20 +83,6 @@ class ReservationMail extends Mailable
             'professionnel' => 'Déplacement professionnel',
             'evenement' => 'Événement/mariage',
             'mise_disposition' => 'Mise à disposition'
-        ];
-
-        return $types[$type] ?? $type;
-    }
-
-    /**
-     * Helper pour formater le type de véhicule
-     */
-    private function getVehicleType($type): string
-    {
-        $types = [
-            'eco' => 'Véhicule Éco',
-            'business' => 'Véhicule Business',
-            'prestige' => 'Véhicule Prestige'
         ];
 
         return $types[$type] ?? $type;
