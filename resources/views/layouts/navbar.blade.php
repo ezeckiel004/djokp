@@ -8,10 +8,11 @@
         <div class="social-top">
             <i class="fa-brands fa-facebook-f"></i>
             <i class="fa-brands fa-instagram"></i>
-            <i class="fa-brands fa-youtube"></i>
+            <i class="fa-brands fa-snapchat"></i>
             <!-- X personnalisé au lieu de Font Awesome -->
             <span class="custom-x-icon">𝕏</span>
             <i class="fa-brands fa-tiktok"></i>
+
         </div>
     </div>
 
@@ -96,10 +97,11 @@
             <div class="mobile-social-top">
                 <i class="fa-brands fa-facebook-f"></i>
                 <i class="fa-brands fa-instagram"></i>
-                <i class="fa-brands fa-youtube"></i>
+                <i class="fa-brands fa-snapchat"></i>
                 <!-- X personnalisé pour mobile -->
                 <span class="custom-x-icon">𝕏</span>
                 <i class="fa-brands fa-tiktok"></i>
+
             </div>
 
             <a href="{{ url('/') }}" class="mobile-link">ACCUEIL</a>
@@ -827,15 +829,15 @@
             let url = '#';
 
             if (this.classList.contains('fa-facebook-f')) {
-                url = 'https://facebook.com/';
+                url = 'https://web.facebook.com/djokPrestige?_rdc=1&_rdr#';
             } else if (this.classList.contains('fa-instagram')) {
-                url = 'https://instagram.com/';
-            } else if (this.classList.contains('fa-youtube')) {
-                url = 'https://youtube.com/';
+                url = 'https://www.instagram.com/djok_prestige/';
+            } else if (this.classList.contains('fa-snapchat')) {
+                url = 'https://www.snapchat.com/@djok_transp2020?share_id=om-FcniDZNw&locale=fr-FR+';
             } else if (this.classList.contains('custom-x-icon') || this.classList.contains('fa-x-twitter')) {
-                url = 'https://twitter.com/';
+                url = 'https://x.com/DjokPrestige?t=7WuNufsxSxAQPmdmzO1DUQ';
             } else if (this.classList.contains('fa-tiktok')) {
-                url = 'https://tiktok.com/';
+                url = 'https://www.tiktok.com/@djok.prestige?_t=8jFWYGHFI36&_r=1';
             }
 
             window.open(url, '_blank');

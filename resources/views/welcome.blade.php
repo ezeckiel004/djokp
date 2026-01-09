@@ -538,7 +538,7 @@
                         <div class="stars text-2xl mb-1" style="color: var(--gold);">★★★★★</div>
                         <small class="text-gray-400 text-sm">15 avis Google</small>
                         <br>
-                        <a href="https://search.google.com/local/writereview?placeid=ChIJ6QjR9E5u5kcR6v5lQv6N7IU"
+                        <a href="https://www.google.com/maps/place//data=!4m3!3m2!1s0x47e613e5ed89e9fb:0xf5ac01ba78653a2b!12e1"
                             target="_blank" rel="noopener noreferrer" class="inline-block mt-3">
                             <button
                                 class="btn-review px-6 py-2 border border-white bg-transparent text-white hover:bg-white hover:text-black transition-all duration-300">
