@@ -131,6 +131,23 @@
                 <p class="text-lg mb-6 max-w-3xl" style="color: #ccc;">
                     {{ Str::limit(strip_tags($formation->description), 200) }}
                 </p>
+
+                <!-- Bouton Télécharger le programme PDF -->
+                @if($formation->program || $formation->programme_pdf_exists)
+                <div class="mt-6">
+                    <a href="{{ $formation->programme_pdf_route }}" target="_blank"
+                        class="inline-flex items-center px-6 py-3 font-semibold transition-all duration-300 hover:bg-blue-800 rounded-lg"
+                        style="background: #1e40af; color: white;" title="Télécharger le programme détaillé"
+                        onclick="trackPdfView('{{ $formation->title }}')">
+                        <i class="mr-3 fas fa-file-pdf"></i>
+                        Télécharger le programme complet (PDF)
+                    </a>
+                    <p class="text-sm mt-2" style="color: #888;">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Programme détaillé officiel de la formation
+                    </p>
+                </div>
+                @endif
             </div>
 
             <!-- Carte prix et action - Style sobre -->
@@ -200,6 +217,19 @@
                         <i class="fas fa-question-circle mr-2"></i>
                         Demander plus d'informations
                     </a>
+
+                    <!-- Bouton Programme PDF (version compacte) -->
+                    @if($formation->program || $formation->programme_pdf_exists)
+                    <div class="mt-4">
+                        <a href="{{ $formation->programme_pdf_route }}" target="_blank"
+                            class="w-full inline-flex items-center justify-center px-4 py-2.5 font-semibold transition-all duration-300 hover:bg-blue-800 rounded"
+                            style="background: #1e40af; color: white;" title="Voir le programme détaillé"
+                            onclick="trackPdfView('{{ $formation->title }}')">
+                            <i class="mr-2 fas fa-file-pdf"></i>
+                            Télécharger le programme
+                        </a>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -451,6 +481,22 @@
                             <div style="color: #888;">Prix TTC</div>
                         </div>
 
+                        <!-- Bouton Programme PDF dans la carte fixe -->
+                        @if($formation->program || $formation->programme_pdf_exists)
+                        <div class="mb-4">
+                            <a href="{{ $formation->programme_pdf_route }}" target="_blank"
+                                class="w-full inline-flex items-center justify-center px-4 py-3 font-semibold transition-all duration-300 hover:bg-blue-800 rounded"
+                                style="background: #1e40af; color: white;" title="Voir le programme détaillé"
+                                onclick="trackPdfView('{{ $formation->title }}')">
+                                <i class="mr-2 fas fa-file-pdf"></i>
+                                Télécharger le programme (PDF)
+                            </a>
+                            <p class="text-xs text-center mt-1" style="color: #888;">
+                                Programme officiel complet
+                            </p>
+                        </div>
+                        @endif
+
                         <!-- Bouton principal -->
                         @if($formation->type_formation === 'presentiel')
                         <a href="{{ route('formation.inscrire.presentiel', $formation->id) }}"
@@ -559,6 +605,18 @@
                                     }}</h4>
                                 <div class="text-sm mb-2" style="color: #888;">{{ $similar->duree ??
                                     $similar->duration_hours.'h' }}</div>
+                                <!-- Bouton Programme PDF pour les formations similaires -->
+                                @if($similar->program || $similar->programme_pdf_exists)
+                                <div class="mt-2">
+                                    <a href="{{ $similar->programme_pdf_route }}" target="_blank"
+                                        class="inline-flex items-center px-3 py-1.5 text-xs font-semibold transition-all duration-300 hover:bg-blue-800 rounded"
+                                        style="background: #1e40af; color: white;"
+                                        onclick="trackPdfView('{{ $similar->title }}')">
+                                        <i class="mr-1 fas fa-file-pdf"></i>
+                                        Programme PDF
+                                    </a>
+                                </div>
+                                @endif
                             </div>
                             <div class="text-right">
                                 <div class="text-lg font-bold" style="color: var(--gold);">{{
@@ -691,6 +749,18 @@
                                         'e_learning' ? 'En ligne' : 'Présentiel' }}
                                     </span>
                                 </div>
+                                <!-- Bouton Programme PDF dans le formulaire -->
+                                @if($formation->program || $formation->programme_pdf_exists)
+                                <div class="mt-3">
+                                    <a href="{{ $formation->programme_pdf_route }}" target="_blank"
+                                        class="inline-flex items-center px-3 py-2 text-xs font-semibold transition-all duration-300 hover:bg-blue-800 rounded"
+                                        style="background: #1e40af; color: white;"
+                                        onclick="trackPdfView('{{ $formation->title }}')">
+                                        <i class="mr-2 fas fa-file-pdf"></i>
+                                        Télécharger le programme complet
+                                    </a>
+                                </div>
+                                @endif
                                 <p class="text-xs mt-2" style="color: #666;">
                                     <i class="fas fa-info-circle mr-1"></i>
                                     Cette formation est automatiquement associée à votre demande
@@ -779,6 +849,14 @@
                                         <p class="font-medium" style="color: white;">Quand puis-je commencer ?</p>
                                         <p style="color: #888;">Démarrage possible sous 48h pour les formations en
                                             ligne.</p>
+                                    </div>
+                                    <div class="text-sm">
+                                        <p class="font-medium" style="color: white;">Puis-je voir le programme avant ?
+                                        </p>
+                                        <p style="color: #888;">
+                                            <i class="fas fa-file-pdf mr-1" style="color: #1e40af;"></i>
+                                            Oui, téléchargez le programme complet en PDF via le bouton ci-dessus.
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -883,6 +961,35 @@
                 });
             }, 300);
         }
+
+        // Fonction de tracking pour les téléchargements PDF
+        function trackPdfView(formationTitle) {
+            // Envoyer un événement à Google Analytics (si configuré)
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'pdf_download', {
+                    'event_category': 'Formation',
+                    'event_label': formationTitle,
+                    'value': 1
+                });
+            }
+
+            // Optionnel : envoyer une requête à votre backend pour tracker
+            fetch('/api/track-pdf-download', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                },
+                body: JSON.stringify({
+                    formation_title: formationTitle,
+                    url: window.location.href,
+                    timestamp: new Date().toISOString()
+                })
+            }).catch(error => console.log('Tracking error:', error));
+        }
+
+        // Exposer la fonction globalement
+        window.trackPdfView = trackPdfView;
     });
 </script>
 @endsection
