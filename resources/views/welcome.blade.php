@@ -14,13 +14,12 @@
                 <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1600&q=80"
                     alt="Formation VTC" class="object-cover w-full h-full opacity-50">
                 <!-- Overlay doré avec opacité réduite pour correspondre à la bannière 2 -->
-                <div class="absolute inset-0" style="background: rgba(182, 146, 70, 0.85); mix-blend-mode: multiply;">
-                </div>
+                <div class="absolute inset-0" style="background: rgba(182, 146, 70, 0.85); mix-blend-mode: multiply;"></div>
                 <!-- Overlay noir supplémentaire pour correspondre à l'opacité de la bannière 2 -->
                 <div class="absolute inset-0 bg-gradient-to-b from-black/90 via-black/70 to-black/50"></div>
             </div>
 
-            <div class="relative z-10 hero-left">
+            <div class="hero-left relative z-10">
                 <h1>FORMATION VTC</h1>
                 <p class="hero-subtitle">Devenez Chauffeur VTC Professionnel</p>
                 <p class="hero-description">
@@ -29,7 +28,7 @@
                 </p>
             </div>
 
-            <div class="relative z-10 hero-right">
+            <div class="hero-right relative z-10">
                 <div class="swiper">
                     <div class="swiper-wrapper">
                         <!-- Slide 1 -->
@@ -127,8 +126,7 @@
 
             <!-- ICÔNES FLOTTANTES -->
             <div class="floating-icons">
-                <a href="https://www.google.com/maps/place//data=!4m3!3m2!1s0x47e613e5ed89e9fb:0xf5ac01ba78653a2b!12e1"
-                    class="icon-item">
+                <a href="https://www.google.com/maps/place//data=!4m3!3m2!1s0x47e613e5ed89e9fb:0xf5ac01ba78653a2b!12e1" class="icon-item">
                     <i class="fa-solid fa-location-dot"></i><span>TROUVER UN CENTRE</span>
                 </a>
                 <a href="{{ route('formation') }}" class="icon-item">
@@ -165,7 +163,7 @@
                 <div class="absolute inset-0 bg-gradient-to-b from-black/90 via-black/70 to-black/50"></div>
             </div>
 
-            <div class="relative z-10 max-w-6xl px-4 py-20 mx-auto text-center text-white">
+            <div class="relative z-10 w-full px-4 py-20 mx-auto text-center text-white">
                 <div class="mb-6">
                     <span
                         class="inline-block px-4 py-2 mb-4 text-sm font-semibold tracking-wider uppercase rounded-full"
@@ -183,11 +181,11 @@
                     tarifs compétitifs et entretien inclus
                 </p>
 
-                <!-- Nouvelles cartes avec images -->
+                <!-- Nouvelles cartes avec images - CORRIGÉ POUR MOBILE -->
                 <div class="grid max-w-6xl grid-cols-1 gap-8 mx-auto mb-16 md:grid-cols-3">
                     <!-- Véhicule Électrique -->
                     <div
-                        class="relative overflow-hidden transition-all duration-300 border group rounded-xl border-white/10 bg-white/5 backdrop-blur-sm hover:transform hover:scale-105 hover:border-b69246/30">
+                        class="relative overflow-hidden transition-all duration-300 border group rounded-xl border-white/10 bg-white/5 backdrop-blur-sm hover:transform hover:scale-105 hover:border-b69246/30 mx-auto w-full max-w-md md:max-w-none">
                         <div class="relative h-48 overflow-hidden">
                             <img src="{{ asset('v_electrique.webp') }}" alt="Véhicule Électrique VTC"
                                 class="absolute inset-0 object-cover w-full h-full transition-transform duration-500 group-hover:scale-110">
@@ -220,7 +218,7 @@
 
                     <!-- Véhicule Berline -->
                     <div
-                        class="relative overflow-hidden transition-all duration-300 border group rounded-xl border-white/10 bg-white/5 backdrop-blur-sm hover:transform hover:scale-105 hover:border-b69246/30">
+                        class="relative overflow-hidden transition-all duration-300 border group rounded-xl border-white/10 bg-white/5 backdrop-blur-sm hover:transform hover:scale-105 hover:border-b69246/30 mx-auto w-full max-w-md md:max-w-none">
                         <div class="relative h-48 overflow-hidden">
                             <img src="{{ asset('v_berline.webp') }}" alt="Berline VTC Premium"
                                 class="absolute inset-0 object-cover w-full h-full transition-transform duration-500 group-hover:scale-110">
@@ -253,7 +251,7 @@
 
                     <!-- Véhicule VAN -->
                     <div
-                        class="relative overflow-hidden transition-all duration-300 border group rounded-xl border-white/10 bg-white/5 backdrop-blur-sm hover:transform hover:scale-105 hover:border-b69246/30">
+                        class="relative overflow-hidden transition-all duration-300 border group rounded-xl border-white/10 bg-white/5 backdrop-blur-sm hover:transform hover:scale-105 hover:border-b69246/30 mx-auto w-full max-w-md md:max-w-none">
                         <div class="relative h-48 overflow-hidden">
                             <img src="{{ asset('v_VAN.webp') }}" alt="VAN VTC 7 places"
                                 class="absolute inset-0 object-cover w-full h-full transition-transform duration-500 group-hover:scale-110">
@@ -337,7 +335,7 @@
 </header>
 
 
-<!-- SERVICES SECTION AVEC NOUVEAU DESIGN -->
+<!-- SERVICES SECTION AVEC NOUVEAU DESIGN - CORRIGÉ POUR MOBILE -->
 <section id="services" class="py-20 bg-black">
     <div class="px-4 mx-auto max-w-7xl">
         <h2 class="mb-4 text-4xl font-bold text-center" style="color: var(--gold);">NOS SERVICES</h2>
@@ -346,9 +344,9 @@
             personnels
         </p>
 
-        <div class="grid grid-cols-1 gap-10 mt-16 md:grid-cols-2 lg:grid-cols-3">
+        <div class="grid grid-cols-1 gap-10 mt-16 md:grid-cols-2 lg:grid-cols-3 justify-items-center">
             <!-- Formations -->
-            <div class="flex flex-col bg-white text-black min-h-[280px] border-2" style="border-color: var(--gold);">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none" style="border-color: var(--gold);">
                 <div class="h-48">
                     <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg" alt="Formations"
                         class="object-cover w-full h-full">
@@ -371,7 +369,7 @@
             </div>
 
             <!-- Formation Internationale -->
-            <div class="flex flex-col bg-white text-black min-h-[280px] border-2" style="border-color: var(--gold);">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none" style="border-color: var(--gold);">
                 <div class="h-48">
                     <img src="https://images.pexels.com/photos/210182/pexels-photo-210182.jpeg"
                         alt="Formation Internationale" class="object-cover w-full h-full">
@@ -394,7 +392,7 @@
             </div>
 
             <!-- VTC & Location -->
-            <div class="flex flex-col bg-white text-black min-h-[280px] border-2" style="border-color: var(--gold);">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none" style="border-color: var(--gold);">
                 <div class="h-48">
                     <img src="https://images.pexels.com/photos/125779/pexels-photo-125779.jpeg" alt="VTC & Location"
                         class="object-cover w-full h-full">
@@ -417,7 +415,7 @@
             </div>
 
             <!-- Location (Nouvelle carte) -->
-            <div class="flex flex-col bg-white text-black min-h-[280px] border-2" style="border-color: var(--gold);">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none" style="border-color: var(--gold);">
                 <div class="h-48">
                     <img src="https://images.pexels.com/photos/164634/pexels-photo-164634.jpeg" alt="Location"
                         class="object-cover w-full h-full">
@@ -440,7 +438,7 @@
             </div>
 
             <!-- Conciergerie (Nouvelle carte) -->
-            <div class="flex flex-col bg-white text-black min-h-[280px] border-2" style="border-color: var(--gold);">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none" style="border-color: var(--gold);">
                 <div class="h-48">
                     <img src="https://images.pexels.com/photos/5273464/pexels-photo-5273464.jpeg" alt="Conciergerie"
                         class="object-cover w-full h-full">
@@ -463,7 +461,7 @@
             </div>
 
             <!-- Espace Client -->
-            <div class="flex flex-col bg-white text-black min-h-[280px] border-2" style="border-color: var(--gold);">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none" style="border-color: var(--gold);">
                 <div class="h-48">
                     <img src="https://images.pexels.com/photos/3768916/pexels-photo-3768916.jpeg" alt="Espace Client"
                         class="object-cover w-full h-full">
@@ -519,13 +517,13 @@
     <div class="px-4 mx-auto max-w-7xl">
         <div class="flex flex-col items-start gap-10 lg:flex-row">
             <!-- Carte entreprise fixe -->
-            <div class="lg:w-1/4">
-                <div class="flex gap-4 company-card">
+            <div class="w-full lg:w-1/4">
+                <div class="flex flex-col items-center gap-4 company-card md:flex-row md:items-start">
                     <div class="flex items-center justify-center w-16 h-16 company-avatar rounded-xl"
                         style="background: #4a6cf7;">
                         <i class="text-2xl text-white fas fa-user"></i>
                     </div>
-                    <div class="company-info">
+                    <div class="company-info text-center md:text-left">
                         <h3 class="mb-2 text-2xl font-bold">Djok Prestige SAS</h3>
                         <div class="mb-1 text-2xl stars" style="color: #b69246;">★★★★★</div>
                         <small class="text-sm text-gray-400">15 avis Google</small>
@@ -542,14 +540,14 @@
             </div>
 
             <!-- Zone slider avec avis -->
-            <div class="relative lg:w-3/4">
+            <div class="relative w-full lg:w-3/4">
                 <!-- Flèches de navigation -->
-                <div class="arrow left absolute top-1/2 -left-5 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-var(--gold) bg-black/80 flex items-center justify-center cursor-pointer hover:bg-b69246 hover:text-black transition-all duration-300"
+                <div class="arrow left absolute top-1/2 -left-5 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-var(--gold) bg-black/80 flex items-center justify-center cursor-pointer hover:bg-b69246 hover:text-black transition-all duration-300 hidden md:flex"
                     style="color: #b69246;" onclick="scrollReviews(-1)">
                     <i class="fas fa-chevron-left"></i>
                 </div>
 
-                <div class="arrow right absolute top-1/2 -right-5 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-var(--gold) bg-black/80 flex items-center justify-center cursor-pointer hover:bg-b69246 hover:text-black transition-all duration-300"
+                <div class="arrow right absolute top-1/2 -right-5 transform -translate-y-1/2 z-10 w-10 h-10 rounded-full border border-var(--gold) bg-black/80 flex items-center justify-center cursor-pointer hover:bg-b69246 hover:text-black transition-all duration-300 hidden md:flex"
                     style="color: #b69246;" onclick="scrollReviews(1)">
                     <i class="fas fa-chevron-right"></i>
                 </div>
@@ -559,7 +557,7 @@
                     style="scrollbar-width: none;">
 
                     <!-- Avis 1 -->
-                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10 mx-2 md:mx-0">
                         <div class="flex items-center gap-3 mb-3 review-header">
                             <div class="flex items-center justify-center w-10 h-10 rounded-full avatar"
                                 style="background: #b8b2a8;">
@@ -579,7 +577,7 @@
                     </div>
 
                     <!-- Avis 2 -->
-                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10 mx-2 md:mx-0">
                         <div class="flex items-center gap-3 mb-3 review-header">
                             <div class="flex items-center justify-center w-10 h-10 rounded-full avatar"
                                 style="background: #6c7cff;">
@@ -599,7 +597,7 @@
                     </div>
 
                     <!-- Avis 3 -->
-                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10 mx-2 md:mx-0">
                         <div class="flex items-center gap-3 mb-3 review-header">
                             <div class="flex items-center justify-center w-10 h-10 rounded-full avatar"
                                 style="background: #4f6b6f;">
@@ -620,7 +618,7 @@
                     </div>
 
                     <!-- Avis 4 -->
-                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10 mx-2 md:mx-0">
                         <div class="flex items-center gap-3 mb-3 review-header">
                             <div class="flex items-center justify-center w-10 h-10 rounded-full avatar"
                                 style="background: #ff6b6b;">
@@ -640,7 +638,7 @@
                     </div>
 
                     <!-- Avis 5 -->
-                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10 mx-2 md:mx-0">
                         <div class="flex items-center gap-3 mb-3 review-header">
                             <div class="flex items-center justify-center w-10 h-10 rounded-full avatar"
                                 style="background: #5cd85c;">
@@ -661,7 +659,7 @@
                     </div>
 
                     <!-- Avis 6 -->
-                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10 mx-2 md:mx-0">
                         <div class="flex items-center gap-3 mb-3 review-header">
                             <div class="flex items-center justify-center w-10 h-10 rounded-full avatar"
                                 style="background: #ffa500;">
@@ -682,7 +680,7 @@
                     </div>
 
                     <!-- Avis 7 -->
-                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10 mx-2 md:mx-0">
                         <div class="flex items-center gap-3 mb-3 review-header">
                             <div class="flex items-center justify-center w-10 h-10 rounded-full avatar"
                                 style="background: #9b59b6;">
@@ -703,7 +701,7 @@
                     </div>
 
                     <!-- Avis 8 -->
-                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10 mx-2 md:mx-0">
                         <div class="flex items-center gap-3 mb-3 review-header">
                             <div class="flex items-center justify-center w-10 h-10 rounded-full avatar"
                                 style="background: #3498db;">
@@ -724,7 +722,7 @@
                     </div>
 
                     <!-- Avis 9 -->
-                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10 mx-2 md:mx-0">
                         <div class="flex items-center gap-3 mb-3 review-header">
                             <div class="flex items-center justify-center w-10 h-10 rounded-full avatar"
                                 style="background: #e74c3c;">
@@ -745,7 +743,7 @@
                     </div>
 
                     <!-- Avis 10 -->
-                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10">
+                    <div class="review min-w-[280px] bg-white/5 p-6 rounded-xl border border-white/10 mx-2 md:mx-0">
                         <div class="flex items-center gap-3 mb-3 review-header">
                             <div class="flex items-center justify-center w-10 h-10 rounded-full avatar"
                                 style="background: #2ecc71;">
@@ -1024,6 +1022,8 @@
             width: 100%;
             max-width: 420px;
             margin-right: 0;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .floating-icons {
@@ -1035,6 +1035,13 @@
             bottom: 20px;
             padding: 16px 28px;
             border-radius: 0 8px 8px 0;
+            position: relative;
+            margin: 20px auto 0;
+            display: block;
+            width: fit-content;
+            left: 0;
+            transform: none;
+            border-radius: 8px;
         }
 
         .hero-left h1 {
@@ -1061,6 +1068,44 @@
 
         .floating-icons {
             right: 20px;
+        }
+    }
+
+    /* CORRECTIONS MOBILE POUR LES CARTES */
+    @media (max-width: 767px) {
+        .hero-right {
+            width: 90%;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+        
+        .grid-cols-1 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .max-w-md {
+            max-width: 320px;
+        }
+        
+        .reviews-slider {
+            padding: 0 16px;
+        }
+        
+        .review {
+            min-width: 280px;
+        }
+        
+        /* Ajustement pour la carte entreprise sur mobile */
+        .company-card {
+            align-items: center;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .company-info {
+            text-align: center !important;
         }
     }
 
@@ -1117,6 +1162,7 @@
 
         .grid-cols-3 {
             grid-template-columns: 1fr !important;
+            gap: 20px;
         }
 
         .relative.h-48 {
@@ -1135,6 +1181,11 @@
         .arrow.left,
         .arrow.right {
             display: none;
+        }
+        
+        /* Correction pour le conteneur des cartes de services */
+        .justify-items-center {
+            justify-items: center;
         }
     }
 

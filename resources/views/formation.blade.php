@@ -240,9 +240,7 @@
 
                             <a href="{{ route('formation.show', $formation->slug) }}"
                                 class="relative inline-block px-4 py-2 overflow-hidden font-bold text-white transition-all duration-300 rounded-lg cursor-pointer price-btn"
-                                style="background: {{ $priceColor }}; min-width: 120px;"
-                                onmouseover="this.style.background='{{ $priceColor == '#2bb3e6' ? '#1a8fbe' : '#7fa63c' }}'"
-                                onmouseout="this.style.background='{{ $priceColor }}'">
+                                style="background: {{ $priceColor }}; min-width: 120px;">
                                 <span class="block text-sm transition-all duration-300 price-text md:text-base">
                                     {{ number_format($formation->price, 0, ',', ' ') }} €
                                 </span>
@@ -290,10 +288,14 @@
                                 $priceColor = $formation->type_formation == 'presentiel' ? '#2bb3e6' : '#9bc64c';
                                 @endphp
                                 <a href="{{ route('formation.show', $formation->slug) }}"
-                                    class="relative inline-block w-full px-4 py-3 overflow-hidden font-bold text-center text-white transition-all duration-300 rounded-lg cursor-pointer price-btn-mobile"
+                                    class="relative inline-block w-full px-4 py-3 overflow-hidden font-bold text-center text-white transition-all duration-300 rounded-lg cursor-pointer price-btn"
                                     style="background: {{ $priceColor }};">
-                                    <span class="block text-base transition-all duration-300 price-text-mobile">
-                                        {{ number_format($formation->price, 0, ',', ' ') }} € - Découvrir
+                                    <span class="block text-base transition-all duration-300 price-text">
+                                        {{ number_format($formation->price, 0, ',', ' ') }} €
+                                    </span>
+                                    <span
+                                        class="absolute inset-0 flex items-center justify-center text-base transition-all duration-300 transform translate-y-2 opacity-0 price-hover-text">
+                                        Découvrir
                                     </span>
                                 </a>
                             </div>
@@ -1126,19 +1128,25 @@
         hyphens: auto;
     }
 
-    /* Effet hover pour les boutons prix desktop */
+    /* Effet hover pour les boutons prix - TOUS LES ÉCRANS */
     .price-btn {
         position: relative;
         min-height: 40px;
-        transition: background 0.3s ease;
+        transition: all 0.3s ease;
+        display: inline-block;
+        overflow: hidden;
     }
 
-    .price-btn:hover .price-text {
+    .price-btn:hover .price-text,
+    .price-btn:active .price-text,
+    .price-btn.touch-active .price-text {
         opacity: 0;
         transform: translateY(-8px);
     }
 
-    .price-btn:hover .price-hover-text {
+    .price-btn:hover .price-hover-text,
+    .price-btn:active .price-hover-text,
+    .price-btn.touch-active .price-hover-text {
         opacity: 1;
         transform: translateY(0);
     }
@@ -1146,21 +1154,31 @@
     .price-text {
         opacity: 1;
         transform: translateY(0);
+        transition: all 0.3s ease;
+        display: block;
+        width: 100%;
     }
 
     .price-hover-text {
         opacity: 0;
         transform: translateY(8px);
         letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    /* Style pour mobile */
-    .price-btn-mobile {
-        transition: background 0.3s ease, transform 0.3s ease;
-    }
-
-    .price-btn-mobile:active {
-        transform: scale(0.98);
+    /* Pour mobile/tablette */
+    @media (max-width: 1024px) {
+        .price-btn {
+            min-height: 48px;
+        }
     }
 
     /* Style des lignes de formation */
@@ -1182,6 +1200,10 @@
         .formation-row:first-child .formation-label-mobile {
             border-top-left-radius: 18px;
             border-top-right-radius: 18px;
+        }
+
+        .price-btn {
+            min-height: 52px;
         }
     }
 
@@ -1207,6 +1229,7 @@
         const priceButtons = document.querySelectorAll('.price-btn');
 
         priceButtons.forEach(button => {
+            // Pour desktop
             button.addEventListener('mouseenter', function() {
                 const priceText = this.querySelector('.price-text');
                 const hoverText = this.querySelector('.price-hover-text');
@@ -1230,19 +1253,57 @@
                     hoverText.style.transform = 'translateY(8px)';
                 }
             });
+
+            // Pour mobile/tablette
+            button.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                this.classList.add('touch-active');
+
+                const priceText = this.querySelector('.price-text');
+                const hoverText = this.querySelector('.price-hover-text');
+
+                if(priceText && hoverText) {
+                    priceText.style.opacity = '0';
+                    priceText.style.transform = 'translateY(-8px)';
+                    hoverText.style.opacity = '1';
+                    hoverText.style.transform = 'translateY(0)';
+                }
+            });
+
+            button.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                setTimeout(() => {
+                    this.classList.remove('touch-active');
+
+                    const priceText = this.querySelector('.price-text');
+                    const hoverText = this.querySelector('.price-hover-text');
+
+                    if(priceText && hoverText) {
+                        priceText.style.opacity = '1';
+                        priceText.style.transform = 'translateY(0)';
+                        hoverText.style.opacity = '0';
+                        hoverText.style.transform = 'translateY(8px)';
+                    }
+                }, 300);
+            });
+
+            // Empêcher le comportement par défaut du touch
+            button.addEventListener('touchmove', function(e) {
+                if (this.classList.contains('touch-active')) {
+                    e.preventDefault();
+                }
+            });
         });
 
-        // Effet de toucher pour mobile
-        const mobilePriceButtons = document.querySelectorAll('.price-btn-mobile');
-        mobilePriceButtons.forEach(button => {
-            button.addEventListener('touchstart', function() {
-                this.style.opacity = '0.9';
-            });
-            
-            button.addEventListener('touchend', function() {
-                this.style.opacity = '1';
-            });
-        });
+        // Prévenir le zoom sur double-tap sur mobile
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
     });
 </script>
 @endsection
