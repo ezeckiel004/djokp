@@ -32,7 +32,8 @@ class FormationController extends Controller
 
         $formations = Formation::withCount('media')
             ->withCount(['paiements' => function ($query) {
-                $query->where('status', 'paid');
+                $query->where('service_type', 'formation')
+                    ->where('status', 'paid');
             }])
             ->withCount(['userFormations' => function ($query) {
                 $query->where('status', 'active');
@@ -275,7 +276,12 @@ class FormationController extends Controller
         $formation->load(['media' => function ($query) {
             $query->orderBy('order');
         }]);
-        $formation->loadCount('paiements');
+
+        // Compter les paiements avec la nouvelle structure
+        $formation->paiements_count = Paiement::where('service_type', 'formation')
+            ->where('service_id', $formation->id)
+            ->where('status', 'paid')
+            ->count();
 
         Log::info('FormationController@show - Nombre de médias: ' . $formation->media->count());
 
@@ -567,8 +573,15 @@ class FormationController extends Controller
 
         try {
             // Compter les associations avant suppression pour le log
-            $paidPaiementsCount = $formation->paiements()->where('status', 'paid')->count();
-            $totalPaiementsCount = $formation->paiements()->count();
+            $paidPaiementsCount = Paiement::where('service_type', 'formation')
+                ->where('service_id', $formation->id)
+                ->where('status', 'paid')
+                ->count();
+
+            $totalPaiementsCount = Paiement::where('service_type', 'formation')
+                ->where('service_id', $formation->id)
+                ->count();
+
             $activeUserFormationsCount = $formation->userFormations()->where('status', 'active')->count();
             $totalUserFormationsCount = $formation->userFormations()->count();
             $participantsCount = $formation->inscriptions()->count();
@@ -588,7 +601,9 @@ class FormationController extends Controller
             try {
                 // 1. Supprimer d'abord les paiements associés
                 Log::info('Suppression des paiements associés...');
-                $paiementsDeleted = $formation->paiements()->delete();
+                $paiementsDeleted = Paiement::where('service_type', 'formation')
+                    ->where('service_id', $formation->id)
+                    ->delete();
                 Log::info('Paiements supprimés: ' . $paiementsDeleted);
 
                 // 2. Supprimer les inscriptions utilisateur (UserFormation)
@@ -1163,17 +1178,18 @@ class FormationController extends Controller
     {
         Log::info('FormationController@paiementsIndex - Liste des paiements');
 
-        $paiements = Paiement::with(['user', 'formation'])
+        $paiements = Paiement::with(['user'])
+            ->where('service_type', 'formation')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
         $statistiques = [
-            'total' => Paiement::count(),
-            'payes' => Paiement::where('status', 'paid')->count(),
-            'en_attente' => Paiement::where('status', 'pending')->count(),
-            'annules' => Paiement::where('status', 'canceled')->count(),
-            'refunded' => Paiement::where('status', 'refunded')->count(),
-            'total_amount' => Paiement::where('status', 'paid')->sum('amount'),
+            'total' => Paiement::where('service_type', 'formation')->count(),
+            'payes' => Paiement::where('service_type', 'formation')->where('status', 'paid')->count(),
+            'en_attente' => Paiement::where('service_type', 'formation')->where('status', 'pending')->count(),
+            'annules' => Paiement::where('service_type', 'formation')->where('status', 'canceled')->count(),
+            'refunded' => Paiement::where('service_type', 'formation')->where('status', 'refunded')->count(),
+            'total_amount' => Paiement::where('service_type', 'formation')->where('status', 'paid')->sum('amount'),
         ];
 
         return view('admin.paiements.index', compact('paiements', 'statistiques'));
@@ -1186,11 +1202,16 @@ class FormationController extends Controller
     {
         Log::info('FormationController@paiementsShow - Détails paiement ID: ' . $paiement->id);
         Log::info('Utilisateur associé: ' . ($paiement->user_id ? 'OUI (ID: ' . $paiement->user_id . ')' : 'NON'));
-        Log::info('Formation ID: ' . $paiement->formation_id);
+        Log::info('Service Type: ' . $paiement->service_type);
+        Log::info('Service ID: ' . $paiement->service_id);
 
         try {
-            // 1. Charger les relations de base (toujours disponibles)
-            $paiement->load(['formation', 'formation.media']);
+            // 1. Charger les relations selon le type de service
+            $formation = null;
+            if ($paiement->service_type === 'formation') {
+                $formation = Formation::with('media')->find($paiement->service_id);
+                Log::info('Formation trouvée: ' . ($formation ? 'OUI' : 'NON'));
+            }
 
             // 2. Charger l'utilisateur seulement s'il existe
             $user = null;
@@ -1201,17 +1222,17 @@ class FormationController extends Controller
                 Log::info('Aucun utilisateur associé à ce paiement');
             }
 
-            // 3. Charger les inscriptions utilisateur (uniquement si l'utilisateur existe)
+            // 3. Charger les inscriptions utilisateur (uniquement si c'est une formation)
             $userFormations = collect();
             $participant = null;
 
-            if ($paiement->user_id && $paiement->formation_id) {
+            if ($paiement->service_type === 'formation' && $paiement->service_id && $paiement->user_id) {
                 // Cas 1: Utilisateur avec compte
                 Log::info('Recherche des inscriptions utilisateur...');
 
                 // Inscriptions dans UserFormation
                 $userFormations = \App\Models\UserFormation::where('user_id', $paiement->user_id)
-                    ->where('formation_id', $paiement->formation_id)
+                    ->where('formation_id', $paiement->service_id)
                     ->get();
                 Log::info('Inscriptions utilisateur trouvées: ' . $userFormations->count());
 
@@ -1219,12 +1240,12 @@ class FormationController extends Controller
                 $participant = \App\Models\Participant::where('paiement_id', $paiement->id)
                     ->orWhere('email', $paiement->customer_info['email'] ?? null)
                     ->first();
-            } else if ($paiement->customer_info['email'] ?? false) {
+            } else if ($paiement->service_type === 'formation' && $paiement->customer_info['email'] ?? false) {
                 // Cas 2: Visiteur sans compte
                 Log::info('Recherche du participant par email: ' . $paiement->customer_info['email']);
 
                 $participant = \App\Models\Participant::where('email', $paiement->customer_info['email'])
-                    ->where('formation_id', $paiement->formation_id)
+                    ->where('formation_id', $paiement->service_id)
                     ->first();
 
                 if ($participant) {
@@ -1237,7 +1258,7 @@ class FormationController extends Controller
             Log::info('Montant: ' . $paiement->amount . ' ' . $paiement->currency);
             Log::info('Date: ' . $paiement->created_at);
 
-            return view('admin.paiements.show', compact('paiement', 'user', 'userFormations', 'participant'));
+            return view('admin.paiements.show', compact('paiement', 'formation', 'user', 'userFormations', 'participant'));
         } catch (\Exception $e) {
             Log::error('Erreur dans paiementsShow: ' . $e->getMessage());
             Log::error('Trace: ' . $e->getTraceAsString());
@@ -1298,9 +1319,13 @@ class FormationController extends Controller
                 'refund_data' => json_decode(json_encode($refund), true),
             ]);
 
-            // Mettre à jour l'accès utilisateur
-            if ($paiement->userFormations) {
-                foreach ($paiement->userFormations as $userFormation) {
+            // Mettre à jour l'accès utilisateur si c'est une formation
+            if ($paiement->service_type === 'formation' && $paiement->service_id) {
+                $userFormations = \App\Models\UserFormation::where('user_id', $paiement->user_id)
+                    ->where('formation_id', $paiement->service_id)
+                    ->get();
+
+                foreach ($userFormations as $userFormation) {
                     $userFormation->update([
                         'status' => 'refunded',
                         'access_end' => now(),
@@ -1309,14 +1334,16 @@ class FormationController extends Controller
                 Log::info('Accès utilisateur mis à jour');
             }
 
-            // Mettre à jour le participant
-            $participant = \App\Models\Participant::where('paiement_id', $paiement->id)->first();
-            if ($participant) {
-                $participant->update([
-                    'statut' => 'annule',
-                    'date_fin' => now(),
-                ]);
-                Log::info('Participant mis à jour');
+            // Mettre à jour le participant si c'est une formation
+            if ($paiement->service_type === 'formation') {
+                $participant = \App\Models\Participant::where('paiement_id', $paiement->id)->first();
+                if ($participant) {
+                    $participant->update([
+                        'statut' => 'annule',
+                        'date_fin' => now(),
+                    ]);
+                    Log::info('Participant mis à jour');
+                }
             }
 
             Log::info('=== FIN FormationController@paiementsRefund - Succès ===');
@@ -1348,12 +1375,12 @@ class FormationController extends Controller
         $elearningFormations = Formation::where('type_formation', 'e_learning')->count();
         $presentielFormations = Formation::where('type_formation', 'presentiel')->count();
 
-        // Statistiques paiements
-        $totalPaiements = Paiement::count();
-        $paidPaiements = Paiement::where('status', 'paid')->count();
-        $pendingPaiements = Paiement::where('status', 'pending')->count();
-        $refundedPaiements = Paiement::where('status', 'refunded')->count();
-        $totalRevenue = Paiement::where('status', 'paid')->sum('amount');
+        // Statistiques paiements formations
+        $totalPaiements = Paiement::where('service_type', 'formation')->count();
+        $paidPaiements = Paiement::where('service_type', 'formation')->where('status', 'paid')->count();
+        $pendingPaiements = Paiement::where('service_type', 'formation')->where('status', 'pending')->count();
+        $refundedPaiements = Paiement::where('service_type', 'formation')->where('status', 'refunded')->count();
+        $totalRevenue = Paiement::where('service_type', 'formation')->where('status', 'paid')->sum('amount');
 
         // Statistiques participants
         $totalParticipants = \App\Models\Participant::count();
@@ -1362,14 +1389,16 @@ class FormationController extends Controller
 
         // Top formations
         $topFormations = Formation::withCount(['paiements' => function ($query) {
-            $query->where('status', 'paid');
+            $query->where('service_type', 'formation')
+                ->where('status', 'paid');
         }])
             ->orderBy('paiements_count', 'desc')
             ->limit(5)
             ->get();
 
-        // Paiements récents
-        $recentPaiements = Paiement::with(['formation', 'user'])
+        // Paiements récents (formations uniquement)
+        $recentPaiements = Paiement::with(['user'])
+            ->where('service_type', 'formation')
             ->where('status', 'paid')
             ->orderBy('created_at', 'desc')
             ->limit(10)

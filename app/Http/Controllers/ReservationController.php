@@ -3,18 +3,30 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Services\PaymentService;
 use App\Mail\ReservationMail;
+use App\Mail\ReservationPaidMail;
+use App\Mail\AdminReservationPaidNotification;
 use App\Models\Reservation;
 use App\Models\VehicleCategory;
+use App\Models\Paiement;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class ReservationController extends Controller
 {
+    protected $paymentService;
+
+    public function __construct(PaymentService $paymentService = null)
+    {
+        $this->paymentService = $paymentService ?? app(PaymentService::class);
+        Log::info('ReservationController initialisé avec PaymentService');
+    }
+
     public function index()
     {
-        // Récupérer les catégories de véhicules actives
         $vehicleCategories = VehicleCategory::where('actif', true)
             ->orderBy('display_name')
             ->get();
@@ -24,7 +36,8 @@ class ReservationController extends Controller
 
     public function submit(Request $request)
     {
-        \Log::info('Début du traitement de la réservation', ['ip' => $request->ip()]);
+        Log::info('=== DÉBUT ReservationController::submit ===');
+        Log::info('Données reçues:', $request->except(['_token']));
 
         // Validation des données
         $validator = Validator::make($request->all(), [
@@ -39,27 +52,33 @@ class ReservationController extends Controller
             'telephone' => 'required|string|max:20',
             'email' => 'required|email|max:255',
             'instructions' => 'nullable|string|max:1000',
-            // Champs calculés (optionnels)
+            'payment_option' => 'required|in:demande,pay_now',
             'depart_lat' => 'nullable|numeric',
             'depart_lng' => 'nullable|numeric',
             'arrivee_lat' => 'nullable|numeric',
             'arrivee_lng' => 'nullable|numeric',
-            'calculated_prise_charge' => 'nullable|numeric|min:0',
-            'calculated_distance_price' => 'nullable|numeric|min:0',
-            'calculated_price_ht' => 'nullable|numeric|min:0',
-            'calculated_tva' => 'nullable|numeric|min:0',
-            'calculated_price_ttc' => 'nullable|numeric|min:0',
-            'calculated_distance_km' => 'nullable|numeric|min:0',
-            'calculated_passengers' => 'nullable|integer|min:1',
+            'start_date' => 'required|date',
+            // Ajouter les champs calculés à la validation
+            'calculated_prise_charge' => 'nullable|numeric',
+            'calculated_distance_price' => 'nullable|numeric',
+            'calculated_price_ht_base' => 'nullable|numeric',
+            'calculated_price_ht_total' => 'nullable|numeric',
+            'calculated_tva' => 'nullable|numeric',
+            'calculated_price_ttc' => 'nullable|numeric',
+            'calculated_distance_km' => 'nullable|numeric',
+            'calculated_passengers' => 'nullable|integer',
         ], [
             'passagers.in' => 'Veuillez sélectionner un nombre de passagers valide.',
             'date.after_or_equal' => 'La date doit être aujourd\'hui ou une date future.',
             'heure.date_format' => 'Veuillez entrer une heure valide (format HH:MM).',
             'vehicle_category_id.exists' => 'Veuillez sélectionner un type de véhicule valide.',
+            'payment_option.required' => 'Veuillez sélectionner une option de paiement.',
+            'start_date.required' => 'La date de début est requise.',
+            'start_date.date' => 'La date de début doit être une date valide.',
         ]);
 
         if ($validator->fails()) {
-            \Log::warning('Validation échouée', ['errors' => $validator->errors()->toArray()]);
+            Log::warning('Validation échouée', ['errors' => $validator->errors()->toArray()]);
             return redirect()->route('reservation')
                 ->withErrors($validator)
                 ->withInput();
@@ -68,164 +87,109 @@ class ReservationController extends Controller
         $reservationData = $validator->validated();
 
         try {
-            \Log::info('Création de la réservation', ['email' => $reservationData['email']]);
+            Log::info('Création de la réservation', ['email' => $reservationData['email']]);
 
             // 1. Récupérer la catégorie de véhicule
             $vehicleCategory = VehicleCategory::findOrFail($reservationData['vehicle_category_id']);
+            Log::info('Catégorie véhicule trouvée:', ['id' => $vehicleCategory->id, 'name' => $vehicleCategory->display_name]);
 
             // 2. Vérifier si l'utilisateur est connecté
             $userId = auth()->check() ? auth()->id() : null;
+            Log::info('User ID:', ['user_id' => $userId]);
 
             // 3. Calculer les prix
             $calculatedPrices = $this->calculatePrices($reservationData, $vehicleCategory);
+            Log::info('Prix calculés:', $calculatedPrices);
 
-            // 4. Convertir passagers en nombre pour le champ passengers
+            // 4. Convertir passagers en nombre
             $passengersCount = $this->convertPassagersToCount($reservationData['passagers']);
+            Log::info('Nombre de passagers:', ['count' => $passengersCount]);
 
-            // 5. Préparer les données pour l'insertion
-            $dataToInsert = [
-                // Champs utilisateur (nullable)
-                'user_id' => $userId,
-                'vehicle_id' => null,
+            // 5. Calculer end_date (ajouter 1 heure par défaut)
+            $startDate = new \DateTime($reservationData['start_date']);
+            $endDate = clone $startDate;
+            $endDate->modify('+1 hour'); // Ajouter 1 heure par défaut
+            Log::info('Dates calculées:', ['start_date' => $startDate->format('Y-m-d H:i:s'), 'end_date' => $endDate->format('Y-m-d H:i:s')]);
 
-                // Champs obligatoires
-                'type' => 'vtc_transport',
-                'status' => 'pending',
-                'total_amount' => $calculatedPrices['price_ttc'],
-                'deposit_amount' => 0.00,
-                'passengers' => $passengersCount,
-                'start_date' => $reservationData['date'],
-                'end_date' => $reservationData['date'],
-
-                // Champs de réservation publique
-                'type_service' => $reservationData['type_service'],
-                'depart' => $reservationData['depart'],
-                'arrivee' => $reservationData['arrivee'],
-                'date' => $reservationData['date'],
-                'heure' => $reservationData['heure'],
-                'type_vehicule' => $vehicleCategory->display_name,
-                'vehicle_category_id' => $vehicleCategory->id,
-                'passagers' => $reservationData['passagers'],
-                'nom' => $reservationData['nom'],
-                'telephone' => $reservationData['telephone'],
-                'email' => $reservationData['email'],
-                'instructions' => $reservationData['instructions'] ?? null,
-
-                // Champs de compatibilité
-                'pickup_location' => $reservationData['depart'],
-                'dropoff_location' => $reservationData['arrivee'],
-                'pickup_time' => $reservationData['heure'],
-
-                // Coordonnées GPS
-                'depart_lat' => $reservationData['depart_lat'] ?? null,
-                'depart_lng' => $reservationData['depart_lng'] ?? null,
-                'arrivee_lat' => $reservationData['arrivee_lat'] ?? null,
-                'arrivee_lng' => $reservationData['arrivee_lng'] ?? null,
-
-                // Données calculées
-                'calculated_prise_charge' => $calculatedPrices['prise_charge'],
-                'calculated_distance_price' => $calculatedPrices['distance_price'],
-                'calculated_price_ht' => $calculatedPrices['price_ht'],
-                'calculated_tva' => $calculatedPrices['tva'],
-                'calculated_price_ttc' => $calculatedPrices['price_ttc'],
-                'calculated_distance_km' => $calculatedPrices['distance_km'],
-
-                // Nouveaux champs
-                'source' => $userId ? 'client' : 'public',
-                'reference' => 'RES' . strtoupper(Str::random(8)),
-                'is_vtc_booking' => true,
-                'special_requests' => $reservationData['instructions'] ?? null,
-            ];
-
-            \Log::info('Données à insérer:', $dataToInsert);
-
-            // 6. Sauvegarder en base de données
-            $reservation = Reservation::create($dataToInsert);
-
-            \Log::info('Réservation créée', [
-                'id' => $reservation->id,
-                'reference' => $reservation->reference,
-                'user_id' => $userId,
-                'vehicle_category_id' => $vehicleCategory->id,
-                'price_ttc' => $calculatedPrices['price_ttc']
-            ]);
-
-            // 7. Préparer les données pour l'email
-            $emailData = [
-                // Informations client
-                'nom' => $reservationData['nom'],
-                'email' => $reservationData['email'],
-                'telephone' => $reservationData['telephone'],
-
-                // Détails du trajet
-                'depart' => $reservationData['depart'],
-                'arrivee' => $reservationData['arrivee'],
-                'date' => $reservationData['date'],
-                'heure' => $reservationData['heure'],
-
-                // Type de service
-                'type_service' => $reservationData['type_service'],
-                'type_service_label' => $this->getServiceTypeLabel($reservationData['type_service']),
-
-                // Véhicule
-                'type_vehicule' => $vehicleCategory->display_name,
-                'vehicle_category_name' => $vehicleCategory->display_name,
-                'vehicle_category_details' => $vehicleCategory,
-
-                // Passagers
-                'passagers' => $reservationData['passagers'],
-
-                // Instructions
-                'instructions' => $reservationData['instructions'] ?? null,
-
-                // Référence
-                'reference' => $reservation->reference,
-
-                // Prix calculés
-                'calculated_prices' => $calculatedPrices,
-                'formatted_prices' => [
-                    'prise_charge' => number_format($calculatedPrices['prise_charge'], 2, ',', ' '),
-                    'distance_price' => number_format($calculatedPrices['distance_price'], 2, ',', ' '),
-                    'price_ht' => number_format($calculatedPrices['price_ht'], 2, ',', ' '),
-                    'tva' => number_format($calculatedPrices['tva'], 2, ',', ' '),
-                    'price_ttc' => number_format($calculatedPrices['price_ttc'], 2, ',', ' '),
-                    'distance_km' => number_format($calculatedPrices['distance_km'], 1, ',', ' '),
-                ],
-
-                // Coordonnées GPS
-                'depart_lat' => $reservationData['depart_lat'] ?? null,
-                'depart_lng' => $reservationData['depart_lng'] ?? null,
-                'arrivee_lat' => $reservationData['arrivee_lat'] ?? null,
-                'arrivee_lng' => $reservationData['arrivee_lng'] ?? null,
-            ];
-
-            // 8. Envoyer l'email au client
-            \Log::info('Envoi email client');
-            Mail::to($reservationData['email'])
-                ->send(new ReservationMail($emailData, 'client'));
-
-            // 9. Envoyer l'email à l'admin
-            $adminEmail = config('mail.from.address', 'vtc@djokprestige.com');
-            \Log::info('Envoi email admin', ['admin_email' => $adminEmail]);
-            Mail::to($adminEmail)
-                ->send(new ReservationMail($emailData, 'admin'));
-
-            // 10. Envoyer un email de secours si nécessaire
-            $secondaryAdminEmail = 'admin@djokprestige.com';
-            if ($secondaryAdminEmail && $secondaryAdminEmail !== $adminEmail) {
-                \Log::info('Envoi email admin secondaire');
-                Mail::to($secondaryAdminEmail)
-                    ->send(new ReservationMail($emailData, 'admin'));
+            // 6. Déterminer le statut
+            $status = 'pending';
+            if ($reservationData['payment_option'] === 'pay_now') {
+                $status = 'pending_payment';
+                Log::info('Option "pay_now" sélectionnée, statut: pending_payment');
+            } else {
+                Log::info('Option "demande" sélectionnée, statut: pending');
             }
 
-            \Log::info('Réservation traitée avec succès');
+            // 7. Créer la réservation
+            $reservationDataToCreate = [
+                'user_id' => $userId,
+                'type_service' => $reservationData['type_service'],
+                'depart' => $reservationData['depart'],
+                'arrivee' => $reservationData['arrivee'],
+                'date' => $reservationData['date'],
+                'heure' => $reservationData['heure'],
+                'vehicle_category_id' => $vehicleCategory->id,
+                'type_vehicule' => $vehicleCategory->display_name,
+                'passagers' => $reservationData['passagers'],
+                'passengers' => $passengersCount,
+                'nom' => $reservationData['nom'],
+                'telephone' => $reservationData['telephone'],
+                'email' => $reservationData['email'],
+                'instructions' => $reservationData['instructions'] ?? null,
+                'total_amount' => $calculatedPrices['price_ttc'],
+                'status' => $status,
+                'reference' => 'RES' . strtoupper(Str::random(8)),
+                'depart_lat' => $reservationData['depart_lat'] ?? null,
+                'depart_lng' => $reservationData['depart_lng'] ?? null,
+                'arrivee_lat' => $reservationData['arrivee_lat'] ?? null,
+                'arrivee_lng' => $reservationData['arrivee_lng'] ?? null,
+                'calculated_price_ttc' => $calculatedPrices['price_ttc'],
+                'calculated_distance_km' => $calculatedPrices['distance_km'],
+                'is_vtc_booking' => true,
+                'source' => $userId ? 'client' : 'public',
+                'type' => 'vtc_transport',
+                'start_date' => $reservationData['start_date'],
+                'end_date' => $endDate->format('Y-m-d H:i:s'),
+                'calculation_method' => $calculatedPrices['calculation_method'],
+            ];
 
-            return redirect()->route('reservation')
-                ->with('success', 'Votre réservation a été envoyée avec succès ! Vous allez recevoir un email de confirmation avec la référence : ' . $reservation->reference . ' et un montant total de ' . number_format($calculatedPrices['price_ttc'], 2, ',', ' ') . ' € TTC.');
+            Log::info('Données pour création réservation:', $reservationDataToCreate);
+
+            $reservation = Reservation::create($reservationDataToCreate);
+
+            Log::info('Réservation créée avec succès', [
+                'id' => $reservation->id,
+                'reference' => $reservation->reference,
+                'status' => $reservation->status,
+                'amount' => $calculatedPrices['price_ttc'],
+                'start_date' => $reservation->start_date,
+                'end_date' => $reservation->end_date,
+                'calculation_method' => $calculatedPrices['calculation_method'],
+            ]);
+
+            // 8. Gérer selon l'option de paiement
+            if ($reservationData['payment_option'] === 'pay_now') {
+                Log::info('=== DÉBUT Traitement paiement immédiat ===');
+
+                // Rediriger vers le paiement
+                return $this->processPayment($reservation, $calculatedPrices);
+            } else {
+                Log::info('=== DÉBUT Envoi demande de devis ===');
+
+                // Envoyer la demande par email
+                $this->sendReservationRequest($reservation, $calculatedPrices);
+
+                Log::info('=== FIN Envoi demande de devis - Succès ===');
+
+                return redirect()->route('reservation')
+                    ->with('success', 'Votre demande de réservation a été envoyée avec succès ! Nous vous contacterons rapidement pour confirmer votre trajet. Référence : ' . $reservation->reference);
+            }
         } catch (\Exception $e) {
-            \Log::error('Erreur création réservation: ' . $e->getMessage());
-            \Log::error('Trace: ' . $e->getTraceAsString());
-            \Log::error('Données de réservation:', $reservationData);
+            Log::error('Erreur création réservation: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
 
             return redirect()->route('reservation')
                 ->with('error', 'Une erreur est survenue lors de l\'envoi: ' . $e->getMessage() . '. Veuillez réessayer ou nous contacter directement au 01 76 38 00 17.')
@@ -234,41 +198,237 @@ class ReservationController extends Controller
     }
 
     /**
+     * Traiter le paiement d'une réservation
+     */
+    protected function processPayment(Reservation $reservation, array $prices)
+    {
+        try {
+            Log::info('=== DÉBUT processPayment ===');
+            Log::info('Données réservation:', [
+                'id' => $reservation->id,
+                'reference' => $reservation->reference,
+                'email' => $reservation->email,
+                'nom' => $reservation->nom,
+                'amount' => $prices['price_ttc'],
+                'calculation_method' => $prices['calculation_method'],
+            ]);
+
+            // Vérifier si le montant est plausible
+            if ($prices['price_ttc'] < 10 || $prices['price_ttc'] > 10000) {
+                Log::warning('Montant suspect détecté, utilisation de fallback', [
+                    'price_ttc' => $prices['price_ttc'],
+                    'distance_km' => $prices['distance_km'],
+                    'calculation_method' => $prices['calculation_method'],
+                ]);
+
+                // Si le montant est suspect, recalculer avec estimation
+                $vehicleCategory = VehicleCategory::find($reservation->vehicle_category_id);
+                if ($vehicleCategory) {
+                    $prices = $this->calculatePricesFallback($vehicleCategory);
+                    Log::info('Recalcul avec fallback:', $prices);
+                }
+            }
+
+            // Préparer les données du service
+            $serviceData = [
+                'amount' => $prices['price_ttc'],
+                'service_name' => 'Réservation VTC - ' . $this->getServiceTypeLabel($reservation->type_service),
+                'description' => 'Trajet ' . $reservation->depart . ' → ' . $reservation->arrivee,
+                'reservation_data' => $reservation->toArray(),
+            ];
+
+            // Données client
+            $customerData = [
+                'name' => $reservation->nom,
+                'email' => $reservation->email,
+                'phone' => $reservation->telephone,
+            ];
+
+            Log::info('Données préparées pour PaymentService:', [
+                'service_type' => 'reservation',
+                'service_data' => $serviceData,
+                'customer_data' => $customerData,
+                'metadata' => [
+                    'reservation_id' => $reservation->id,
+                    'reference' => $reservation->reference,
+                ]
+            ]);
+
+            // Créer la session de paiement
+            Log::info('Appel à PaymentService::createPaymentSession...');
+            $paymentSession = $this->paymentService->createPaymentSession(
+                'reservation',
+                $serviceData,
+                $customerData,
+                [
+                    'reservation_id' => $reservation->id,
+                    'reference' => $reservation->reference,
+                ]
+            );
+
+            Log::info('PaymentService a retourné:', $paymentSession);
+
+            // Mettre à jour la réservation avec l'ID de session
+            $reservation->update([
+                'stripe_session_id' => $paymentSession['session_id'],
+            ]);
+
+            Log::info('Réservation mise à jour avec stripe_session_id:', [
+                'reservation_id' => $reservation->id,
+                'stripe_session_id' => $paymentSession['session_id'],
+            ]);
+
+            Log::info('=== FIN processPayment - Redirection vers Stripe ===');
+            Log::info('URL de redirection: ' . $paymentSession['url']);
+
+            // Rediriger vers Stripe Checkout
+            return redirect($paymentSession['url']);
+        } catch (\Exception $e) {
+            Log::error('Erreur création paiement réservation: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            // En cas d'erreur, envoyer quand même la demande
+            Log::info('Fallback: envoi par email suite à erreur paiement');
+            $this->sendReservationRequest($reservation, $prices);
+
+            return redirect()->route('reservation')
+                ->with('warning', 'Nous avons reçu votre demande mais avons rencontré une erreur avec le paiement en ligne. Nous vous contacterons pour finaliser la réservation. Référence : ' . $reservation->reference);
+        }
+    }
+
+    /**
+     * Envoyer une demande de réservation (sans paiement immédiat)
+     */
+    protected function sendReservationRequest(Reservation $reservation, array $prices)
+    {
+        try {
+            Log::info('=== DÉBUT sendReservationRequest ===');
+
+            // Préparer les données pour l'email
+            $emailData = [
+                'nom' => $reservation->nom,
+                'email' => $reservation->email,
+                'telephone' => $reservation->telephone,
+                'depart' => $reservation->depart,
+                'arrivee' => $reservation->arrivee,
+                'date' => $reservation->date,
+                'heure' => $reservation->heure,
+                'start_date' => $reservation->start_date,
+                'end_date' => $reservation->end_date,
+                'type_service' => $reservation->type_service,
+                'type_service_label' => $this->getServiceTypeLabel($reservation->type_service),
+                'type_vehicule' => $reservation->type_vehicule,
+                'passagers' => $reservation->passagers,
+                'instructions' => $reservation->instructions,
+                'reference' => $reservation->reference,
+                'calculated_prices' => $prices,
+                'formatted_prices' => [
+                    'price_ttc' => number_format($prices['price_ttc'], 2, ',', ' '),
+                    'distance_km' => number_format($prices['distance_km'], 1, ',', ' '),
+                ],
+            ];
+
+            Log::info('Données email:', $emailData);
+
+            // Envoyer l'email au client
+            Mail::to($reservation->email)
+                ->send(new ReservationMail($emailData, 'client'));
+
+            Log::info('Email de demande envoyé à: ' . $reservation->email);
+
+            // Envoyer la notification admin
+            $adminEmail = config('mail.admin_email', 'vtc@djokprestige.com');
+            Mail::to($adminEmail)
+                ->send(new ReservationMail($emailData, 'admin'));
+
+            Log::info('Notification admin envoyée à: ' . $adminEmail);
+
+            Log::info('=== FIN sendReservationRequest - Succès ===');
+        } catch (\Exception $e) {
+            Log::error('Erreur envoi email réservation: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Calcule les prix pour la réservation
      */
     private function calculatePrices(array $data, VehicleCategory $vehicleCategory): array
     {
-        // Récupérer le nombre de passagers pour le calcul
-        $passengers = isset($data['calculated_passengers']) ? (int)$data['calculated_passengers'] : $this->convertPassagersToCount($data['passagers']);
+        Log::info('=== DÉBUT calculatePrices ===');
+        Log::info('Données reçues pour calcul:', [
+            'has_calculated_distance_km' => isset($data['calculated_distance_km']),
+            'calculated_distance_km' => $data['calculated_distance_km'] ?? 'non défini',
+            'calculated_price_ttc' => $data['calculated_price_ttc'] ?? 'non défini',
+            'calculated_price_ht_base' => $data['calculated_price_ht_base'] ?? 'non défini',
+            'calculated_price_ht_total' => $data['calculated_price_ht_total'] ?? 'non défini',
+        ]);
 
         // Vérifier si des données calculées ont été envoyées par le formulaire
-        $hasCalculatedData = isset($data['calculated_distance_km']) && $data['calculated_distance_km'] > 0;
+        $hasCalculatedData = isset($data['calculated_distance_km'])
+            && !empty($data['calculated_distance_km'])
+            && floatval($data['calculated_distance_km']) > 0;
 
         if ($hasCalculatedData) {
-            // Utiliser les données calculées par le formulaire JavaScript
-            $priseCharge = (float) ($data['calculated_prise_charge'] ?? $vehicleCategory->prise_en_charge);
-            $distancePrice = (float) ($data['calculated_distance_price'] ?? 0);
-            $priceHT = (float) ($data['calculated_price_ht'] ?? $vehicleCategory->prix_minimum);
-            $tva = (float) ($data['calculated_tva'] ?? 0);
-            $priceTTC = (float) ($data['calculated_price_ttc'] ?? $vehicleCategory->prix_minimum);
-            $distanceKm = (float) ($data['calculated_distance_km'] ?? 0);
+            Log::info('Utilisation des données calculées JavaScript');
 
-            return [
+            // Utiliser les données calculées par le formulaire JavaScript
+            // IMPORTANT: Votre JavaScript envoie calculated_price_ht_base et calculated_price_ht_total
+            // Mais vous devez utiliser calculated_price_ttc pour le paiement
+
+            $priseCharge = floatval($data['calculated_prise_charge'] ?? $vehicleCategory->prise_en_charge);
+            $distancePrice = floatval($data['calculated_distance_price'] ?? 0);
+
+            // Essayer d'abord calculated_price_ht_total, puis calculated_price_ht_base, puis fallback
+            if (isset($data['calculated_price_ht_total']) && floatval($data['calculated_price_ht_total']) > 0) {
+                $priceHT = floatval($data['calculated_price_ht_total']);
+            } elseif (isset($data['calculated_price_ht_base']) && floatval($data['calculated_price_ht_base']) > 0) {
+                $priceHT = floatval($data['calculated_price_ht_base']);
+            } else {
+                $priceHT = floatval($vehicleCategory->prix_minimum);
+            }
+
+            $tva = floatval($data['calculated_tva'] ?? 0);
+
+            // CORRECTION CRITIQUE: Utiliser calculated_price_ttc pour le montant TTC
+            if (isset($data['calculated_price_ttc']) && floatval($data['calculated_price_ttc']) > 0) {
+                $priceTTC = floatval($data['calculated_price_ttc']);
+            } else {
+                // Fallback: recalculer TTC
+                $priceTTC = $priceHT + $tva;
+            }
+
+            $distanceKm = floatval($data['calculated_distance_km'] ?? 0);
+
+            $result = [
                 'prise_charge' => $priseCharge,
                 'distance_price' => $distancePrice,
                 'price_ht' => $priceHT,
                 'tva' => $tva,
                 'price_ttc' => $priceTTC,
                 'distance_km' => $distanceKm,
-                'passengers' => $passengers,
                 'calculation_method' => 'javascript'
             ];
+
+            Log::info('Résultat avec données JavaScript:', $result);
+        } else {
+            Log::warning('Calcul des prix sans données de distance, utilisation de l\'estimation');
+
+            // Fallback: calcul manuel basé sur des estimations
+            $result = $this->calculatePricesFallback($vehicleCategory);
         }
 
-        // Fallback: calcul manuel basé sur des estimations
-        \Log::warning('Calcul des prix sans données de distance, utilisation de l\'estimation');
+        Log::info('=== FIN calculatePrices ===');
+        return $result;
+    }
 
-        // Estimer une distance moyenne (20km par défaut)
+    /**
+     * Calcul de prix de fallback (estimation)
+     */
+    private function calculatePricesFallback(VehicleCategory $vehicleCategory): array
+    {
         $estimatedDistanceKm = 20.0;
 
         // Calcul standard
@@ -282,23 +442,23 @@ class ReservationController extends Controller
             $distancePrice = $priceHT - $priseCharge;
         }
 
-        // Multiplier par le nombre de passagers
-        $priceHT = $priceHT * $passengers;
-
         // Calcul de la TVA (10%)
         $tva = $priceHT * 0.1;
         $priceTTC = $priceHT + $tva;
 
-        return [
+        $result = [
             'prise_charge' => $priseCharge,
             'distance_price' => $distancePrice,
             'price_ht' => $priceHT,
             'tva' => $tva,
             'price_ttc' => $priceTTC,
             'distance_km' => $estimatedDistanceKm,
-            'passengers' => $passengers,
             'calculation_method' => 'estimation'
         ];
+
+        Log::info('Résultat avec estimation:', $result);
+
+        return $result;
     }
 
     /**
@@ -306,7 +466,7 @@ class ReservationController extends Controller
      */
     private function convertPassagersToCount(string $passagers): int
     {
-        return (int) $passagers; // Maintenant les valeurs sont 1-8, pas de 5+
+        return (int) $passagers;
     }
 
     /**
@@ -322,6 +482,32 @@ class ReservationController extends Controller
         ];
 
         return $labels[$type] ?? $type;
+    }
+
+    /**
+     * API pour créer une session de paiement (AJAX)
+     */
+    public function createPayment(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'reservation_id' => 'required|exists:reservations,id',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        try {
+            $reservation = Reservation::find($request->reservation_id);
+
+            // Calculer les prix
+            $calculatedPrices = $this->calculatePrices($reservation->toArray(), $reservation->vehicleCategory);
+
+            // Créer la session de paiement
+            return $this->processPayment($reservation, $calculatedPrices);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -393,7 +579,7 @@ class ReservationController extends Controller
                 ]
             ]);
         } catch (\Exception $e) {
-            \Log::error('Erreur calcul prix API: ' . $e->getMessage());
+            Log::error('Erreur calcul prix API: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
@@ -404,7 +590,6 @@ class ReservationController extends Controller
 
     /**
      * Calcule la distance entre deux points (formule haversine)
-     * Note: Dans une vraie application, utilisez l'API Google Maps
      */
     private function calculateDistance($lat1, $lon1, $lat2, $lon2): float
     {

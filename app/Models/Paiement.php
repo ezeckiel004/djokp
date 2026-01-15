@@ -11,7 +11,12 @@ class Paiement extends Model
 
     protected $fillable = [
         'user_id',
-        'formation_id',
+        'service_id',
+        'service_type',
+        'reservation_id',
+        'location_id',
+        'conciergerie_id',
+        'formation_internationale_id',
         'reference',
         'amount',
         'currency',
@@ -21,6 +26,7 @@ class Paiement extends Model
         'stripe_response',
         'paid_at',
         'customer_info',
+        'service_details',
         'refunded_at',
         'refund_reason',
         'refund_data',
@@ -29,6 +35,7 @@ class Paiement extends Model
     protected $casts = [
         'stripe_response' => 'array',
         'customer_info' => 'array',
+        'service_details' => 'array',
         'refund_data' => 'array',
         'paid_at' => 'datetime',
         'refunded_at' => 'datetime',
@@ -48,7 +55,40 @@ class Paiement extends Model
      */
     public function formation()
     {
-        return $this->belongsTo(Formation::class);
+        // CORRECTION : Pas de condition where ici
+        return $this->belongsTo(Formation::class, 'service_id');
+    }
+
+    /**
+     * Relation avec la réservation VTC
+     */
+    public function reservation()
+    {
+        return $this->belongsTo(Reservation::class);
+    }
+
+    /**
+     * Relation avec la location
+     */
+    public function location()
+    {
+        return $this->belongsTo(\App\Models\LocationReservation::class, 'location_id');
+    }
+
+    /**
+     * Relation avec la conciergerie
+     */
+    public function conciergerie()
+    {
+        return $this->belongsTo(\App\Models\Conciergerie::class);
+    }
+
+    /**
+     * Relation avec la formation internationale
+     */
+    public function formationInternationale()
+    {
+        return $this->belongsTo(\App\Models\FormationInternationale::class);
     }
 
     /**
@@ -56,7 +96,8 @@ class Paiement extends Model
      */
     public function userFormations()
     {
-        return $this->hasMany(UserFormation::class);
+        return $this->hasMany(UserFormation::class, 'formation_id', 'service_id')
+            ->where('user_id', $this->user_id);
     }
 
     /**
@@ -65,6 +106,50 @@ class Paiement extends Model
     public function participants()
     {
         return $this->hasMany(Participant::class);
+    }
+
+    /**
+     * Récupérer le service associé
+     */
+    public function getServiceAttribute()
+    {
+        switch ($this->service_type) {
+            case 'formation':
+                return $this->formation;
+            case 'reservation':
+                return $this->reservation;
+            case 'location':
+                return $this->location;
+            case 'conciergerie':
+                return $this->conciergerie;
+            case 'formation_internationale':
+                return $this->formationInternationale;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Récupérer le nom du service
+     */
+    public function getServiceNameAttribute()
+    {
+        if ($this->service) {
+            switch ($this->service_type) {
+                case 'formation':
+                    return $this->formation->title ?? 'Formation inconnue';
+                case 'reservation':
+                    return 'Réservation VTC ' . ($this->reservation->reference ?? 'N/A');
+                case 'location':
+                    return 'Location ' . ($this->location->vehicule->marque ?? 'Véhicule');
+                case 'conciergerie':
+                    return 'Service conciergerie ' . ($this->conciergerie->reference ?? 'N/A');
+                case 'formation_internationale':
+                    return 'Formation internationale ' . ($this->formationInternationale->reference ?? 'N/A');
+            }
+        }
+
+        return $this->service_details['service_name'] ?? 'Service inconnu';
     }
 
     /**
@@ -93,6 +178,46 @@ class Paiement extends Model
 
         // Sinon: nom des infos client Stripe
         return $this->customer_info['name'] ?? 'Client';
+    }
+
+    /**
+     * Vérifier si c'est un paiement pour formations
+     */
+    public function isFormation()
+    {
+        return $this->service_type === 'formation';
+    }
+
+    /**
+     * Vérifier si c'est un paiement pour VTC
+     */
+    public function isReservation()
+    {
+        return $this->service_type === 'reservation';
+    }
+
+    /**
+     * Vérifier si c'est un paiement pour location
+     */
+    public function isLocation()
+    {
+        return $this->service_type === 'location';
+    }
+
+    /**
+     * Vérifier si c'est un paiement pour conciergerie
+     */
+    public function isConciergerie()
+    {
+        return $this->service_type === 'conciergerie';
+    }
+
+    /**
+     * Vérifier si c'est un paiement pour formation internationale
+     */
+    public function isFormationInternationale()
+    {
+        return $this->service_type === 'formation_internationale';
     }
 
     /**
@@ -160,17 +285,21 @@ class Paiement extends Model
     }
 
     /**
-     * Récupérer le participant associé
+     * Récupérer le participant associé (pour formations)
      */
     public function getAssociatedParticipant()
     {
+        if (!$this->isFormation()) {
+            return null;
+        }
+
         // Chercher d'abord par paiement_id
         $participant = $this->participants()->first();
 
         if (!$participant && $this->customer_email) {
             // Chercher par email si pas trouvé par paiement_id
             $participant = Participant::where('email', $this->customer_email)
-                ->where('formation_id', $this->formation_id)
+                ->where('formation_id', $this->service_id)
                 ->first();
         }
 
@@ -178,16 +307,16 @@ class Paiement extends Model
     }
 
     /**
-     * Récupérer les inscriptions utilisateur associées
+     * Récupérer les inscriptions utilisateur associées (pour formations)
      */
     public function getAssociatedUserFormations()
     {
-        if (!$this->user_id || !$this->formation_id) {
+        if (!$this->isFormation() || !$this->user_id) {
             return collect();
         }
 
         return UserFormation::where('user_id', $this->user_id)
-            ->where('formation_id', $this->formation_id)
+            ->where('formation_id', $this->service_id)
             ->get();
     }
 
@@ -221,6 +350,14 @@ class Paiement extends Model
     public function scopeCanceled($query)
     {
         return $query->where('status', 'canceled');
+    }
+
+    /**
+     * Scope pour les paiements par type de service
+     */
+    public function scopeByServiceType($query, $serviceType)
+    {
+        return $query->where('service_type', $serviceType);
     }
 
     /**
@@ -261,5 +398,37 @@ class Paiement extends Model
         ];
 
         return $colors[$this->status] ?? 'bg-gray-100 text-gray-800';
+    }
+
+    /**
+     * Obtenir la couleur du badge selon le type de service
+     */
+    public function getServiceTypeColorAttribute()
+    {
+        $colors = [
+            'formation' => 'bg-blue-100 text-blue-800',
+            'reservation' => 'bg-green-100 text-green-800',
+            'location' => 'bg-purple-100 text-purple-800',
+            'conciergerie' => 'bg-yellow-100 text-yellow-800',
+            'formation_internationale' => 'bg-indigo-100 text-indigo-800',
+        ];
+
+        return $colors[$this->service_type] ?? 'bg-gray-100 text-gray-800';
+    }
+
+    /**
+     * Obtenir le type de service formaté
+     */
+    public function getFormattedServiceTypeAttribute()
+    {
+        $types = [
+            'formation' => 'Formation',
+            'reservation' => 'Réservation VTC',
+            'location' => 'Location',
+            'conciergerie' => 'Conciergerie',
+            'formation_internationale' => 'Formation Internationale',
+        ];
+
+        return $types[$this->service_type] ?? $this->service_type;
     }
 }

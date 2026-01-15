@@ -56,17 +56,14 @@
                                         class="px-3 py-1 text-xs font-semibold rounded-full {{ $paiement->status_color }}">
                                         {{ $paiement->formatted_status }}
                                     </span>
+                                    <span
+                                        class="ml-2 px-3 py-1 text-xs font-semibold rounded-full {{ $paiement->service_type_color }}">
+                                        {{ $paiement->formatted_service_type }}
+                                    </span>
                                 </div>
                             </div>
-                            <p class="text-gray-600">Formation :
-                                <span class="font-semibold">
-                                    @if($paiement->formation)
-                                    {{ $paiement->formation->title }}
-                                    @else
-                                    <span class="text-red-500">Formation supprimée</span>
-                                    @endif
-                                </span>
-                            </p>
+                            <p class="text-gray-600">Service : <span class="font-semibold">{{ $paiement->service_name
+                                    }}</span></p>
                         </div>
                         <div class="text-right">
                             <div class="text-sm text-gray-500">Date création</div>
@@ -112,6 +109,13 @@
                                     <div class="text-sm text-gray-500">Email</div>
                                     <div class="font-medium">{{ $paiement->customer_email ?? 'Non fourni' }}</div>
                                 </div>
+
+                                @if($paiement->customer_info['phone'] ?? false)
+                                <div>
+                                    <div class="text-sm text-gray-500">Téléphone</div>
+                                    <div class="font-medium">{{ $paiement->customer_info['phone'] }}</div>
+                                </div>
+                                @endif
 
                                 <!-- Compte client -->
                                 @if($paiement->user)
@@ -170,10 +174,12 @@
                         </div>
                     </div>
 
-                    <!-- Formation -->
-                    @if($paiement->formation)
+                    <!-- Détails du service -->
                     <div class="mt-6 pt-6 border-t border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Formation associée</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Détails du service</h3>
+
+                        @if($paiement->isFormation() && $paiement->formation)
+                        <!-- Formation -->
                         <div class="flex items-center p-4 bg-gray-50 rounded-lg">
                             <div class="flex-1">
                                 <h4 class="font-semibold text-gray-900">{{ $paiement->formation->title }}</h4>
@@ -196,16 +202,77 @@
                                 </div>
                             </div>
                             <div>
-                                <a href="{{ route('admin.formations.show', $paiement->formation_id) }}"
+                                <a href="{{ route('admin.formations.show', $paiement->service_id) }}"
                                     class="text-blue-600 hover:text-blue-800 p-2 rounded hover:bg-blue-50">
                                     <i class="fas fa-external-link-alt"></i>
                                 </a>
                             </div>
                         </div>
-                    </div>
-                    @endif
+                        @elseif($paiement->isReservation() && $paiement->reservation)
+                        <!-- Réservation VTC -->
+                        <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                            <div class="flex items-start">
+                                <i class="fas fa-car text-blue-600 mt-1 mr-3"></i>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h4 class="font-semibold text-blue-800 mb-2">Réservation {{
+                                                $paiement->reservation->reference }}</h4>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                                                <div>
+                                                    <div class="text-sm text-gray-600">Trajet</div>
+                                                    <div class="font-medium">{{ $paiement->reservation->depart }} → {{
+                                                        $paiement->reservation->arrivee }}</div>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm text-gray-600">Date/Heure</div>
+                                                    <div class="font-medium">
+                                                        {{
+                                                        \Carbon\Carbon::parse($paiement->reservation->date)->format('d/m/Y')
+                                                        }} à {{ $paiement->reservation->heure }}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm text-gray-600">Véhicule</div>
+                                                    <div class="font-medium">{{ $paiement->reservation->type_vehicule }}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="text-sm text-gray-600">Passagers</div>
+                                                    <div class="font-medium">{{ $paiement->reservation->passagers }}
+                                                        personnes</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('admin.reservations.show', $paiement->reservation_id) }}"
+                                            class="text-blue-600 hover:text-blue-800 p-2 rounded hover:bg-blue-100">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    </div>
 
-                    <!-- Inscriptions et accès -->
+                                    @if($paiement->reservation->instructions)
+                                    <div>
+                                        <div class="text-sm text-gray-600 mb-1">Instructions</div>
+                                        <div class="text-sm text-gray-700 bg-white p-3 rounded border">{{
+                                            $paiement->reservation->instructions }}</div>
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        @else
+                        <!-- Autres services -->
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="text-center py-8">
+                                <i class="fas fa-info-circle text-3xl text-gray-400 mb-4"></i>
+                                <p class="text-gray-600">Aucun détail supplémentaire disponible pour ce service.</p>
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+
+                    <!-- Inscriptions et accès (uniquement pour formations) -->
+                    @if($paiement->isFormation())
                     <div class="mt-6 pt-6 border-t border-gray-200">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Inscriptions et accès</h3>
 
@@ -221,11 +288,9 @@
                                             <span class="text-sm text-gray-600 mr-3">
                                                 Statut :
                                                 <span
-                                                    class="font-semibold {{ $userFormation->status === 'active' ? 'text-green-600' : ($userFormation->status === 'refunded' ? 'text-purple-600' : 'text-gray-600') }}">
+                                                    class="font-semibold {{ $userFormation->status === 'active' ? 'text-green-600' : 'text-gray-600' }}">
                                                     @if($userFormation->status === 'active')
                                                     Actif
-                                                    @elseif($userFormation->status === 'refunded')
-                                                    Remboursé
                                                     @else
                                                     {{ $userFormation->status }}
                                                     @endif
@@ -319,14 +384,14 @@
                                     <p class="text-yellow-800 font-medium">Aucune inscription trouvée</p>
                                     <p class="text-yellow-700 text-sm mt-1">
                                         Aucune inscription n'a été trouvée pour ce paiement.
-                                        Cela peut arriver si l'inscription n'a pas encore été créée ou si elle a été
-                                        supprimée.
+                                        Cela peut arriver si l'inscription n'a pas encore été créée.
                                     </p>
                                 </div>
                             </div>
                         </div>
                         @endif
                     </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -347,11 +412,19 @@
                     </a>
                     @endif
 
-                    @if($paiement->formation_id)
-                    <a href="{{ route('admin.formations.show', $paiement->formation_id) }}"
+                    @if($paiement->isFormation() && $paiement->service_id)
+                    <a href="{{ route('admin.formations.show', $paiement->service_id) }}"
                         class="w-full flex items-center justify-center px-4 py-2.5 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
                         <i class="fas fa-graduation-cap mr-2"></i>
                         Voir la formation
+                    </a>
+                    @endif
+
+                    @if($paiement->isReservation() && $paiement->reservation_id)
+                    <a href="{{ route('admin.reservations.show', $paiement->reservation_id) }}"
+                        class="w-full flex items-center justify-center px-4 py-2.5 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors">
+                        <i class="fas fa-car mr-2"></i>
+                        Voir la réservation
                     </a>
                     @endif
                 </div>
@@ -360,20 +433,8 @@
                 <div class="border-t border-gray-200 pt-6">
                     <h4 class="font-semibold text-gray-900 mb-3">Gestion du paiement</h4>
 
-                    @if($paiement->isPaid())
-                    <!-- Remboursement -->
-                    <div class="mb-4">
-                        <button type="button"
-                            onclick="document.getElementById('refundModal').classList.remove('hidden')"
-                            class="w-full flex items-center justify-center px-4 py-2.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors">
-                            <i class="fas fa-undo mr-2"></i>
-                            Effectuer un remboursement
-                        </button>
-                    </div>
-                    @endif
-
                     <!-- Télécharger reçu -->
-                    @if($paiement->isPaid() || $paiement->isRefunded())
+                    @if($paiement->isPaid())
                     <div class="mb-4">
                         <button type="button" onclick="generateReceipt()"
                             class="w-full flex items-center justify-center px-4 py-2.5 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors">
@@ -429,85 +490,15 @@
                         </div>
                     </div>
                     @endif
-
-                    <!-- Remboursement -->
-                    @if($paiement->refunded_at)
-                    <div class="flex items-start">
-                        <div
-                            class="flex-shrink-0 h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center mr-3">
-                            <i class="fas fa-undo text-purple-600 text-sm"></i>
-                        </div>
-                        <div>
-                            <div class="font-medium">Remboursement</div>
-                            <div class="text-sm text-gray-500">{{ $paiement->refunded_at->format('d/m/Y H:i') }}</div>
-                            @if($paiement->refund_reason)
-                            <div class="text-sm text-gray-600 mt-1">{{ $paiement->refund_reason }}</div>
-                            @endif
-                        </div>
-                    </div>
-                    @endif
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-<!-- Modal de remboursement -->
-<div id="refundModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-xl bg-white">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Confirmer le remboursement</h3>
-            <button type="button" onclick="document.getElementById('refundModal').classList.add('hidden')"
-                class="text-gray-400 hover:text-gray-500">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-
-        <form action="{{ route('admin.paiements.refund', $paiement) }}" method="POST">
-            @csrf
-            @method('POST')
-
-            <div class="mb-4">
-                <label for="reason" class="block text-sm font-medium text-gray-700 mb-2">Raison du remboursement</label>
-                <textarea name="reason" id="reason" rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Optionnel - Ex: Demande du client, erreur de facturation..."></textarea>
-            </div>
-
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                <div class="flex items-center">
-                    <i class="fas fa-exclamation-triangle text-yellow-600 mr-2"></i>
-                    <p class="text-sm text-yellow-800">
-                        <strong>Attention :</strong> Cette action est irréversible.
-                        Le client sera remboursé via Stripe et perdra l'accès à la formation.
-                    </p>
-                </div>
-            </div>
-
-            <div class="flex justify-end space-x-3">
-                <button type="button" onclick="document.getElementById('refundModal').classList.add('hidden')"
-                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                    Annuler
-                </button>
-                <button type="submit"
-                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                    Confirmer le remboursement
-                </button>
-            </div>
-        </form>
     </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
-    // Masquer le modal si on clique en dehors
-    document.getElementById('refundModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.classList.add('hidden');
-        }
-    });
-
     // Suggérer la création de compte
     function suggestAccountCreation(email, name) {
         if (confirm('Voulez-vous créer un compte pour ce client ?\n\nEmail: ' + email + '\nNom: ' + name)) {
@@ -518,8 +509,100 @@
 
     // Générer un reçu
     function generateReceipt() {
-        const url = '{{ route("admin.paiements.show", $paiement) }}/receipt';
-        window.open(url, '_blank');
+        const printContent = `
+            <html>
+            <head>
+                <title>Reçu de paiement - {{ $paiement->reference }}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+                    .header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #333; }
+                    .logo { font-size: 24px; font-weight: bold; color: #333; margin-bottom: 10px; }
+                    .company-info { font-size: 12px; color: #666; margin-bottom: 20px; }
+                    .title { font-size: 20px; margin: 30px 0; color: #333; }
+                    .details { width: 100%; border-collapse: collapse; margin: 30px 0; }
+                    .details td { padding: 10px 0; border-bottom: 1px solid #eee; }
+                    .details .label { color: #666; font-weight: 500; width: 40%; }
+                    .total { font-weight: bold; font-size: 18px; margin-top: 30px; padding-top: 20px; border-top: 2px solid #333; }
+                    .footer { margin-top: 50px; text-align: center; color: #666; font-size: 12px; line-height: 1.6; }
+                    .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); 
+                               font-size: 80px; color: rgba(0,0,0,0.1); z-index: -1; font-weight: bold; }
+                </style>
+            </head>
+            <body>
+                <div class="watermark">DJOK PRESTIGE</div>
+                
+                <div class="header">
+                    <div class="logo">DJOK PRESTIGE</div>
+                    <div class="company-info">
+                        123 Avenue des Champs-Élysées, 75008 Paris<br>
+                        Tél: 01 76 38 00 17 | Email: contact@djokprestige.com<br>
+                        SIRET: 123 456 789 00012 | TVA Intracom: FR12345678901
+                    </div>
+                    <div class="title">REÇU DE PAIEMENT N°{{ $paiement->reference }}</div>
+                </div>
+                
+                <table class="details">
+                    <tr>
+                        <td class="label">Date d'émission :</td>
+                        <td>{{ $paiement->paid_at->format('d/m/Y') ?? $paiement->created_at->format('d/m/Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Client :</td>
+                        <td>{{ $paiement->customer_name }}</td>
+                    </tr>
+                    @if($paiement->customer_email)
+                    <tr>
+                        <td class="label">Email :</td>
+                        <td>{{ $paiement->customer_email }}</td>
+                    </tr>
+                    @endif
+                    <tr>
+                        <td class="label">Service :</td>
+                        <td>{{ $paiement->service_name }}</td>
+                    </tr>
+                    @if($paiement->isReservation() && $paiement->reservation)
+                    <tr>
+                        <td class="label">Détails réservation :</td>
+                        <td>
+                            {{ $paiement->reservation->depart }} → {{ $paiement->reservation->arrivee }}<br>
+                            {{ \Carbon\Carbon::parse($paiement->reservation->date)->format('d/m/Y') }} à {{ $paiement->reservation->heure }}
+                        </td>
+                    </tr>
+                    @endif
+                    <tr>
+                        <td class="label">Mode de paiement :</td>
+                        <td>Carte bancaire (Stripe)</td>
+                    </tr>
+                    <tr>
+                        <td class="label">Montant HT :</td>
+                        <td>{{ number_format($paiement->amount / 1.1, 2, ',', ' ') }} €</td>
+                    </tr>
+                    <tr>
+                        <td class="label">TVA (10%) :</td>
+                        <td>{{ number_format($paiement->amount * 0.1 / 1.1, 2, ',', ' ') }} €</td>
+                    </tr>
+                    <tr class="total">
+                        <td>MONTANT TTC :</td>
+                        <td>{{ number_format($paiement->amount, 2, ',', ' ') }} €</td>
+                    </tr>
+                </table>
+                
+                <div class="footer">
+                    <p>Ce document constitue un reçu officiel de paiement.</p>
+                    <p>Merci pour votre confiance !</p>
+                    <p>DJOK PRESTIGE - 01 76 38 00 17 - contact@djokprestige.com</p>
+                    <p style="margin-top: 20px; font-size: 10px;">
+                        Document généré le {{ now()->format('d/m/Y à H:i') }}
+                    </p>
+                </div>
+            </body>
+            </html>
+        `;
+
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.print();
     }
 
     // Formater la date

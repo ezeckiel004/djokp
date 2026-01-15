@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'title' => 'Restablecer Contraseña',
+    'heading' => 'Nueva Contraseña',
+    'message' => 'Elija una contraseña segura para completar el restablecimiento.',
+    'email_label' => 'Dirección de correo electrónico',
+    'email_placeholder' => 'su@email.com',
+    'new_password_label' => 'Nueva Contraseña',
+    'confirm_password_label' => 'Confirmar Contraseña',
+    'button' => 'Restablecer Contraseña',
+    'back_link' => 'Volver al inicio de sesión',
+    'benefit_secure' => 'Contraseña cifrada y segura',
+    'benefit_realtime' => 'Confirmación en tiempo real',
+    'image_alt' => 'Espacio del Cliente DJOK PRESTIGE',
+    'right_title' => 'Tu Éxito<br>Comienza Aquí',
+    'right_description' => 'Únase a una comunidad de profesionales y desarrolle sus habilidades con DJOK PRESTIGE. Acceda a formación exclusiva e impulse su carrera.',
+    'feature_trainings' => 'Formaciones Certificadoras',
+    'feature_support' => 'Soporte Experto 24/7',
+    'feature_network' => 'Red Profesional',
+    'feature_opportunities' => 'Oportunidades de Negocio',
+    'stats_members' => 'Miembros Activos',
+    'stats_satisfaction' => 'Tasa de Satisfacción',
+    'stats_support' => 'Soporte Disponible',
+];

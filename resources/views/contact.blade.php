@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Contact - DJOK PRESTIGE')
+@section('title', __('contact.title'))
 
 @section('content')
 <style>
@@ -49,19 +49,19 @@
                     </div>
                 </div>
                 <div class="ml-3">
-                    <h3 class="text-lg font-semibold text-white">Message envoyé avec succès !</h3>
+                    <h3 class="text-lg font-semibold text-white">{{ __('contact.success_title') }}</h3>
                     <div class="mt-1 text-green-100">
                         <p>{{ session('success') }}</p>
                         @if(session('email'))
                         <p class="text-sm mt-1">
-                            Un email de confirmation a été envoyé à <strong>{{ session('email') }}</strong>
+                            {!! __('contact.confirmation_email', ['email' => session('email')]) !!}
                         </p>
                         @endif
                     </div>
                 </div>
             </div>
             <button type="button" onclick="document.getElementById('success-alert').remove();"
-                class="text-green-300 hover:text-white">
+                class="text-green-300 hover:text-white" aria-label="{{ __('contact.close_alert') }}">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -83,10 +83,10 @@
 <div class="container mx-auto px-4 md:px-6 py-12">
     <div class="max-w-6xl mx-auto">
         <div class="text-center mb-12">
-            <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: var(--gold);">Contactez DJOK PRESTIGE</h1>
+            <h1 class="text-3xl md:text-4xl font-bold mb-4" style="color: var(--gold);">{{ __('contact.hero_title') }}
+            </h1>
             <p class="text-gray-400 max-w-3xl mx-auto">
-                Vous avez une question, un projet ou besoin d'un service spécifique ? Notre équipe est à votre écoute
-                pour vous accompagner.
+                {{ __('contact.hero_description') }}
             </p>
         </div>
 
@@ -94,7 +94,7 @@
             <!-- Formulaire de contact - Style sobre -->
             <div class="lg:col-span-2">
                 <div class="p-6 md:p-8" style="background: #111; border: 1px solid #333;">
-                    <h2 class="text-2xl font-bold mb-6" style="color: var(--gold);">Envoyez-nous votre message</h2>
+                    <h2 class="text-2xl font-bold mb-6" style="color: var(--gold);">{{ __('contact.form_title') }}</h2>
 
                     @if($errors->any())
                     <div class="p-4 mb-6" style="background: #7f1d1d; border: 1px solid #991b1b;">
@@ -104,7 +104,7 @@
                                 <i class="fas fa-exclamation-triangle text-white"></i>
                             </div>
                             <div>
-                                <h4 class="font-bold text-white">Veuillez corriger les erreurs suivantes :</h4>
+                                <h4 class="font-bold text-white">{{ __('contact.error_correction') }}</h4>
                                 <ul class="text-red-100 list-disc list-inside mt-1">
                                     @foreach($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -120,25 +120,28 @@
 
                         <!-- Informations personnelles -->
                         <div class="mb-8">
-                            <h3 class="text-lg font-semibold mb-4" style="color: white;">Vos informations</h3>
+                            <h3 class="text-lg font-semibold mb-4" style="color: white;">{{ __('contact.personal_info')
+                                }}</h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label class="block mb-2 font-medium" style="color: #ddd;">Nom complet *</label>
+                                    <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                        __('contact.full_name') }}</label>
                                     <input type="text" name="nom" required value="{{ old('nom') }}"
                                         class="w-full px-4 py-3 rounded @error('nom') border-red-500 @enderror"
                                         style="background: #1a1a1a; border: 1px solid #444; color: white;"
-                                        placeholder="Votre nom et prénom">
+                                        placeholder="{{ __('contact.full_name_placeholder') }}">
                                     @error('nom')
                                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 <div>
-                                    <label class="block mb-2 font-medium" style="color: #ddd;">Email *</label>
+                                    <label class="block mb-2 font-medium" style="color: #ddd;">{{ __('contact.email')
+                                        }}</label>
                                     <input type="email" name="email" required value="{{ old('email') }}"
                                         class="w-full px-4 py-3 rounded @error('email') border-red-500 @enderror"
                                         style="background: #1a1a1a; border: 1px solid #444; color: white;"
-                                        placeholder="votre@email.com">
+                                        placeholder="{{ __('contact.email_placeholder') }}">
                                     @error('email')
                                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                                     @enderror
@@ -146,11 +149,12 @@
                             </div>
 
                             <div class="mt-4">
-                                <label class="block mb-2 font-medium" style="color: #ddd;">Téléphone</label>
+                                <label class="block mb-2 font-medium" style="color: #ddd;">{{ __('contact.phone')
+                                    }}</label>
                                 <input type="tel" name="telephone" value="{{ old('telephone') }}"
                                     class="w-full px-4 py-3 rounded @error('telephone') border-red-500 @enderror"
                                     style="background: #1a1a1a; border: 1px solid #444; color: white;"
-                                    placeholder="+33 1 23 45 67 89">
+                                    placeholder="{{ __('contact.phone_placeholder') }}">
                                 @error('telephone')
                                 <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -159,9 +163,9 @@
 
                         <!-- Sélection du service -->
                         <div class="mb-8">
-                            <h3 class="text-lg font-semibold mb-4" style="color: white;">Type de service concerné *</h3>
-                            <p class="text-gray-400 text-sm mb-4">Sélectionnez le service qui correspond à votre demande
-                            </p>
+                            <h3 class="text-lg font-semibold mb-4" style="color: white;">{{ __('contact.service_type')
+                                }}</h3>
+                            <p class="text-gray-400 text-sm mb-4">{{ __('contact.service_select_help') }}</p>
 
                             @error('service_id')
                             <p class="text-red-400 text-sm mb-4">{{ $message }}</p>
@@ -169,7 +173,7 @@
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 @foreach($services as $service)
-                                <label class="cursor-pointer">
+                                <label class="cursor-pointer" aria-label="{{ __('contact.select_service') }}">
                                     <input type="radio" name="service_id" value="{{ $service->id }}"
                                         class="service-radio hidden" {{ old('service_id')==$service->id ? 'checked' : ''
                                     }}>
@@ -185,8 +189,11 @@
                                                 <h4 class="font-medium" style="color: white;">{{ $service->name }}</h4>
                                                 @if($service->price_from)
                                                 <p class="text-sm text-gray-400 mt-1">
-                                                    À partir de {{ number_format($service->price_from, 0, ',', ' ') }}€
-                                                    @if($service->price_unit) /{{ $service->price_unit }} @endif
+                                                    {{ __('À partir de') }} {{ number_format($service->price_from, 0,
+                                                    ',', ' ') }}€
+                                                    @if($service->price_unit)
+                                                    {{ __('contact.' . $service->price_unit) }}
+                                                    @endif
                                                 </p>
                                                 @endif
                                             </div>
@@ -196,7 +203,7 @@
                                 @endforeach
 
                                 <!-- Option "Autre service" -->
-                                <label class="cursor-pointer">
+                                <label class="cursor-pointer" aria-label="{{ __('contact.select_service') }}">
                                     <input type="radio" name="service_id" value="autre" class="service-radio hidden"
                                         id="autre-service" {{ old('service_id')=='autre' ? 'checked' : '' }}>
                                     <div class="service-card rounded-lg p-4 transition-all duration-200">
@@ -205,8 +212,10 @@
                                                 <i class="fas fa-plus-circle text-lg" style="color: var(--gold);"></i>
                                             </div>
                                             <div>
-                                                <h4 class="font-medium" style="color: white;">Autre service</h4>
-                                                <p class="text-sm text-gray-400 mt-1">Précisez votre demande</p>
+                                                <h4 class="font-medium" style="color: white;">{{
+                                                    __('contact.other_service') }}</h4>
+                                                <p class="text-sm text-gray-400 mt-1">{{
+                                                    __('contact.other_service_desc') }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -217,12 +226,12 @@
                             <div id="autre-field-container"
                                 class="other-field {{ old('service_id') == 'autre' ? 'show' : '' }}">
                                 <div class="mt-4">
-                                    <label class="block mb-2 font-medium" style="color: #ddd;">Précisez votre demande
-                                        *</label>
+                                    <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                        __('contact.other_specify') }}</label>
                                     <input type="text" name="autre_service" value="{{ old('autre_service') }}"
                                         class="w-full px-4 py-3 rounded @error('autre_service') border-red-500 @enderror"
                                         style="background: #1a1a1a; border: 1px solid #444; color: white;"
-                                        placeholder="De quel service avez-vous besoin ?">
+                                        placeholder="{{ __('contact.other_placeholder') }}">
                                     @error('autre_service')
                                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                                     @enderror
@@ -232,17 +241,19 @@
 
                         <!-- Message -->
                         <div class="mb-8">
-                            <h3 class="text-lg font-semibold mb-4" style="color: white;">Votre message</h3>
+                            <h3 class="text-lg font-semibold mb-4" style="color: white;">{{
+                                __('contact.message_section') }}</h3>
                             <div>
-                                <label class="block mb-2 font-medium" style="color: #ddd;">Message détaillé *</label>
+                                <label class="block mb-2 font-medium" style="color: #ddd;">{{ __('contact.message')
+                                    }}</label>
                                 <textarea name="message" rows="6" required
                                     class="w-full px-4 py-3 rounded @error('message') border-red-500 @enderror"
                                     style="background: #1a1a1a; border: 1px solid #444; color: white;"
-                                    placeholder="Décrivez en détail votre demande, vos besoins, vos contraintes...">{{ old('message') }}</textarea>
+                                    placeholder="{{ __('contact.message_placeholder') }}">{{ old('message') }}</textarea>
                                 @error('message')
                                 <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                                 @enderror
-                                <p class="text-sm text-gray-500 mt-2">Minimum 10 caractères</p>
+                                <p class="text-sm text-gray-500 mt-2">{{ __('contact.message_min_chars') }}</p>
                             </div>
                         </div>
 
@@ -253,18 +264,18 @@
                                 style="background: var(--gold); color: black;">
                                 <span id="btn-text" class="flex items-center justify-center">
                                     <i class="fas fa-paper-plane mr-3"></i>
-                                    Envoyer mon message
+                                    {{ __('contact.submit_button') }}
                                 </span>
                                 <span id="btn-loading" class="hidden flex items-center justify-center">
                                     <i class="fas fa-spinner fa-spin mr-3"></i>
-                                    Envoi en cours...
+                                    {{ __('contact.sending') }}
                                 </span>
                             </button>
                         </div>
 
                         <p class="text-center text-sm mt-4" style="color: #888;">
                             <i class="fas fa-shield-alt mr-2"></i>
-                            Vos informations sont sécurisées et ne seront pas partagées avec des tiers.
+                            {{ __('contact.security_notice') }}
                         </p>
                     </form>
                 </div>
@@ -274,7 +285,7 @@
             <div class="space-y-8">
                 <!-- Coordonnées -->
                 <div class="p-6" style="background: #111; border: 1px solid #333;">
-                    <h3 class="text-xl font-bold mb-6" style="color: var(--gold);">Nos coordonnées</h3>
+                    <h3 class="text-xl font-bold mb-6" style="color: var(--gold);">{{ __('contact.contact_info') }}</h3>
                     <div class="space-y-6">
                         <div>
                             <div class="flex items-center mb-3">
@@ -283,14 +294,14 @@
                                     <i class="fas fa-phone-alt" style="color: var(--gold);"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold" style="color: white;">Par téléphone</h4>
+                                    <h4 class="font-semibold" style="color: white;">{{ __('contact.by_phone') }}</h4>
                                 </div>
                             </div>
                             <a href="tel:0176380017" class="text-lg font-medium hover:text-var(--gold)"
                                 style="color: var(--gold);">
                                 01 76 38 00 17
                             </a>
-                            <p class="text-sm text-gray-400 mt-2">Lun-Ven: 9h-19h | Sam: 9h-13h</p>
+                            <p class="text-sm text-gray-400 mt-2">{{ __('contact.phone_hours') }}</p>
                         </div>
 
                         <div>
@@ -300,7 +311,7 @@
                                     <i class="fas fa-envelope" style="color: #3b82f6;"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold" style="color: white;">Par email</h4>
+                                    <h4 class="font-semibold" style="color: white;">{{ __('contact.by_email') }}</h4>
                                 </div>
                             </div>
                             <a href="mailto:contact@djokprestige.com" class="text-lg font-medium hover:text-blue-400"
@@ -316,14 +327,14 @@
                                     <i class="fab fa-whatsapp" style="color: #25D366;"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold" style="color: white;">WhatsApp</h4>
+                                    <h4 class="font-semibold" style="color: white;">{{ __('contact.by_whatsapp') }}</h4>
                                 </div>
                             </div>
                             <a href="https://wa.me/33176380017" target="_blank"
                                 class="text-lg font-medium hover:text-green-400" style="color: #25D366;">
                                 +33 1 76 38 00 17
                             </a>
-                            <p class="text-sm text-gray-400 mt-2">Disponible 24h/24 pour les urgences</p>
+                            <p class="text-sm text-gray-400 mt-2">{{ __('contact.whatsapp_available') }}</p>
                         </div>
 
                         <div>
@@ -333,13 +344,13 @@
                                     <i class="fas fa-map-marker-alt" style="color: #8b5cf6;"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold" style="color: white;">Notre centre</h4>
+                                    <h4 class="font-semibold" style="color: white;">{{ __('contact.our_center') }}</h4>
                                 </div>
                             </div>
                             <div>
                                 <p class="font-medium" style="color: white;">DJOK PRESTIGE</p>
-                                <p class="text-sm text-gray-400 mt-1">123 Avenue des Champs-Élysées</p>
-                                <p class="text-sm text-gray-400">75008 Paris</p>
+                                <p class="text-sm text-gray-400 mt-1">{{ __('contact.center_address_line1') }}</p>
+                                <p class="text-sm text-gray-400">{{ __('contact.center_address_line2') }}</p>
                             </div>
                         </div>
                     </div>
@@ -347,7 +358,8 @@
 
                 <!-- Services populaires -->
                 <div class="p-6" style="background: #1a1a1a; border: 1px solid #333;">
-                    <h3 class="text-lg font-bold mb-4" style="color: var(--gold);">Nos services populaires</h3>
+                    <h3 class="text-lg font-bold mb-4" style="color: var(--gold);">{{ __('contact.popular_services') }}
+                    </h3>
                     <div class="space-y-3">
                         @foreach($services->take(4) as $service)
                         <div class="flex items-center p-3 rounded-lg" style="background: #111; border: 1px solid #333;">
@@ -373,88 +385,88 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Smooth scroll pour les ancres
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
+            // Smooth scroll pour les ancres
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            const autreServiceRadio = document.getElementById('autre-service');
+            const autreFieldContainer = document.getElementById('autre-field-container');
+            const autreFieldInput = document.querySelector('input[name="autre_service"]');
+
+            function toggleOtherField() {
+                if (autreServiceRadio && autreServiceRadio.checked) {
+                    autreFieldContainer.classList.add('show');
+                    if (autreFieldInput) autreFieldInput.required = true;
+                } else {
+                    autreFieldContainer.classList.remove('show');
+                    if (autreFieldInput) autreFieldInput.required = false;
+                }
+            }
+
+            document.querySelectorAll('input[name="service_id"]').forEach(radio => {
+                radio.addEventListener('change', toggleOtherField);
+            });
+
+            toggleOtherField();
+
+            const form = document.getElementById('contact-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnLoading = document.getElementById('btn-loading');
+
+            if (form) {
+                form.addEventListener('submit', function() {
+                    if (submitBtn) submitBtn.disabled = true;
+                    if (btnText) btnText.classList.add('hidden');
+                    if (btnLoading) btnLoading.classList.remove('hidden');
+                });
+
+                if (document.querySelector('.border-red-500')) {
+                    if (submitBtn) submitBtn.disabled = false;
+                    if (btnText) btnText.classList.remove('hidden');
+                    if (btnLoading) btnLoading.classList.add('hidden');
+                }
+            }
+
+            // Auto-hide du message de succès
+            const successAlert = document.getElementById('success-alert');
+            if (successAlert) {
+                setTimeout(() => {
+                    successAlert.style.opacity = '0';
+                    successAlert.style.transition = 'opacity 0.5s ease';
+                    setTimeout(() => successAlert.remove(), 500);
+                }, 8000);
+            }
+
+            // Scroll vers le formulaire s'il y a des erreurs
+            if (document.querySelector('[class*="border-red"]')) {
+                setTimeout(() => {
+                    form.scrollIntoView({
                         behavior: 'smooth',
                         block: 'start'
                     });
-                }
-            });
-        });
-
-        const autreServiceRadio = document.getElementById('autre-service');
-        const autreFieldContainer = document.getElementById('autre-field-container');
-        const autreFieldInput = document.querySelector('input[name="autre_service"]');
-
-        function toggleOtherField() {
-            if (autreServiceRadio && autreServiceRadio.checked) {
-                autreFieldContainer.classList.add('show');
-                if (autreFieldInput) autreFieldInput.required = true;
-            } else {
-                autreFieldContainer.classList.remove('show');
-                if (autreFieldInput) autreFieldInput.required = false;
+                }, 300);
             }
-        }
 
-        document.querySelectorAll('input[name="service_id"]').forEach(radio => {
-            radio.addEventListener('change', toggleOtherField);
-        });
-
-        toggleOtherField();
-
-        const form = document.getElementById('contact-form');
-        const submitBtn = document.getElementById('submit-btn');
-        const btnText = document.getElementById('btn-text');
-        const btnLoading = document.getElementById('btn-loading');
-
-        if (form) {
-            form.addEventListener('submit', function() {
-                if (submitBtn) submitBtn.disabled = true;
-                if (btnText) btnText.classList.add('hidden');
-                if (btnLoading) btnLoading.classList.remove('hidden');
-            });
-
-            if (document.querySelector('.border-red-500')) {
-                if (submitBtn) submitBtn.disabled = false;
-                if (btnText) btnText.classList.remove('hidden');
-                if (btnLoading) btnLoading.classList.add('hidden');
+            // Scroll vers le message de succès s'il existe
+            if (successAlert) {
+                setTimeout(() => {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }, 100);
             }
-        }
-
-        // Auto-hide du message de succès
-        const successAlert = document.getElementById('success-alert');
-        if (successAlert) {
-            setTimeout(() => {
-                successAlert.style.opacity = '0';
-                successAlert.style.transition = 'opacity 0.5s ease';
-                setTimeout(() => successAlert.remove(), 500);
-            }, 8000);
-        }
-
-        // Scroll vers le formulaire s'il y a des erreurs
-        if (document.querySelector('[class*="border-red"]')) {
-            setTimeout(() => {
-                form.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }, 300);
-        }
-
-        // Scroll vers le message de succès s'il existe
-        if (successAlert) {
-            setTimeout(() => {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            }, 100);
-        }
-    });
+        });
 </script>
 @endsection

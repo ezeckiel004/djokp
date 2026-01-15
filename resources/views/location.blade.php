@@ -1,6 +1,7 @@
 @extends('layouts.main')
 
-@section('title', 'Location de Véhicules VTC - DJOK PRESTIGE')
+@section('title', trans('location.title'))
+@section('meta_description', trans('location.meta_description'))
 
 @section('content')
 <style>
@@ -89,20 +90,18 @@
 <header class="relative min-h-screen flex items-center" style="background: #000;">
     <div class="absolute inset-0 bg-black">
         <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
-            alt="Location de véhicules VTC" class="w-full h-full object-cover opacity-40">
+            alt="{{ trans('location.hero_title') }}" class="w-full h-full object-cover opacity-40">
         <div class="absolute inset-0" style="background: rgba(0, 0, 0, 0.8);"></div>
     </div>
 
     <div class="container mx-auto px-4 md:px-6 py-20 relative z-10">
         <div class="max-w-5xl mx-auto text-center">
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-8" style="color: var(--gold);">
-                Louez votre véhicule VTC haut de gamme avec DJOK PRESTIGE
+                {{ trans('location.hero_title') }}
             </h1>
 
             <p class="text-lg md:text-xl text-gray-300 mb-12 fade-in">
-                Vous cherchez un véhicule pour travailler, voyager ou simplement profiter du confort d'une voiture
-                premium ? DJOK PRESTIGE met à votre disposition une flotte de véhicules récents, entretenus et assurés,
-                disponibles à la journée, à la semaine ou au mois, avec ou sans chauffeur.
+                {{ trans('location.hero_description') }}
             </p>
 
             <!-- Boutons - Style sobre -->
@@ -110,12 +109,12 @@
                 <a href="#flotte"
                     class="w-full sm:w-auto px-6 md:px-8 py-3 font-semibold text-center transition duration-300"
                     style="background: var(--gold); color: black;">
-                    Voir les véhicules disponibles
+                    {{ trans('location.view_vehicles') }}
                 </a>
                 <a href="#devis"
                     class="w-full sm:w-auto px-6 md:px-8 py-3 font-semibold text-center border transition duration-300"
                     style="border-color: var(--gold); color: var(--gold);">
-                    Demander un devis personnalisé
+                    {{ trans('location.request_quote') }}
                 </a>
             </div>
         </div>
@@ -123,7 +122,8 @@
 
     <!-- Scroll Indicator -->
     <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <a href="#offres" class="text-white transition duration-300 hover:text-var(--gold)">
+        <a href="#offres" class="text-white transition duration-300 hover:text-var(--gold)"
+            aria-label="{{ trans('location.scroll_down') }}">
             <i class="text-xl fas fa-chevron-down"></i>
         </a>
     </div>
@@ -133,9 +133,10 @@
 <section id="offres" class="py-16" style="background: #000;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Nos offres de location</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                trans('location.offers_title') }}</h2>
             <p class="text-gray-400 max-w-3xl mx-auto">
-                Découvrez nos formules flexibles, pensées pour s'adapter à votre activité et à votre budget.
+                {{ trans('location.offers_description') }}
             </p>
         </div>
 
@@ -143,47 +144,48 @@
             <table class="w-full" style="background: #111; border: 1px solid #333;">
                 <thead style="background: #000;">
                     <tr>
-                        <th class="py-4 px-4 md:px-6 text-left text-white">Formule</th>
-                        <th class="py-4 px-4 md:px-6 text-center text-white">Durée</th>
-                        <th class="py-4 px-4 md:px-6 text-center text-white">Public visé</th>
-                        <th class="py-4 px-4 md:px-6 text-center text-white">Inclus</th>
-                        <th class="py-4 px-4 md:px-6 text-center text-white">Tarif TTC</th>
-                        <th class="py-4 px-4 md:px-6 text-center text-white">Action</th>
+                        <th class="py-4 px-4 md:px-6 text-left text-white">{{ trans('location.formula') }}</th>
+                        <th class="py-4 px-4 md:px-6 text-center text-white">{{ trans('location.duration') }}</th>
+                        <th class="py-4 px-4 md:px-6 text-center text-white">{{ trans('location.target_audience') }}
+                        </th>
+                        <th class="py-4 px-4 md:px-6 text-center text-white">{{ trans('location.included') }}</th>
+                        <th class="py-4 px-4 md:px-6 text-center text-white">{{ trans('location.price_ttc') }}</th>
+                        <th class="py-4 px-4 md:px-6 text-center text-white">{{ trans('location.action') }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach([
                     [
-                    'formule' => 'Location courte durée',
-                    'duree' => '1 à 7 jours',
-                    'public' => 'Particuliers / Chauffeurs VTC occasionnels',
-                    'inclus' => 'Assurance + Entretien + Assistance',
-                    'tarif' => 'Dès 100 €/jour',
-                    'action' => 'Réserver'
+                    'formule' => trans('location.short_term_rental'),
+                    'duree' => trans('location.short_term_duration'),
+                    'public' => trans('location.short_term_audience'),
+                    'inclus' => trans('location.short_term_includes'),
+                    'tarif' => trans('location.short_term_price'),
+                    'action' => trans('location.book')
                     ],
                     [
-                    'formule' => 'Location moyenne durée',
-                    'duree' => '1 à 4 semaines',
-                    'public' => 'Chauffeurs VTC actifs ou entreprises',
-                    'inclus' => 'Assurance + Maintenance + Véhicule de remplacement',
-                    'tarif' => 'Dès 280 €/semaine',
-                    'action' => 'Réserver'
+                    'formule' => trans('location.medium_term_rental'),
+                    'duree' => trans('location.medium_term_duration'),
+                    'public' => trans('location.medium_term_audience'),
+                    'inclus' => trans('location.medium_term_includes'),
+                    'tarif' => trans('location.medium_term_price'),
+                    'action' => trans('location.book')
                     ],
                     [
-                    'formule' => 'Location longue durée (LLD)',
-                    'duree' => '1 à 12 mois',
-                    'public' => 'Chauffeurs indépendants / Flottes d\'entreprises',
-                    'inclus' => 'Assurance, révision, pneus, véhicule de prêt',
-                    'tarif' => 'Dès 790 €/mois',
-                    'action' => 'Réserver'
+                    'formule' => trans('location.long_term_rental'),
+                    'duree' => trans('location.long_term_duration'),
+                    'public' => trans('location.long_term_audience'),
+                    'inclus' => trans('location.long_term_includes'),
+                    'tarif' => trans('location.long_term_price'),
+                    'action' => trans('location.book')
                     ],
                     [
-                    'formule' => 'Location avec chauffeur',
-                    'duree' => 'Sur demande',
-                    'public' => 'Événements / Transferts / VIP',
-                    'inclus' => 'Véhicule + Chauffeur professionnel + Service personnalisé',
-                    'tarif' => 'Sur devis',
-                    'action' => 'Demander devis'
+                    'formule' => trans('location.driver_rental'),
+                    'duree' => trans('location.driver_duration'),
+                    'public' => trans('location.driver_audience'),
+                    'inclus' => trans('location.driver_includes'),
+                    'tarif' => trans('location.driver_price'),
+                    'action' => trans('location.request_quote_small')
                     ]
                     ] as $offer)
                     <tr class="border-b" style="border-color: #333; color: white;">
@@ -194,17 +196,17 @@
                         <td class="py-4 px-4 md:px-6 text-center font-bold" style="color: var(--gold);">{{
                             $offer['tarif'] }}</td>
                         <td class="py-4 px-4 md:px-6 text-center">
-                            @if($offer['action'] === 'Réserver')
+                            @if($offer['action'] === trans('location.book'))
                             <a href="#reservation"
                                 class="inline-flex items-center px-4 md:px-6 py-2 text-sm font-semibold transition-all duration-300"
                                 style="background: var(--gold); color: black;">
-                                Réserver
+                                {{ trans('location.book') }}
                             </a>
                             @else
                             <a href="#devis"
                                 class="inline-flex items-center px-4 md:px-6 py-2 text-sm font-semibold transition-all duration-300"
                                 style="border: 1px solid var(--gold); color: var(--gold);">
-                                Demander devis
+                                {{ trans('location.request_quote_small') }}
                             </a>
                             @endif
                         </td>
@@ -218,27 +220,26 @@
             <a href="#reservation"
                 class="inline-flex items-center px-6 md:px-8 py-3 font-semibold text-center transition duration-300"
                 style="background: var(--gold); color: black;">
-                Réserver maintenant
+                {{ trans('location.book_now') }}
             </a>
             <a href="#simulation"
                 class="inline-flex items-center px-6 md:px-8 py-3 font-semibold text-center border transition duration-300"
                 style="border-color: var(--gold); color: var(--gold);">
-                Obtenir une simulation
+                {{ trans('location.get_simulation') }}
             </a>
         </div>
     </div>
 </section>
 
-<!-- Notre flotte de véhicules premium - Style sobre -->
 <!-- Notre flotte de véhicules premium - Version DYNAMIQUE -->
 <section id="flotte" class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
             <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">
-                Notre flotte de véhicules premium
+                {{ trans('location.fleet_title') }}
             </h2>
             <p class="text-gray-400 max-w-3xl mx-auto">
-                Découvrez toutes nos catégories de véhicules disponibles à la location
+                {{ trans('location.fleet_description') }}
             </p>
         </div>
 
@@ -288,19 +289,19 @@
                             <span class="text-xl md:text-2xl font-bold" style="color: var(--gold);">
                                 {{ $vehicle->weekly_rate_formatted }}
                             </span>
-                            <span class="text-gray-500">/semaine</span>
+                            <span class="text-gray-500">{{ trans('location.weekly') }}</span>
                         </div>
 
                         <div class="flex gap-3">
                             <button onclick="selectVehicle({{ $vehicle->id }}, '{{ addslashes($vehicle->full_name) }}')"
                                 class="flex-1 inline-flex items-center justify-center px-4 py-2 md:py-3 font-semibold transition-all duration-300"
                                 style="background: var(--gold); color: black;">
-                                Sélectionner
+                                {{ trans('location.select') }}
                             </button>
                             <a href="{{ route('vehicle.details', $vehicle->id) }}"
                                 class="flex-1 inline-flex items-center justify-center px-4 py-2 md:py-3 font-semibold transition-all duration-300"
                                 style="background: #111; color: white; border: 1px solid #333;">
-                                Détails
+                                {{ trans('location.details') }}
                             </a>
                         </div>
                     </div>
@@ -312,10 +313,10 @@
                         <i class="fas fa-car" style="color: #666; font-size: 1.5rem;"></i>
                     </div>
                     <h4 class="text-lg font-medium mb-2" style="color: white;">
-                        Aucun véhicule disponible
+                        {{ trans('location.no_vehicles') }}
                     </h4>
                     <p class="text-gray-400">
-                        Aucun véhicule dans la catégorie {{ $category->display_name }} pour le moment.
+                        {{ trans('location.no_vehicles_category', ['category' => $category->display_name]) }}
                     </p>
                 </div>
                 @endforelse
@@ -325,31 +326,32 @@
         @empty
         <div class="text-center py-20">
             <p class="text-gray-400 text-lg">
-                Aucune catégorie de véhicule n'est actuellement disponible.
+                {{ trans('location.no_categories') }}
             </p>
         </div>
         @endforelse
     </div>
 </section>
+
 <!-- Services inclus - Style sobre -->
 <section class="py-16" style="background: #000;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Services inclus avec chaque
-                location</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                trans('location.services_title') }}</h2>
             <p class="text-gray-400 max-w-3xl mx-auto">
-                Chaque véhicule DJOK PRESTIGE bénéficie d'un service clé en main, sans frais cachés.
+                {{ trans('location.services_description') }}
             </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             @foreach([
-            ['Assurance tous risques', 'fas fa-shield-alt'],
-            ['Entretien et révision régulière', 'fas fa-tools'],
-            ['Assistance 24h/24 et 7j/7', 'fas fa-headset'],
-            ['Véhicule de remplacement en cas de panne', 'fas fa-car'],
-            ['Nettoyage professionnel avant chaque mise à disposition', 'fas fa-spray-can'],
-            ['Option GPS, siège bébé, ou chargeur électrique', 'fas fa-cogs']
+            [trans('location.full_insurance'), 'fas fa-shield-alt'],
+            [trans('location.maintenance'), 'fas fa-tools'],
+            [trans('location.assistance'), 'fas fa-headset'],
+            [trans('location.replacement_vehicle'), 'fas fa-car'],
+            [trans('location.cleaning'), 'fas fa-spray-can'],
+            [trans('location.options'), 'fas fa-cogs']
             ] as $service)
             <div class="p-4 md:p-6" style="background: #111; border: 1px solid #333;">
                 <div class="flex items-start">
@@ -371,7 +373,7 @@
             <a href="#reservation"
                 class="inline-flex items-center px-6 md:px-8 py-3 font-semibold transition duration-300"
                 style="background: var(--gold); color: black;">
-                Demander la disponibilité de mon véhicule
+                {{ trans('location.check_availability') }}
             </a>
         </div>
     </div>
@@ -381,64 +383,65 @@
 <section class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Offres spéciales Chauffeurs VTC
-            </h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                trans('location.special_offers_title') }}</h2>
             <p class="text-gray-400 max-w-3xl mx-auto">
-                Vous débutez ou vous exercez déjà en tant que chauffeur ? DJOK PRESTIGE vous accompagne avec des
-                formules adaptées aux pros du transport.
+                {{ trans('location.special_offers_description') }}
             </p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
             <div class="p-6 md:p-8" style="background: #1a1a1a; border: 1px solid #333;">
-                <h3 class="text-xl md:text-2xl font-bold mb-4" style="color: white;">Formule "START PRO"</h3>
+                <h3 class="text-xl md:text-2xl font-bold mb-4" style="color: white;">{{
+                    trans('location.start_pro_title') }}</h3>
                 <p class="text-gray-400 mb-6">
-                    Pour les nouveaux chauffeurs qui n'ont pas encore leur propre véhicule.
+                    {{ trans('location.start_pro_description') }}
                 </p>
                 <ul class="space-y-3 mb-8">
                     <li class="flex items-start">
                         <i class="fas fa-check mt-1 mr-3" style="color: var(--gold);"></i>
-                        <span style="color: white;">Véhicule prêt à rouler (assuré et contrôlé)</span>
+                        <span style="color: white;">{{ trans('location.start_pro_point1') }}</span>
                     </li>
                     <li class="flex items-start">
                         <i class="fas fa-check mt-1 mr-3" style="color: var(--gold);"></i>
-                        <span style="color: white;">Contrat flexible sans engagement long</span>
+                        <span style="color: white;">{{ trans('location.start_pro_point2') }}</span>
                     </li>
                     <li class="flex items-start">
                         <i class="fas fa-check mt-1 mr-3" style="color: var(--gold);"></i>
-                        <span style="color: white;">Option formation + location groupée (tarif préférentiel)</span>
+                        <span style="color: white;">{{ trans('location.start_pro_point3') }}</span>
                     </li>
                 </ul>
                 <a href="#devis"
                     class="inline-flex items-center px-6 md:px-8 py-3 font-semibold transition-all duration-300"
                     style="background: var(--gold); color: black;">
-                    Découvrir la formule START PRO
+                    {{ trans('location.start_pro_button') }}
                 </a>
             </div>
 
             <div class="p-6 md:p-8" style="background: #1a1a1a; border: 1px solid #333;">
-                <h3 class="text-xl md:text-2xl font-bold mb-4" style="color: white;">Formule "FULL VTC"</h3>
+                <h3 class="text-xl md:text-2xl font-bold mb-4" style="color: white;">{{ trans('location.full_vtc_title')
+                    }}</h3>
                 <p class="text-gray-400 mb-6">
-                    Pour les chauffeurs expérimentés.
+                    {{ trans('location.full_vtc_description') }}
                 </p>
                 <ul class="space-y-3 mb-8">
                     <li class="flex items-start">
                         <i class="fas fa-check mt-1 mr-3" style="color: var(--gold);"></i>
-                        <span style="color: white;">Véhicule haut de gamme (Mercedes, Tesla...)</span>
+                        <span style="color: white;">{{ trans('location.full_vtc_point1') }}</span>
                     </li>
                     <li class="flex items-start">
                         <i class="fas fa-check mt-1 mr-3" style="color: var(--gold);"></i>
-                        <span style="color: white;">Assistance 24/7</span>
+                        <span style="color: white;">{{ trans('location.full_vtc_point2') }}</span>
                     </li>
                     <li class="flex items-start">
                         <i class="fas fa-check mt-1 mr-3" style="color: var(--gold);"></i>
-                        <span style="color: white;">Option rachat de véhicule à la fin du contrat</span>
+                        <span style="color: white;">{{ trans('location.full_vtc_point3') }}</span>
                     </li>
                 </ul>
                 <a href="#devis"
                     class="inline-flex items-center px-6 md:px-8 py-3 font-semibold transition-all duration-300"
                     style="background: var(--gold); color: black;">
-                    Découvrir la formule FULL VTC
+                    {{ trans('location.full_vtc_button') }}
                 </a>
             </div>
         </div>
@@ -446,7 +449,7 @@
         <div class="mt-12 text-center">
             <a href="#devis" class="inline-flex items-center px-6 md:px-8 py-3 font-semibold transition duration-300"
                 style="background: var(--gold); color: black;">
-                Je suis chauffeur, je veux un devis
+                {{ trans('location.driver_quote') }}
             </a>
         </div>
     </div>
@@ -457,30 +460,32 @@
     <div class="container mx-auto px-4 md:px-6">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12">
             <div>
-                <h2 class="text-2xl md:text-3xl font-bold mb-6" style="color: var(--gold);">Conditions de location</h2>
+                <h2 class="text-2xl md:text-3xl font-bold mb-6" style="color: var(--gold);">{{
+                    trans('location.conditions_title') }}</h2>
                 <div class="space-y-4">
                     <div>
-                        <h3 class="text-lg md:text-xl font-semibold mb-3" style="color: white;">Pièces requises :</h3>
+                        <h3 class="text-lg md:text-xl font-semibold mb-3" style="color: white;">{{
+                            trans('location.requirements_title') }}</h3>
                         <ul class="space-y-2">
                             <li class="flex items-start">
                                 <i class="fas fa-file-alt text-sm mt-1 mr-3" style="color: var(--gold);"></i>
-                                <span style="color: white;">Pièce d'identité ou titre de séjour valide</span>
+                                <span style="color: white;">{{ trans('location.id_card') }}</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-id-card text-sm mt-1 mr-3" style="color: var(--gold);"></i>
-                                <span style="color: white;">Permis B depuis +3 ans</span>
+                                <span style="color: white;">{{ trans('location.license') }}</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-home text-sm mt-1 mr-3" style="color: var(--gold);"></i>
-                                <span style="color: white;">Justificatif de domicile (-3 mois)</span>
+                                <span style="color: white;">{{ trans('location.address_proof') }}</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-badge-check text-sm mt-1 mr-3" style="color: var(--gold);"></i>
-                                <span style="color: white;">Carte professionnelle VTC (si location pro)</span>
+                                <span style="color: white;">{{ trans('location.vtc_card') }}</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-euro-sign text-sm mt-1 mr-3" style="color: var(--gold);"></i>
-                                <span style="color: white;">Dépôt de garantie (selon le véhicule choisi)</span>
+                                <span style="color: white;">{{ trans('location.deposit') }}</span>
                             </li>
                         </ul>
                     </div>
@@ -488,37 +493,39 @@
             </div>
 
             <div>
-                <h2 class="text-2xl md:text-3xl font-bold mb-6" style="color: var(--gold);">Modalités de paiement</h2>
+                <h2 class="text-2xl md:text-3xl font-bold mb-6" style="color: var(--gold);">{{
+                    trans('location.payment_title') }}</h2>
                 <div class="space-y-6">
                     <div class="p-4 md:p-6 rounded" style="background: #111; border: 1px solid #333;">
-                        <h3 class="text-lg font-semibold mb-3" style="color: white;">Moyens de paiement acceptés :</h3>
+                        <h3 class="text-lg font-semibold mb-3" style="color: white;">{{
+                            trans('location.payment_methods_title') }}</h3>
                         <ul class="space-y-2">
                             <li class="flex items-center">
                                 <i class="fas fa-credit-card mr-3" style="color: #60a5fa;"></i>
-                                <span style="color: white;">Carte bancaire</span>
+                                <span style="color: white;">{{ trans('location.credit_card') }}</span>
                             </li>
                             <li class="flex items-center">
                                 <i class="fas fa-university mr-3" style="color: #60a5fa;"></i>
-                                <span style="color: white;">Virement bancaire</span>
+                                <span style="color: white;">{{ trans('location.bank_transfer') }}</span>
                             </li>
                             <li class="flex items-center">
                                 <i class="fas fa-money-bill-wave mr-3" style="color: #60a5fa;"></i>
-                                <span style="color: white;">Espèces (dans la limite autorisée)</span>
+                                <span style="color: white;">{{ trans('location.cash') }}</span>
                             </li>
                         </ul>
                     </div>
 
                     <div class="p-4 md:p-6 rounded" style="background: #1a1a1a; border: 1px solid #333;">
-                        <h3 class="text-lg font-semibold mb-3" style="color: white;">Échéancier de paiement :</h3>
+                        <h3 class="text-lg font-semibold mb-3" style="color: white;">{{
+                            trans('location.payment_schedule_title') }}</h3>
                         <ul class="space-y-2">
                             <li class="flex items-center">
                                 <i class="fas fa-percentage mr-3" style="color: var(--gold);"></i>
-                                <span style="color: white;">Acompte de 40 % à la réservation</span>
+                                <span style="color: white;">{{ trans('location.deposit_amount') }}</span>
                             </li>
                             <li class="flex items-center">
                                 <i class="fas fa-calendar-alt mr-3" style="color: var(--gold);"></i>
-                                <span style="color: white;">Paiement échelonné possible pour les contrats longue
-                                    durée</span>
+                                <span style="color: white;">{{ trans('location.installments') }}</span>
                             </li>
                         </ul>
                     </div>
@@ -533,10 +540,10 @@
     <div class="container mx-auto px-4 md:px-6">
         <div class="max-w-4xl mx-auto">
             <div class="text-center mb-12">
-                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Réserver votre véhicule</h2>
+                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                    trans('location.booking_title') }}</h2>
                 <p class="text-gray-400">
-                    Remplissez le formulaire ci-dessous pour réserver votre véhicule. Notre équipe vous contactera dans
-                    les plus brefs délais.
+                    {{ trans('location.booking_description') }}
                 </p>
             </div>
 
@@ -571,10 +578,9 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                     <!-- Colonne gauche : Formulaire -->
                     <div>
-                        <h3 class="text-xl md:text-2xl font-bold mb-4" style="color: white;">Formulaire de réservation
-                        </h3>
-                        <p class="text-gray-400 mb-6">Remplissez ce formulaire pour réserver votre véhicule en ligne.
-                        </p>
+                        <h3 class="text-xl md:text-2xl font-bold mb-4" style="color: white;">{{
+                            trans('location.booking_form_title') }}</h3>
+                        <p class="text-gray-400 mb-6">{{ trans('location.booking_form_description') }}</p>
 
                         <form action="{{ route('location.reservation.store') }}" method="POST" id="reservationForm">
                             @csrf
@@ -586,7 +592,8 @@
                             <div class="space-y-4">
                                 <!-- Champ Nom complet -->
                                 <div>
-                                    <label class="block mb-2 font-medium" style="color: #ddd;">Nom complet *</label>
+                                    <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                        trans('location.full_name') }}</label>
                                     <input type="text" name="nom" required
                                         class="w-full px-4 py-3 rounded focus:outline-none"
                                         style="background: #111; border: 1px solid #444; color: white;"
@@ -598,7 +605,8 @@
 
                                 <!-- Champ Email -->
                                 <div>
-                                    <label class="block mb-2 font-medium" style="color: #ddd;">Email *</label>
+                                    <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                        trans('location.email') }}</label>
                                     <input type="email" name="email" required
                                         class="w-full px-4 py-3 rounded focus:outline-none"
                                         style="background: #111; border: 1px solid #444; color: white;"
@@ -610,7 +618,8 @@
 
                                 <!-- Champ Téléphone -->
                                 <div>
-                                    <label class="block mb-2 font-medium" style="color: #ddd;">Téléphone *</label>
+                                    <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                        trans('location.phone') }}</label>
                                     <input type="tel" name="telephone" required
                                         class="w-full px-4 py-3 rounded focus:outline-none"
                                         style="background: #111; border: 1px solid #444; color: white;"
@@ -622,14 +631,14 @@
 
                                 <!-- Champ Type de véhicule (affiché en lecture seule) -->
                                 <div>
-                                    <label class="block mb-2 font-medium" style="color: #ddd;">Véhicule sélectionné
-                                        *</label>
+                                    <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                        trans('location.selected_vehicle') }}</label>
                                     <input type="text" id="vehicle_display" readonly required
                                         class="w-full px-4 py-3 rounded focus:outline-none cursor-not-allowed"
                                         style="background: #0a0a0a; border: 1px solid #333; color: #888;"
-                                        value="{{ old('vehicle_model', 'Veuillez sélectionner un véhicule ci-dessus') }}">
-                                    <p class="text-xs text-gray-500 mt-1">Cliquez sur "Sélectionner" sur le véhicule de
-                                        votre choix</p>
+                                        value="{{ old('vehicle_model', trans('location.vehicle_placeholder')) }}">
+                                    <p class="text-xs text-gray-500 mt-1">{{ trans('location.select_vehicle_hint') }}
+                                    </p>
                                     @error('vehicle_id')
                                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                                     @enderror
@@ -637,13 +646,13 @@
 
                                 <!-- CHAMP DATE DE DÉBUT DE LOCATION -->
                                 <div>
-                                    <label class="block mb-2 font-medium" style="color: #ddd;">Date de début de location
-                                        *</label>
+                                    <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                        trans('location.start_date') }}</label>
                                     <input type="date" name="date_debut" id="date_debut" required
                                         min="{{ date('Y-m-d') }}" class="w-full px-4 py-3 rounded focus:outline-none"
                                         style="background: #111; border: 1px solid #444; color: white;"
                                         value="{{ old('date_debut') }}">
-                                    <p class="text-xs text-gray-500 mt-1">La date minimale est aujourd'hui</p>
+                                    <p class="text-xs text-gray-500 mt-1">{{ trans('location.min_date_hint') }}</p>
                                     @error('date_debut')
                                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                                     @enderror
@@ -651,15 +660,14 @@
 
                                 <!-- CHAMP DATE DE FIN DE LOCATION -->
                                 <div>
-                                    <label class="block mb-2 font-medium" style="color: #ddd;">Date de fin de location
-                                        *</label>
+                                    <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                        trans('location.end_date') }}</label>
                                     <input type="date" name="date_fin" id="date_fin" required
                                         min="{{ date('Y-m-d', strtotime('+1 day')) }}"
                                         class="w-full px-4 py-3 rounded focus:outline-none"
                                         style="background: #111; border: 1px solid #444; color: white;"
                                         value="{{ old('date_fin') }}">
-                                    <p class="text-xs text-gray-500 mt-1">La date doit être postérieure à la date de
-                                        début</p>
+                                    <p class="text-xs text-gray-500 mt-1">{{ trans('location.end_date_hint') }}</p>
                                     @error('date_fin')
                                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                                     @enderror
@@ -667,11 +675,11 @@
 
                                 <!-- Message supplémentaire -->
                                 <div>
-                                    <label class="block mb-2 font-medium" style="color: #ddd;">Message
-                                        (optionnel)</label>
+                                    <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                        trans('location.message_optional') }}</label>
                                     <textarea name="notes" rows="3" class="w-full px-4 py-3 rounded focus:outline-none"
                                         style="background: #111; border: 1px solid #444; color: white;"
-                                        placeholder="Informations complémentaires, questions...">{{ old('notes') }}</textarea>
+                                        placeholder="{{ trans('location.message_placeholder') }}">{{ old('notes') }}</textarea>
                                 </div>
 
                                 <!-- Vérification de disponibilité -->
@@ -683,7 +691,8 @@
                                 <!-- Estimation de prix -->
                                 <div id="price_estimation" class="hidden p-4 rounded"
                                     style="background: #1a1a1a; border: 1px solid #333;">
-                                    <h4 class="font-bold mb-2" style="color: var(--gold);">Estimation de prix :</h4>
+                                    <h4 class="font-bold mb-2" style="color: var(--gold);">{{
+                                        trans('location.price_estimation') }}</h4>
                                     <div id="price_result"></div>
                                 </div>
 
@@ -694,11 +703,13 @@
                                             class="mt-1 mr-3 h-5 w-5 rounded focus:outline-none"
                                             style="background: #111; border: 1px solid #444;">
                                         <label for="terms" class="text-gray-300 text-sm">
-                                            J'accepte les <a href="{{ route('cgv') }}" style="color: var(--gold);"
-                                                class="hover:text-yellow-400">conditions générales de location</a>
-                                            et j'ai pris connaissance de la <a href="{{ route('rgpd') }}"
-                                                style="color: var(--gold);" class="hover:text-yellow-400">politique de
-                                                confidentialité</a>.
+                                            {!! trans('location.accept_terms', [
+                                            'conditions' => '<a href="' . route('cgv') . '" style="color: var(--gold);"
+                                                class="hover:text-yellow-400">' . trans('location.terms_link') . '</a>',
+                                            'privacy' => '<a href="' . route('rgpd') . '" style="color: var(--gold);"
+                                                class="hover:text-yellow-400">' . trans('location.privacy_link') .
+                                                '</a>'
+                                            ]) !!}
                                         </label>
                                     </div>
                                     @error('terms')
@@ -711,7 +722,7 @@
                                     class="w-full mt-6 inline-flex items-center justify-center px-6 md:px-8 py-3 font-semibold transition-all duration-300"
                                     style="background: var(--gold); color: black;">
                                     <i class="fas fa-paper-plane mr-2"></i>
-                                    Envoyer ma demande de réservation
+                                    {{ trans('location.submit_booking') }}
                                 </button>
                             </div>
                         </form>
@@ -719,23 +730,24 @@
 
                     <!-- Colonne droite : Contact et devis -->
                     <div id="devis">
-                        <h3 class="text-xl md:text-2xl font-bold mb-4" style="color: white;">Demande de devis /
-                            Simulation</h3>
-                        <p class="text-gray-400 mb-6">Besoin d'un devis personnalisé ou d'une simulation de tarif ?</p>
+                        <h3 class="text-xl md:text-2xl font-bold mb-4" style="color: white;">{{
+                            trans('location.quote_title') }}</h3>
+                        <p class="text-gray-400 mb-6">{{ trans('location.quote_description') }}</p>
 
                         <div class="space-y-6">
                             <div class="p-4 rounded" style="background: #111; border: 1px solid #333;">
-                                <h4 class="font-bold mb-2" style="color: white;">Contact rapide :</h4>
+                                <h4 class="font-bold mb-2" style="color: white;">{{ trans('location.quick_contact') }}
+                                </h4>
                                 <p class="text-gray-300">
                                     <i class="fas fa-phone-alt mr-2" style="color: var(--gold);"></i>
-                                    Téléphone :
+                                    {{ trans('location.phone_label') }}
                                     <a href="tel:0176380017"
                                         class="font-semibold hover:text-yellow-400 transition duration-300"
                                         style="color: var(--gold);">01 76 38 00 17</a>
                                 </p>
                                 <p class="text-gray-300 mt-2">
                                     <i class="fas fa-envelope mr-2" style="color: var(--gold);"></i>
-                                    Email :
+                                    {{ trans('location.email_label') }}
                                     <a href="mailto:location@djokprestige.com"
                                         class="font-semibold hover:text-yellow-400 transition duration-300"
                                         style="color: var(--gold);">location@djokprestige.com</a>
@@ -743,14 +755,15 @@
                             </div>
 
                             <div class="p-4 rounded" style="background: #111; border: 1px solid #333;">
-                                <h4 class="font-bold mb-2" style="color: white;">Horaires d'ouverture :</h4>
+                                <h4 class="font-bold mb-2" style="color: white;">{{
+                                    trans('location.opening_hours_title') }}</h4>
                                 <p class="text-gray-300">
                                     <i class="fas fa-clock mr-2" style="color: var(--gold);"></i>
-                                    Lundi - Vendredi : 9h00 - 19h00
+                                    {{ trans('location.weekdays_hours') }}
                                 </p>
                                 <p class="text-gray-300 mt-2">
                                     <i class="fas fa-clock mr-2" style="color: var(--gold);"></i>
-                                    Samedi : 9h00 - 13h00
+                                    {{ trans('location.saturday_hours') }}
                                 </p>
                             </div>
 
@@ -758,7 +771,8 @@
                                 <a href="{{ route('contact') }}"
                                     class="inline-flex items-center px-6 md:px-8 py-3 font-semibold transition-all duration-300"
                                     style="background: #111; color: white; border: 1px solid #333;">
-                                    <i class="fas fa-file-invoice-dollar mr-3"></i>Demander un devis personnalisé
+                                    <i class="fas fa-file-invoice-dollar mr-3"></i>{{
+                                    trans('location.personalized_quote') }}
                                 </a>
                             </div>
                         </div>
@@ -773,11 +787,10 @@
 <section class="py-16" style="background: #000;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Découvrez tous nos véhicules
-            </h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                trans('location.discover_title') }}</h2>
             <p class="text-gray-400 max-w-3xl mx-auto">
-                Notre flotte est régulièrement mise à jour avec de nouveaux véhicules. Consultez les pages détaillées
-                pour en savoir plus.
+                {{ trans('location.discover_description') }}
             </p>
         </div>
 
@@ -841,7 +854,7 @@
                 <a href="{{ route('vehicle.details', $vehicle->id) }}"
                     class="block text-center w-full px-4 py-2 font-semibold transition-all duration-300"
                     style="background: var(--gold); color: black;">
-                    Voir les détails
+                    {{ trans('location.view_details') }}
                 </a>
             </div>
             @endforeach
@@ -852,8 +865,8 @@
                     style="background: #1a1a1a; border: 1px solid #333;">
                     <i class="fas fa-car" style="color: #666; font-size: 1.5rem;"></i>
                 </div>
-                <h4 class="text-lg font-medium mb-2" style="color: white;">Aucun véhicule disponible</h4>
-                <p class="text-gray-400">Revenez bientôt pour découvrir notre flotte.</p>
+                <h4 class="text-lg font-medium mb-2" style="color: white;">{{ trans('location.no_vehicles') }}</h4>
+                <p class="text-gray-400">{{ trans('location.loading') }}</p>
             </div>
             @endif
         </div>
@@ -864,8 +877,13 @@
             @endphp
             @if($totalCount > 0)
             <p class="text-gray-400 mb-4">
-                {{ $totalCount }} véhicule{{ $totalCount > 1 ? 's' : '' }} disponible{{ $totalCount > 1 ? 's' : '' }}
-                dans notre flotte.
+                @php
+                $plural = $totalCount > 1 ? 's' : '';
+                @endphp
+                {{ trans('location.vehicles_available', [
+                'count' => $totalCount,
+                'plural' => $plural
+                ]) }}
             </p>
             @endif
 
@@ -873,7 +891,7 @@
                 class="inline-flex items-center px-6 md:px-8 py-3 font-semibold transition-all duration-300"
                 style="background: #111; color: white; border: 1px solid #333;">
                 <i class="fas fa-car mr-2"></i>
-                Voir toute la flotte
+                {{ trans('location.see_all_fleet') }}
             </a>
         </div>
     </div>
@@ -882,10 +900,10 @@
 <!-- CTA Final - Style sobre -->
 <section class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6 text-center">
-        <h2 class="text-2xl md:text-3xl font-bold mb-6" style="color: var(--gold);">Trouvez le véhicule parfait pour vos
-            besoins</h2>
+        <h2 class="text-2xl md:text-3xl font-bold mb-6" style="color: var(--gold);">{{ trans('location.cta_title') }}
+        </h2>
         <p class="text-gray-400 mb-8 max-w-2xl mx-auto">
-            Que vous soyez chauffeur VTC, entrepreneur ou particulier, nous avons la solution adaptée à vos besoins.
+            {{ trans('location.cta_description') }}
         </p>
 
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
@@ -893,21 +911,21 @@
                 class="inline-flex items-center px-6 md:px-8 py-3 font-semibold transition-all duration-300"
                 style="background: var(--gold); color: black;">
                 <i class="fas fa-car mr-3"></i>
-                Explorer notre flotte
+                {{ trans('location.explore_fleet') }}
             </a>
             <a href="tel:0176380017"
                 class="inline-flex items-center px-6 md:px-8 py-3 font-semibold transition-all duration-300"
                 style="background: #1a1a1a; color: white; border: 1px solid #333;">
                 <i class="fas fa-phone mr-3"></i>
-                Nous appeler : 01 76 38 00 17
+                {{ trans('location.call_us', ['phone' => '01 76 38 00 17']) }}
             </a>
         </div>
 
         <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
             @foreach([
-            ['Assurance incluse', 'fas fa-shield-alt', 'Tous risques avec assistance 24h/24'],
-            ['Entretien compris', 'fas fa-tools', 'Révisions et maintenance incluses'],
-            ['Flexibilité totale', 'fas fa-calendar-check', 'Location à la journée, semaine ou mois']
+            [trans('location.feature_insurance'), 'fas fa-shield-alt', trans('location.feature_insurance_desc')],
+            [trans('location.feature_maintenance'), 'fas fa-tools', trans('location.feature_maintenance_desc')],
+            [trans('location.feature_flexibility'), 'fas fa-calendar-check', trans('location.feature_flexibility_desc')]
             ] as $feature)
             <div class="p-4 rounded" style="background: #1a1a1a; border: 1px solid #333;">
                 <i class="{{ $feature[1] }} mb-3" style="color: var(--gold); font-size: 1.5rem;"></i>
@@ -1000,7 +1018,7 @@
                     const dateFin = new Date(this.value);
 
                     if (dateFin <= dateDebut) {
-                        alert("La date de fin doit être postérieure à la date de début.");
+                        alert("{{ trans('location.date_error') }}");
                         const nextDay = new Date(dateDebut);
                         nextDay.setDate(nextDay.getDate() + 1);
                         this.value = nextDay.toISOString().split('T')[0];
@@ -1031,7 +1049,7 @@
                 availabilityResult.innerHTML = `
                     <div class="flex items-center">
                         <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-600 mr-2"></div>
-                        <span class="text-white">Vérification en cours...</span>
+                        <span class="text-white">{{ trans('location.checking_availability') }}</span>
                     </div>
                 `;
                 availabilityCheck.classList.remove('hidden');
@@ -1059,24 +1077,27 @@
                             </div>
                         `;
 
+                        // Déterminer le mot jour/jours en fonction de la durée
+                        const dayWord = data.duree_jours > 1 ? '{{ trans('location.days') }}' : '{{ trans('location.day') }}';
+                        
                         // Afficher l'estimation de prix
                         priceResult.innerHTML = `
                             <div class="space-y-2">
                                 <div class="flex justify-between">
-                                    <span class="text-gray-300">Durée :</span>
-                                    <span class="font-semibold text-white">${data.duree_jours} jours</span>
+                                    <span class="text-gray-300">{{ trans('location.duration_days') }}</span>
+                                    <span class="font-semibold text-white">${data.duree_jours} ${dayWord}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-gray-300">Type de tarif :</span>
+                                    <span class="text-gray-300">{{ trans('location.rate_type') }}</span>
                                     <span class="font-semibold text-white">${data.tarif_type}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-gray-300">Montant estimé :</span>
+                                    <span class="text-gray-300">{{ trans('location.estimated_amount') }}</span>
                                     <span class="font-bold text-lg" style="color: var(--gold);">${parseFloat(data.montant_estime).toFixed(2).replace('.', ',')} €</span>
                                 </div>
                                 <div class="text-xs text-gray-500 mt-2">
                                     <i class="fas fa-info-circle mr-1"></i>
-                                    Prix indicatif TTC
+                                    {{ trans('location.price_indication') }}
                                 </div>
                             </div>
                         `;
@@ -1100,7 +1121,7 @@
                     availabilityResult.innerHTML = `
                         <div class="text-red-400">
                             <i class="fas fa-exclamation-triangle mr-2"></i>
-                            Erreur lors de la vérification. Veuillez réessayer.
+                            {{ trans('location.availability_error') }}
                         </div>
                     `;
                     priceEstimation.classList.add('hidden');

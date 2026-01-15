@@ -66,7 +66,8 @@ class Formation extends Model
 
     public function paiements()
     {
-        return $this->hasMany(Paiement::class);
+        return $this->hasMany(Paiement::class, 'service_id')
+            ->where('service_type', 'formation');
     }
 
     public function userFormations()

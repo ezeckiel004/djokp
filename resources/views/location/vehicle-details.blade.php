@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', $vehicle->full_name . ' - DJOK PRESTIGE Location')
+@section('title', __('vehicle-details.title', ['vehicle_name' => $vehicle->full_name]))
 
 @section('content')
 <style>
@@ -37,7 +37,7 @@
     }
 </style>
 
-<!-- Message de succès - Style sobre -->
+<!-- Message de succès -->
 @if(session('success'))
 <div id="success-alert" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-2xl">
     <div class="mx-4 p-4" style="background: #064e3b; border-left: 4px solid #10b981;">
@@ -45,11 +45,11 @@
             <div class="flex items-center">
                 <div class="flex-shrink-0">
                     <div class="w-8 h-8 flex items-center justify-center rounded-full" style="background: #047857;">
-                        <i class="fas fa-check text-white text-sm"></i>
+                        <i class="{{ __('vehicle-details.icons.check') }} text-white text-sm"></i>
                     </div>
                 </div>
                 <div class="ml-3">
-                    <h3 class="text-lg font-semibold text-white">Réservation envoyée avec succès !</h3>
+                    <h3 class="text-lg font-semibold text-white">{{ __('vehicle-details.alerts.success.title') }}</h3>
                     <div class="mt-1 text-green-100">
                         <p>{{ session('success') }}</p>
                     </div>
@@ -57,7 +57,7 @@
             </div>
             <button type="button" onclick="document.getElementById('success-alert').remove();"
                 class="text-green-300 hover:text-white">
-                <i class="fas fa-times"></i>
+                <i class="{{ __('vehicle-details.icons.times') }}"></i>
             </button>
         </div>
     </div>
@@ -71,7 +71,7 @@
             alert.style.transition = 'opacity 0.5s ease';
             setTimeout(() => alert.remove(), 500);
         }
-    }, 8000);
+    }, {{ __('vehicle-details.alerts.success.timeout') }});
 </script>
 @endif
 
@@ -80,10 +80,10 @@
     <div class="mx-4 p-4" style="background: #7f1d1d; border: 1px solid #991b1b;">
         <div class="flex items-center">
             <div class="w-8 h-8 flex items-center justify-center rounded-full mr-3" style="background: #dc2626;">
-                <i class="fas fa-exclamation-triangle text-white"></i>
+                <i class="{{ __('vehicle-details.icons.exclamation') }} text-white"></i>
             </div>
             <div>
-                <h4 class="font-bold text-white">Erreur</h4>
+                <h4 class="font-bold text-white">{{ __('vehicle-details.alerts.error.title') }}</h4>
                 <p class="text-red-100">{{ session('error') }}</p>
             </div>
         </div>
@@ -102,7 +102,7 @@
 </script>
 @endif
 
-<!-- Hero Section avec image du véhicule -->
+<!-- Hero Section -->
 <section class="hero-bg relative">
     <div class="absolute inset-0 bg-black bg-opacity-60"></div>
     <div class="relative container mx-auto px-6 h-full flex items-center">
@@ -129,14 +129,14 @@
                 <a href="#reservation-form"
                     class="inline-flex items-center px-8 py-3 font-semibold rounded-lg transition-all duration-300"
                     style="background: var(--gold); color: black;">
-                    <i class="fas fa-calendar-alt mr-2"></i>
-                    Réserver maintenant
+                    <i class="{{ __('vehicle-details.icons.calendar') }} mr-2"></i>
+                    {{ __('vehicle-details.hero.reserve_now') }}
                 </a>
                 <a href="tel:0176380017"
                     class="inline-flex items-center px-8 py-3 font-semibold rounded-lg transition-all duration-300 border"
                     style="border-color: var(--gold); color: var(--gold);">
-                    <i class="fas fa-phone mr-2"></i>
-                    01 76 38 00 17
+                    <i class="{{ __('vehicle-details.icons.phone') }} mr-2"></i>
+                    {{ __('vehicle-details.hero.call_us') }}
                 </a>
             </div>
         </div>
@@ -147,8 +147,8 @@
         <a href="{{ route('location') }}"
             class="inline-flex items-center px-4 py-2 text-white rounded-lg hover:bg-opacity-30 transition-all duration-300 backdrop-blur-sm"
             style="background: rgba(255, 255, 255, 0.2);">
-            <i class="fas fa-arrow-left mr-2"></i>
-            Retour aux véhicules
+            <i class="{{ __('vehicle-details.icons.arrow_left') }} mr-2"></i>
+            {{ __('vehicle-details.hero.back_to_vehicles') }}
         </a>
     </div>
 </section>
@@ -169,20 +169,24 @@
 
                 <!-- Galerie d'images -->
                 <div class="mb-8">
-                    <h3 class="text-2xl font-bold mb-4" style="color: var(--gold);">Galerie</h3>
+                    <h3 class="text-2xl font-bold mb-4" style="color: var(--gold);">
+                        {{ __('vehicle-details.sections.gallery') }}
+                    </h3>
                     <div class="vehicle-gallery">
                         <div class="rounded-lg overflow-hidden">
-                            <img src="{{ $vehicle->image_url }}" alt="{{ $vehicle->full_name }} - Vue 1"
+                            <img src="{{ $vehicle->image_url }}" alt="{{ $vehicle->full_name }}"
                                 class="w-full h-32 object-cover">
                         </div>
                         <div class="rounded-lg overflow-hidden" style="background: #111;">
                             <div class="w-full h-32 flex items-center justify-center">
-                                <i class="fas fa-car" style="color: #666; font-size: 2rem;"></i>
+                                <i class="{{ __('vehicle-details.icons.car') }}"
+                                    style="color: #666; font-size: 2rem;"></i>
                             </div>
                         </div>
                         <div class="rounded-lg overflow-hidden" style="background: #111;">
                             <div class="w-full h-32 flex items-center justify-center">
-                                <i class="fas fa-cogs" style="color: #666; font-size: 2rem;"></i>
+                                <i class="{{ __('vehicle-details.icons.cogs') }}"
+                                    style="color: #666; font-size: 2rem;"></i>
                             </div>
                         </div>
                     </div>
@@ -191,7 +195,9 @@
                 <!-- Description -->
                 @if($vehicle->description)
                 <div class="mb-8">
-                    <h3 class="text-2xl font-bold mb-4" style="color: var(--gold);">Description</h3>
+                    <h3 class="text-2xl font-bold mb-4" style="color: var(--gold);">
+                        {{ __('vehicle-details.sections.description') }}
+                    </h3>
                     <div class="prose max-w-none">
                         <p class="text-gray-400">{{ $vehicle->description }}</p>
                     </div>
@@ -203,39 +209,44 @@
             <div>
                 <!-- Fiche technique -->
                 <div class="p-6 mb-8" style="background: #111; border: 1px solid #333;">
-                    <h3 class="text-2xl font-bold mb-4" style="color: var(--gold);">Fiche technique</h3>
+                    <h3 class="text-2xl font-bold mb-4" style="color: var(--gold);">
+                        {{ __('vehicle-details.sections.specs') }}
+                    </h3>
                     <div class="space-y-4">
                         <div class="grid grid-cols-2 gap-4">
                             <div style="background: #1a1a1a; border: 1px solid #444;" class="p-4 rounded-lg">
-                                <div class="text-gray-400 text-sm mb-1">Marque</div>
+                                <div class="text-gray-400 text-sm mb-1">{{ __('vehicle-details.specs.brand') }}</div>
                                 <div class="font-semibold" style="color: white;">{{ $vehicle->brand }}</div>
                             </div>
                             <div style="background: #1a1a1a; border: 1px solid #444;" class="p-4 rounded-lg">
-                                <div class="text-gray-400 text-sm mb-1">Modèle</div>
+                                <div class="text-gray-400 text-sm mb-1">{{ __('vehicle-details.specs.model') }}</div>
                                 <div class="font-semibold" style="color: white;">{{ $vehicle->model }}</div>
                             </div>
                             <div style="background: #1a1a1a; border: 1px solid #444;" class="p-4 rounded-lg">
-                                <div class="text-gray-400 text-sm mb-1">Année</div>
+                                <div class="text-gray-400 text-sm mb-1">{{ __('vehicle-details.specs.year') }}</div>
                                 <div class="font-semibold" style="color: white;">{{ $vehicle->year }}</div>
                             </div>
                             <div style="background: #1a1a1a; border: 1px solid #444;" class="p-4 rounded-lg">
-                                <div class="text-gray-400 text-sm mb-1">Couleur</div>
+                                <div class="text-gray-400 text-sm mb-1">{{ __('vehicle-details.specs.color') }}</div>
                                 <div class="font-semibold" style="color: white;">{{ $vehicle->color }}</div>
                             </div>
                             <div style="background: #1a1a1a; border: 1px solid #444;" class="p-4 rounded-lg">
-                                <div class="text-gray-400 text-sm mb-1">Type de carburant</div>
+                                <div class="text-gray-400 text-sm mb-1">{{ __('vehicle-details.specs.fuel_type') }}
+                                </div>
                                 <div class="font-semibold" style="color: white;">{{ $vehicle->fuel_type_fr }}</div>
                             </div>
                             <div style="background: #1a1a1a; border: 1px solid #444;" class="p-4 rounded-lg">
-                                <div class="text-gray-400 text-sm mb-1">Nombre de places</div>
-                                <div class="font-semibold" style="color: white;">{{ $vehicle->seats }} places</div>
+                                <div class="text-gray-400 text-sm mb-1">{{ __('vehicle-details.specs.seats') }}</div>
+                                <div class="font-semibold" style="color: white;">{{ $vehicle->seats }} {{
+                                    __('vehicle-details.specs.seats_unit') }}</div>
                             </div>
                             <div style="background: #1a1a1a; border: 1px solid #444;" class="p-4 rounded-lg">
-                                <div class="text-gray-400 text-sm mb-1">Immatriculation</div>
+                                <div class="text-gray-400 text-sm mb-1">{{ __('vehicle-details.specs.registration') }}
+                                </div>
                                 <div class="font-semibold" style="color: white;">{{ $vehicle->registration }}</div>
                             </div>
                             <div style="background: #1a1a1a; border: 1px solid #444;" class="p-4 rounded-lg">
-                                <div class="text-gray-400 text-sm mb-1">Catégorie</div>
+                                <div class="text-gray-400 text-sm mb-1">{{ __('vehicle-details.specs.category') }}</div>
                                 <div class="font-semibold" style="color: white;">{{ $vehicle->category_fr }}</div>
                             </div>
                         </div>
@@ -244,7 +255,9 @@
 
                 <!-- Équipements -->
                 <div class="mb-8">
-                    <h3 class="text-2xl font-bold mb-4" style="color: var(--gold);">Équipements & options</h3>
+                    <h3 class="text-2xl font-bold mb-4" style="color: var(--gold);">
+                        {{ __('vehicle-details.sections.features') }}
+                    </h3>
                     <div class="flex flex-wrap gap-2">
                         @foreach($vehicle->features_list as $feature)
                         <span class="feature-badge" style="background: rgba(var(--gold-rgb), 0.2); color: var(--gold);">
@@ -256,20 +269,20 @@
                         <!-- Équipements standard -->
                         @if(count($vehicle->features_list) < 5) <span class="feature-badge"
                             style="background: rgba(59, 130, 246, 0.2); color: #3b82f6;">
-                            <i class="fas fa-car mr-1"></i>
-                            Climatisation
+                            <i class="{{ __('vehicle-details.icons.bolt') }} mr-1"></i>
+                            {{ __('vehicle-details.features.default.air_conditioning') }}
                             </span>
                             <span class="feature-badge" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6;">
-                                <i class="fas fa-map-marker-alt mr-1"></i>
-                                GPS
+                                <i class="{{ __('vehicle-details.icons.map_marker') }} mr-1"></i>
+                                {{ __('vehicle-details.features.default.gps') }}
                             </span>
                             <span class="feature-badge" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6;">
-                                <i class="fas fa-bluetooth mr-1"></i>
-                                Bluetooth
+                                <i class="{{ __('vehicle-details.icons.bluetooth') }} mr-1"></i>
+                                {{ __('vehicle-details.features.default.bluetooth') }}
                             </span>
                             <span class="feature-badge" style="background: rgba(59, 130, 246, 0.2); color: #3b82f6;">
-                                <i class="fas fa-camera mr-1"></i>
-                                Caméra de recul
+                                <i class="{{ __('vehicle-details.icons.camera') }} mr-1"></i>
+                                {{ __('vehicle-details.features.default.rear_camera') }}
                             </span>
                             @endif
                     </div>
@@ -277,51 +290,61 @@
 
                 <!-- Tarifs -->
                 <div class="p-6 mb-8" style="background: #111; border: 1px solid #333;">
-                    <h3 class="text-2xl font-bold mb-4" style="color: var(--gold);">Tarifs de location</h3>
+                    <h3 class="text-2xl font-bold mb-4" style="color: var(--gold);">
+                        {{ __('vehicle-details.sections.pricing') }}
+                    </h3>
                     <div class="space-y-4">
                         <div class="flex justify-between items-center pb-4" style="border-bottom: 1px solid #333;">
                             <div>
-                                <div class="font-semibold" style="color: white;">Location à la journée</div>
-                                <div class="text-sm text-gray-400">Minimum 1 jour</div>
+                                <div class="font-semibold" style="color: white;">{{
+                                    __('vehicle-details.pricing.daily.title') }}</div>
+                                <div class="text-sm text-gray-400">{{ __('vehicle-details.pricing.daily.min_days') }}
+                                </div>
                             </div>
                             <div class="text-right">
                                 <div class="text-2xl font-bold" style="color: var(--gold);">{{
                                     $vehicle->daily_rate_formatted }}</div>
-                                <div class="text-sm text-gray-400">TTC / jour</div>
+                                <div class="text-sm text-gray-400">{{ __('vehicle-details.pricing.daily.unit') }}</div>
                             </div>
                         </div>
 
                         <div class="flex justify-between items-center pb-4" style="border-bottom: 1px solid #333;">
                             <div>
-                                <div class="font-semibold" style="color: white;">Location à la semaine</div>
-                                <div class="text-sm text-gray-400">Minimum 7 jours</div>
+                                <div class="font-semibold" style="color: white;">{{
+                                    __('vehicle-details.pricing.weekly.title') }}</div>
+                                <div class="text-sm text-gray-400">{{ __('vehicle-details.pricing.weekly.min_days') }}
+                                </div>
                             </div>
                             <div class="text-right">
                                 <div class="text-2xl font-bold" style="color: var(--gold);">{{
                                     $vehicle->weekly_rate_formatted }}</div>
-                                <div class="text-sm text-gray-400">TTC / semaine</div>
+                                <div class="text-sm text-gray-400">{{ __('vehicle-details.pricing.weekly.unit') }}</div>
                             </div>
                         </div>
 
                         <div class="flex justify-between items-center">
                             <div>
-                                <div class="font-semibold" style="color: white;">Location au mois</div>
-                                <div class="text-sm text-gray-400">Minimum 30 jours</div>
+                                <div class="font-semibold" style="color: white;">{{
+                                    __('vehicle-details.pricing.monthly.title') }}</div>
+                                <div class="text-sm text-gray-400">{{ __('vehicle-details.pricing.monthly.min_days') }}
+                                </div>
                             </div>
                             <div class="text-right">
                                 <div class="text-2xl font-bold" style="color: var(--gold);">{{
                                     $vehicle->monthly_rate_formatted }}</div>
-                                <div class="text-sm text-gray-400">TTC / mois</div>
+                                <div class="text-sm text-gray-400">{{ __('vehicle-details.pricing.monthly.unit') }}
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="mt-6 p-4 rounded-lg" style="background: rgba(var(--gold-rgb), 0.1);">
                         <div class="flex items-center">
-                            <i class="fas fa-info-circle text-xl mr-3" style="color: var(--gold);"></i>
+                            <i class="{{ __('vehicle-details.icons.info_circle') }} text-xl mr-3"
+                                style="color: var(--gold);"></i>
                             <div class="text-sm text-gray-300">
-                                <strong>Inclus dans tous nos tarifs :</strong> Assurance tous risques, entretien,
-                                assistance 24h/24
+                                <strong>{{ __('vehicle-details.pricing.included.title') }}</strong> {{
+                                __('vehicle-details.pricing.included.description') }}
                             </div>
                         </div>
                     </div>
@@ -332,12 +355,12 @@
                     <a href="#reservation-form"
                         class="inline-flex items-center justify-center w-full px-8 py-4 text-lg font-semibold rounded transition-all duration-300 transform hover:scale-105"
                         style="background: var(--gold); color: black;">
-                        <i class="fas fa-calendar-check mr-3"></i>
-                        Réserver ce véhicule
+                        <i class="{{ __('vehicle-details.icons.calendar_check') }} mr-3"></i>
+                        {{ __('vehicle-details.booking.cta') }}
                     </a>
                     <p class="text-gray-400 text-sm mt-3">
-                        <i class="fas fa-shield-alt mr-1" style="color: #10b981;"></i>
-                        Réservation 100% sécurisée • Sans engagement
+                        <i class="{{ __('vehicle-details.icons.shield') }} mr-1" style="color: #10b981;"></i>
+                        {{ __('vehicle-details.booking.security_note') }}
                     </p>
                 </div>
             </div>
@@ -350,11 +373,11 @@
     <div class="container mx-auto px-6">
         <div class="max-w-4xl mx-auto">
             <div class="text-center mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: var(--gold);">Réserver {{
-                    $vehicle->full_name }}</h2>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: var(--gold);">
+                    {{ __('vehicle-details.sections.booking_form', ['vehicle_name' => $vehicle->full_name]) }}
+                </h2>
                 <p class="text-gray-400">
-                    Remplissez le formulaire ci-dessous pour réserver ce véhicule. Notre équipe vous contactera dans les
-                    plus brefs délais.
+                    {{ __('vehicle-details.booking.form_description') }}
                 </p>
             </div>
 
@@ -368,7 +391,9 @@
                     <div class="space-y-4">
                         <!-- Champ Nom complet -->
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Nom complet *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">
+                                {{ __('vehicle-details.booking.fields.full_name') }}
+                            </label>
                             <input type="text" name="nom" required
                                 class="w-full px-4 py-3 rounded @error('nom') border-red-500 @enderror"
                                 style="background: #111; border: 1px solid #444; color: white;"
@@ -380,7 +405,9 @@
 
                         <!-- Champ Email -->
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Email *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">
+                                {{ __('vehicle-details.booking.fields.email') }}
+                            </label>
                             <input type="email" name="email" required
                                 class="w-full px-4 py-3 rounded @error('email') border-red-500 @enderror"
                                 style="background: #111; border: 1px solid #444; color: white;"
@@ -392,7 +419,9 @@
 
                         <!-- Champ Téléphone -->
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Téléphone *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">
+                                {{ __('vehicle-details.booking.fields.phone') }}
+                            </label>
                             <input type="tel" name="telephone" required
                                 class="w-full px-4 py-3 rounded @error('telephone') border-red-500 @enderror"
                                 style="background: #111; border: 1px solid #444; color: white;"
@@ -404,23 +433,28 @@
 
                         <!-- Champ Type de véhicule (affiché en lecture seule) -->
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Véhicule sélectionné *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">
+                                {{ __('vehicle-details.booking.fields.selected_vehicle') }}
+                            </label>
                             <input type="text" readonly required
                                 class="w-full px-4 py-3 rounded bg-opacity-50 cursor-not-allowed"
                                 style="background: #111; border: 1px solid #444; color: #888;"
                                 value="{{ $vehicle->full_name }}">
-                            <p class="text-sm text-gray-500 mt-1">Vous réservez ce véhicule</p>
+                            <p class="text-sm text-gray-500 mt-1">{{ __('vehicle-details.booking.fields.vehicle_hint')
+                                }}</p>
                         </div>
 
                         <!-- CHAMP DATE DE DÉBUT DE LOCATION -->
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Date de début de location
-                                *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">
+                                {{ __('vehicle-details.booking.fields.start_date') }}
+                            </label>
                             <input type="date" name="date_debut" id="date_debut" required min="{{ date('Y-m-d') }}"
                                 class="w-full px-4 py-3 rounded @error('date_debut') border-red-500 @enderror"
                                 style="background: #111; border: 1px solid #444; color: white;"
                                 value="{{ old('date_debut') }}">
-                            <p class="text-sm text-gray-500 mt-1">La date minimale est aujourd'hui</p>
+                            <p class="text-sm text-gray-500 mt-1">{{ __('vehicle-details.booking.fields.start_hint') }}
+                            </p>
                             @error('date_debut')
                             <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -428,13 +462,16 @@
 
                         <!-- CHAMP DATE DE FIN DE LOCATION -->
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Date de fin de location *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">
+                                {{ __('vehicle-details.booking.fields.end_date') }}
+                            </label>
                             <input type="date" name="date_fin" id="date_fin" required
                                 min="{{ date('Y-m-d', strtotime('+1 day')) }}"
                                 class="w-full px-4 py-3 rounded @error('date_fin') border-red-500 @enderror"
                                 style="background: #111; border: 1px solid #444; color: white;"
                                 value="{{ old('date_fin') }}">
-                            <p class="text-sm text-gray-500 mt-1">La date doit être postérieure à la date de début</p>
+                            <p class="text-sm text-gray-500 mt-1">{{ __('vehicle-details.booking.fields.end_hint') }}
+                            </p>
                             @error('date_fin')
                             <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -448,16 +485,19 @@
                         <!-- Estimation de prix -->
                         <div id="price_estimation" class="hidden p-4 rounded-lg"
                             style="background: rgba(var(--gold-rgb), 0.1); border: 1px solid rgba(var(--gold-rgb), 0.3);">
-                            <h4 class="font-bold mb-2" style="color: var(--gold);">Estimation de prix :</h4>
+                            <h4 class="font-bold mb-2" style="color: var(--gold);">{{
+                                __('vehicle-details.booking.price_estimation.title') }}</h4>
                             <div id="price_result"></div>
                         </div>
 
                         <!-- Message supplémentaire -->
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Message (optionnel)</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">
+                                {{ __('vehicle-details.booking.fields.message') }}
+                            </label>
                             <textarea name="notes" rows="3" class="w-full px-4 py-3 rounded"
                                 style="background: #111; border: 1px solid #444; color: white;"
-                                placeholder="Informations complémentaires, questions...">{{ old('notes') }}</textarea>
+                                placeholder="{{ __('vehicle-details.booking.fields.message_placeholder') }}">{{ old('notes') }}</textarea>
                         </div>
 
                         <!-- CGV -->
@@ -467,11 +507,18 @@
                                     class="mt-1 mr-3 h-5 w-5 rounded focus:ring-yellow-500"
                                     style="background: #111; border: 1px solid #666; accent-color: var(--gold);">
                                 <label for="terms" class="text-gray-300 text-sm">
-                                    J'accepte les <a href="{{ route('cgv') }}" class="hover:underline"
-                                        style="color: var(--gold);">conditions générales de location</a>
-                                    et j'ai pris connaissance de la <a href="{{ route('rgpd') }}"
-                                        class="hover:underline" style="color: var(--gold);">politique de
-                                        confidentialité</a>.
+                                    @php
+                                    $cgvLink = '<a href="' . route('cgv') . '" class="hover:underline"
+                                        style="color: var(--gold);">' . __('vehicle-details.booking.fields.terms.cgv') .
+                                        '</a>';
+                                    $privacyLink = '<a href="' . route('rgpd') . '" class="hover:underline"
+                                        style="color: var(--gold);">' .
+                                        __('vehicle-details.booking.fields.terms.privacy') . '</a>';
+                                    @endphp
+                                    {!! __('vehicle-details.booking.fields.terms.label', [
+                                    'cgv_link' => $cgvLink,
+                                    'privacy_link' => $privacyLink
+                                    ]) !!}
                                 </label>
                             </div>
                             @error('terms')
@@ -485,12 +532,12 @@
                         <button type="submit" id="submit_btn"
                             class="w-full inline-flex items-center justify-center px-6 py-4 font-semibold rounded transition-all duration-300 transform hover:scale-105"
                             style="background: var(--gold); color: black;">
-                            <i class="fas fa-paper-plane mr-2"></i>
-                            Envoyer ma demande de réservation
+                            <i class="{{ __('vehicle-details.icons.paper_plane') }} mr-2"></i>
+                            {{ __('vehicle-details.booking.submit.button') }}
                         </button>
                         <p class="text-gray-400 text-sm mt-4">
-                            <i class="fas fa-lock mr-1" style="color: #10b981;"></i>
-                            Vos données sont sécurisées
+                            <i class="{{ __('vehicle-details.icons.lock') }} mr-1" style="color: #10b981;"></i>
+                            {{ __('vehicle-details.booking.submit.security_note') }}
                         </p>
                     </div>
                 </form>
@@ -504,9 +551,11 @@
 <section class="py-16" style="background: #000;">
     <div class="container mx-auto px-6">
         <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: var(--gold);">Véhicules similaires</h2>
+            <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: var(--gold);">
+                {{ __('vehicle-details.sections.similar_vehicles') }}
+            </h2>
             <p class="text-gray-400 max-w-3xl mx-auto">
-                Découvrez d'autres véhicules de la même catégorie qui pourraient vous intéresser.
+                {{ __('vehicle-details.similar_vehicles.description') }}
             </p>
         </div>
 
@@ -533,7 +582,7 @@
                             <div>
                                 <span class="text-2xl font-bold" style="color: var(--gold);">{{
                                     $similar->daily_rate_formatted }}</span>
-                                <span class="text-gray-500">/jour</span>
+                                <span class="text-gray-500">{{ __('vehicle-details.similar_vehicles.per_day') }}</span>
                             </div>
                             <span class="px-3 py-1 rounded-full text-sm font-semibold"
                                 style="background: rgba(var(--gold-rgb), 0.2); color: var(--gold);">
@@ -545,7 +594,7 @@
                             <a href="{{ route('vehicle.details', $similar->id) }}"
                                 class="block text-center w-full px-4 py-3 font-semibold rounded transition-all duration-300"
                                 style="background: rgba(var(--gold-rgb), 0.2); color: var(--gold);">
-                                Voir les détails
+                                {{ __('vehicle-details.similar_vehicles.view_details') }}
                             </a>
                         </div>
                     </div>
@@ -561,48 +610,21 @@
 <section class="py-16" style="background: #111;">
     <div class="container mx-auto px-6">
         <div class="text-center mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: var(--gold);">Questions fréquentes</h2>
+            <h2 class="text-3xl md:text-4xl font-bold mb-4" style="color: var(--gold);">
+                {{ __('vehicle-details.sections.faq') }}
+            </h2>
             <p class="text-gray-400 max-w-3xl mx-auto">
-                Tout ce que vous devez savoir sur la location de ce véhicule.
+                {{ __('vehicle-details.faq.title') }}
             </p>
         </div>
 
         <div class="max-w-3xl mx-auto space-y-6">
+            @foreach(__('vehicle-details.faq.items') as $item)
             <div class="p-6" style="background: #1a1a1a; border: 1px solid #333;">
-                <h4 class="text-lg font-bold mb-2" style="color: white;">Quels documents sont nécessaires pour la
-                    location ?</h4>
-                <p class="text-gray-400">
-                    Pour louer ce véhicule, vous aurez besoin de : votre pièce d'identité valide, permis de conduire B
-                    depuis plus de 3 ans,
-                    justificatif de domicile de moins de 3 mois, et pour les locations professionnelles, votre carte
-                    VTC.
-                </p>
+                <h4 class="text-lg font-bold mb-2" style="color: white;">{{ $item['question'] }}</h4>
+                <p class="text-gray-400">{{ $item['answer'] }}</p>
             </div>
-
-            <div class="p-6" style="background: #1a1a1a; border: 1px solid #333;">
-                <h4 class="text-lg font-bold mb-2" style="color: white;">L'assurance est-elle incluse ?</h4>
-                <p class="text-gray-400">
-                    Oui, toutes nos locations incluent une assurance tous risques avec franchise réduite.
-                    L'assurance conducteur supplémentaire est également disponible en option.
-                </p>
-            </div>
-
-            <div class="p-6" style="background: #1a1a1a; border: 1px solid #333;">
-                <h4 class="text-lg font-bold mb-2" style="color: white;">Puis-je modifier ou annuler ma réservation ?
-                </h4>
-                <p class="text-gray-400">
-                    Vous pouvez modifier votre réservation jusqu'à 48h avant le début de la location.
-                    Les annulations sont possibles avec des conditions variables selon le délai.
-                </p>
-            </div>
-
-            <div class="p-6" style="background: #1a1a1a; border: 1px solid #333;">
-                <h4 class="text-lg font-bold mb-2" style="color: white;">Y a-t-il un kilométrage maximum ?</h4>
-                <p class="text-gray-400">
-                    Pour les locations courte durée, un forfait kilométrique est inclus.
-                    Pour les locations longue durée, le kilométrage est illimité pour les véhicules VTC.
-                </p>
-            </div>
+            @endforeach
         </div>
     </div>
 </section>
@@ -610,24 +632,25 @@
 <!-- CTA -->
 <section class="py-16" style="background: #000;">
     <div class="container mx-auto px-6 text-center">
-        <h2 class="text-3xl md:text-4xl font-bold mb-6" style="color: var(--gold);">Prêt à réserver {{
-            $vehicle->full_name }} ?</h2>
+        <h2 class="text-3xl md:text-4xl font-bold mb-6" style="color: var(--gold);">
+            {{ __('vehicle-details.sections.cta', ['vehicle_name' => $vehicle->full_name]) }}
+        </h2>
         <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Contactez-nous directement pour toute question ou pour réserver ce véhicule par téléphone.
+            {{ __('vehicle-details.cta.description') }}
         </p>
 
         <div class="flex flex-col sm:flex-row gap-6 justify-center">
             <a href="tel:0176380017"
                 class="inline-flex items-center px-8 py-4 text-lg font-semibold rounded transition-all duration-300"
                 style="background: var(--gold); color: black;">
-                <i class="fas fa-phone mr-3"></i>
-                01 76 38 00 17
+                <i class="{{ __('vehicle-details.icons.phone') }} mr-3"></i>
+                {{ __('vehicle-details.cta.phone') }}
             </a>
             <a href="mailto:location@djokprestige.com"
                 class="inline-flex items-center px-8 py-4 text-lg font-semibold rounded transition-all duration-300 border"
                 style="border-color: var(--gold); color: var(--gold);">
-                <i class="fas fa-envelope mr-3"></i>
-                location@djokprestige.com
+                <i class="{{ __('vehicle-details.icons.envelope') }} mr-3"></i>
+                {{ __('vehicle-details.cta.email') }}
             </a>
         </div>
     </div>
@@ -657,6 +680,24 @@
     const priceResult = document.getElementById('price_result');
     const submitBtn = document.getElementById('submit_btn');
     const vehicleId = {{ $vehicle->id }};
+
+    // Traductions JavaScript
+    const translations = {
+        date_error: "{{ __('vehicle-details.messages.date_error') }}",
+        checking: "{{ __('vehicle-details.booking.availability_check.checking') }}",
+        available: "{{ __('vehicle-details.booking.availability_check.available') }}",
+        not_available: "{{ __('vehicle-details.booking.availability_check.not_available') }}",
+        error: "{{ __('vehicle-details.booking.availability_check.error') }}",
+        duration: "{{ __('vehicle-details.booking.price_estimation.duration') }}",
+        rate_type: "{{ __('vehicle-details.booking.price_estimation.rate_type') }}",
+        estimated_amount: "{{ __('vehicle-details.booking.price_estimation.estimated_amount') }}",
+        days: "{{ __('vehicle-details.booking.price_estimation.days') }}",
+        note: "{{ __('vehicle-details.booking.price_estimation.note') }}",
+        check_circle: "{{ __('vehicle-details.icons.check_in_circle') }}",
+        times_circle: "{{ __('vehicle-details.icons.times_in_circle') }}",
+        info_circle: "{{ __('vehicle-details.icons.info_circle') }}",
+        spinner: "{{ __('vehicle-details.icons.spinner') }}",
+    };
 
     if (dateDebutInput && dateFinInput) {
         const today = new Date();
@@ -695,7 +736,7 @@
                 const dateFin = new Date(this.value);
 
                 if (dateFin <= dateDebut) {
-                    alert("La date de fin doit être postérieure à la date de début.");
+                    alert(translations.date_error);
                     const nextDay = new Date(dateDebut);
                     nextDay.setDate(nextDay.getDate() + 1);
                     this.value = nextDay.toISOString().split('T')[0];
@@ -725,7 +766,7 @@
             availabilityResult.innerHTML = `
                 <div class="flex items-center">
                     <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-600 mr-2"></div>
-                    <span style="color: var(--gold);">Vérification en cours...</span>
+                    <span style="color: var(--gold);">${translations.checking}</span>
                 </div>
             `;
             availabilityCheck.classList.remove('hidden');
@@ -748,7 +789,7 @@
                 if (data.available) {
                     availabilityResult.innerHTML = `
                         <div style="color: #10b981;">
-                            <i class="fas fa-check-circle mr-2"></i>
+                            <i class="${translations.check_circle} mr-2"></i>
                             ${data.message}
                         </div>
                     `;
@@ -757,20 +798,20 @@
                     priceResult.innerHTML = `
                         <div class="space-y-2">
                             <div class="flex justify-between">
-                                <span style="color: white;">Durée :</span>
-                                <span class="font-semibold" style="color: var(--gold);">${data.duree_jours} jours</span>
+                                <span style="color: white;">${translations.duration}</span>
+                                <span class="font-semibold" style="color: var(--gold);">${data.duree_jours} ${translations.days}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span style="color: white;">Type de tarif :</span>
+                                <span style="color: white;">${translations.rate_type}</span>
                                 <span class="font-semibold" style="color: var(--gold);">${data.tarif_type}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span style="color: white;">Montant estimé :</span>
+                                <span style="color: white;">${translations.estimated_amount}</span>
                                 <span class="font-bold text-lg" style="color: var(--gold);">${parseFloat(data.montant_estime).toFixed(2).replace('.', ',')} €</span>
                             </div>
                             <div class="text-sm mt-2" style="color: #888;">
-                                <i class="fas fa-info-circle mr-1"></i>
-                                Prix indicatif TTC
+                                <i class="${translations.info_circle} mr-1"></i>
+                                ${translations.note}
                             </div>
                         </div>
                     `;
@@ -780,7 +821,7 @@
                 } else {
                     availabilityResult.innerHTML = `
                         <div style="color: #dc2626;">
-                            <i class="fas fa-times-circle mr-2"></i>
+                            <i class="${translations.times_circle} mr-2"></i>
                             ${data.message}
                         </div>
                     `;
@@ -794,7 +835,7 @@
                 availabilityResult.innerHTML = `
                     <div style="color: #dc2626;">
                         <i class="fas fa-exclamation-triangle mr-2"></i>
-                        Erreur lors de la vérification. Veuillez réessayer.
+                        ${translations.error}
                     </div>
                 `;
                 priceEstimation.classList.add('hidden');
@@ -816,7 +857,7 @@
             successAlert.style.opacity = '0';
             successAlert.style.transition = 'opacity 0.5s ease';
             setTimeout(() => successAlert.remove(), 500);
-        }, 8000);
+        }, {{ __('vehicle-details.alerts.success.timeout') }});
     }
 
     if (errorAlert) {

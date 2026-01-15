@@ -6,7 +6,7 @@ use App\Models\Formation;
 use App\Models\Paiement;
 use App\Models\UserFormation;
 use App\Models\Participant;
-use App\Services\StripeService;
+use App\Services\PaymentService;
 use App\Mail\ElearningPurchaseConfirmation;
 use App\Mail\ElearningPurchaseAdminNotification;
 use App\Mail\FormationInscriptionConfirmation;
@@ -18,11 +18,11 @@ use Illuminate\Support\Str;
 
 class FormationController extends Controller
 {
-    protected $stripeService;
+    protected $paymentService;
 
-    public function __construct(StripeService $stripeService)
+    public function __construct(PaymentService $paymentService)
     {
-        $this->stripeService = $stripeService;
+        $this->paymentService = $paymentService;
     }
 
     /**
@@ -201,7 +201,7 @@ class FormationController extends Controller
     }
 
     /**
-     * Créer une session de paiement Stripe
+     * Créer une session de paiement
      */
     public function createPaymentSession(Request $request, $id)
     {
@@ -220,19 +220,9 @@ class FormationController extends Controller
                 'id' => $formation->id,
                 'title' => $formation->title,
                 'price' => $formation->price,
-                'stripe_price_id' => $formation->stripe_price_id,
             ]);
 
-            // S'assurer que la formation a un produit Stripe
-            if (!$formation->stripe_price_id) {
-                Log::info('Création du produit Stripe pour la formation...');
-                $result = $this->stripeService->createProductForFormation($formation);
-                Log::info('Résultat création produit:', ['success' => $result]);
-                $formation->refresh();
-                Log::info('Formation après refresh - stripe_price_id:', ['stripe_price_id' => $formation->stripe_price_id]);
-            }
-
-            // Récupérer l'email de l'utilisateur
+            // Récupérer l'email et le nom de l'utilisateur
             $userEmail = null;
             $userName = null;
 
@@ -256,7 +246,8 @@ class FormationController extends Controller
             // Créer un paiement en attente
             $paiement = Paiement::create([
                 'user_id' => auth()->check() ? auth()->id() : null,
-                'formation_id' => $formation->id,
+                'service_id' => $formation->id,
+                'service_type' => 'formation',
                 'reference' => 'PAY_' . Str::upper(Str::random(10)),
                 'amount' => $formation->price,
                 'currency' => 'eur',
@@ -264,6 +255,11 @@ class FormationController extends Controller
                 'customer_info' => [
                     'email' => $userEmail,
                     'name' => $userName,
+                ],
+                'service_details' => [
+                    'service_name' => 'Formation e-learning: ' . $formation->title,
+                    'description' => 'Accès 12 mois à la formation "' . $formation->title . '"',
+                    'formation_data' => $formation->toArray(),
                 ],
             ]);
 
@@ -273,77 +269,67 @@ class FormationController extends Controller
                 'status' => $paiement->status,
             ]);
 
-            // Créer un participant en attente pour l'e-learning
-            if (auth()->check()) {
-                Participant::create([
-                    'formation_id' => $formation->id,
-                    'user_id' => auth()->id(),
-                    'paiement_id' => $paiement->id,
-                    'nom' => auth()->user()->name,
-                    'prenom' => '',
-                    'email' => auth()->user()->email,
-                    'type_formation' => 'en_ligne',
-                    'statut' => 'en_attente',
-                    'donnees_supplementaires' => [
-                        'inscription_date' => now()->format('Y-m-d H:i:s'),
-                        'formation_title' => $formation->title,
-                        'paiement_reference' => $paiement->reference,
-                        'type_paiement' => 'e_learning',
-                    ],
-                ]);
-            } else {
-                Participant::create([
-                    'formation_id' => $formation->id,
-                    'user_id' => null,
-                    'paiement_id' => $paiement->id,
-                    'nom' => $userName,
-                    'prenom' => '',
-                    'email' => $userEmail,
-                    'type_formation' => 'en_ligne',
-                    'statut' => 'en_attente',
-                    'donnees_supplementaires' => [
-                        'inscription_date' => now()->format('Y-m-d H:i:s'),
-                        'formation_title' => $formation->title,
-                        'paiement_reference' => $paiement->reference,
-                        'type_paiement' => 'e_learning',
-                    ],
-                ]);
-            }
-
-            Log::info('Participant créé pour l\'e-learning');
-
-            // Créer la session Stripe
-            $metadata = [
-                'paiement_reference' => $paiement->reference,
+            // Créer un participant en attente
+            $participantData = [
                 'formation_id' => $formation->id,
-                'formation_title' => $formation->title,
-                'customer_email' => $userEmail,
+                'user_id' => auth()->check() ? auth()->id() : null,
+                'paiement_id' => $paiement->id,
+                'nom' => $userName,
+                'prenom' => '',
+                'email' => $userEmail,
+                'type_formation' => 'en_ligne',
+                'statut' => 'en_attente',
+                'donnees_supplementaires' => [
+                    'inscription_date' => now()->format('Y-m-d H:i:s'),
+                    'formation_title' => $formation->title,
+                    'paiement_reference' => $paiement->reference,
+                    'type_paiement' => 'e_learning',
+                ],
             ];
 
-            Log::info('Création de la session Stripe avec metadata:', $metadata);
+            Participant::create($participantData);
+            Log::info('Participant créé pour l\'e-learning');
 
-            $session = $this->stripeService->createCheckoutSession(
-                $formation,
-                $userEmail,
+            // Préparer les données pour PaymentService
+            $serviceData = [
+                'amount' => $formation->price,
+                'service_name' => 'Formation e-learning: ' . $formation->title,
+                'description' => 'Accès 12 mois à la formation "' . $formation->title . '"',
+                'formation_data' => $formation->toArray(),
+            ];
+
+            $customerData = [
+                'name' => $userName,
+                'email' => $userEmail,
+                'phone' => '',
+            ];
+
+            $metadata = [
+                'formation_id' => $formation->id,
+                'paiement_reference' => $paiement->reference,
+                'service_type' => 'formation',
+            ];
+
+            Log::info('Création de la session via PaymentService...');
+
+            // Utiliser le PaymentService unifié
+            $paymentSession = $this->paymentService->createPaymentSession(
+                'formation',
+                $serviceData,
+                $customerData,
                 $metadata
             );
 
-            Log::info('Session Stripe créée:', [
-                'session_id' => $session->id,
-                'url' => $session->url,
-                'payment_intent_id' => $session->payment_intent ?? 'N/A',
-            ]);
-
             // Mettre à jour le paiement avec l'ID de session
             $paiement->update([
-                'stripe_session_id' => $session->id,
+                'stripe_session_id' => $paymentSession['session_id'],
             ]);
 
             Log::info('=== FIN createPaymentSession - Succès ===');
 
             return response()->json([
-                'sessionId' => $session->id,
-                'url' => $session->url,
+                'sessionId' => $paymentSession['session_id'],
+                'url' => $paymentSession['url'],
             ]);
         } catch (\Exception $e) {
             Log::error('Erreur dans createPaymentSession:', [
@@ -360,316 +346,24 @@ class FormationController extends Controller
     }
 
     /**
-     * Succès du paiement
+     * Redirection pour succès (utilise PaymentController)
      */
     public function paymentSuccess(Request $request)
     {
-        Log::info('=== DÉBUT paymentSuccess ===');
-        Log::info('Paramètres reçus:', $request->all());
-
-        $sessionId = $request->get('session_id');
-
-        if (!$sessionId) {
-            Log::warning('Aucun session_id fourni');
-            return redirect()->route('formation')
-                ->with('error', 'Session de paiement invalide.');
-        }
-
-        try {
-            Log::info('Récupération de la session Stripe: ' . $sessionId);
-
-            // Récupérer la session Stripe
-            $session = $this->stripeService->retrieveSession($sessionId);
-
-            Log::info('Session Stripe récupérée:', [
-                'session_id' => $session->id,
-                'payment_status' => $session->payment_status,
-                'customer_email' => $session->customer_email ?? 'N/A',
-                'amount_total' => $session->amount_total ?? 'N/A',
-            ]);
-
-            // Trouver le paiement
-            $paiement = Paiement::where('stripe_session_id', $sessionId)->first();
-
-            Log::info('Paiement trouvé dans la base:', [
-                'exists' => !is_null($paiement),
-                'paiement_reference' => $paiement ? $paiement->reference : 'N/A',
-                'status' => $paiement ? $paiement->status : 'N/A',
-            ]);
-
-            if (!$paiement) {
-                Log::info('Création d\'un nouveau paiement à partir des données Stripe');
-
-                $formationId = $session->metadata->formation_id ?? null;
-                $formation = Formation::find($formationId);
-
-                if (!$formation) {
-                    Log::error('Formation non trouvée pour l\'ID: ' . $formationId);
-                    return redirect()->route('formation')
-                        ->with('error', 'Formation non trouvée.');
-                }
-
-                $paiement = Paiement::create([
-                    'reference' => $session->metadata->paiement_reference ?? 'PAY_' . Str::upper(Str::random(10)),
-                    'formation_id' => $formation->id,
-                    'amount' => $session->amount_total / 100,
-                    'currency' => $session->currency,
-                    'status' => 'paid',
-                    'stripe_session_id' => $sessionId,
-                    'stripe_payment_intent_id' => $session->payment_intent,
-                    'stripe_response' => json_decode(json_encode($session), true),
-                    'customer_info' => [
-                        'email' => $session->customer_email,
-                        'name' => $session->customer_details->name ?? null,
-                    ],
-                    'paid_at' => now(),
-                ]);
-
-                Log::info('Nouveau paiement créé:', ['reference' => $paiement->reference]);
-            } elseif ($paiement->status !== 'paid') {
-                Log::info('Mise à jour du paiement existant vers "paid"');
-
-                $paiement->update([
-                    'status' => 'paid',
-                    'stripe_payment_intent_id' => $session->payment_intent,
-                    'stripe_response' => json_decode(json_encode($session), true),
-                    'paid_at' => now(),
-                ]);
-
-                Log::info('Paiement mis à jour avec succès');
-            } else {
-                Log::info('Paiement déjà marqué comme "paid"');
-            }
-
-            // Mettre à jour le statut du participant
-            $participant = Participant::where('paiement_id', $paiement->id)->first();
-            if ($participant) {
-                $participant->update([
-                    'statut' => 'confirme',
-                    'date_debut' => now(),
-                    'date_fin' => now()->addYear(),
-                ]);
-                Log::info('Statut du participant mis à jour:', [
-                    'participant_id' => $participant->id,
-                    'statut' => 'confirme',
-                ]);
-            }
-
-            // Accorder l'accès à la formation et envoyer les emails
-            Log::info('Tentative d\'accorder l\'accès à la formation...');
-            $this->grantFormationAccess($paiement);
-            Log::info('Accès à la formation accordé avec succès');
-
-            // Message de succès détaillé
-            $formationTitle = $paiement->formation->title;
-            $successMessage = 'Félicitations ! Votre paiement de ' . number_format($paiement->amount, 2, ',', ' ') . ' € a été accepté.';
-            $successMessage .= ' Vous avez maintenant accès à la formation "' . $formationTitle . '".';
-            $successMessage .= ' Votre référence de paiement : ' . $paiement->reference;
-
-            // Stocker les informations pour le dashboard
-            session([
-                'payment_success' => true,
-                'payment_message' => $successMessage,
-                'formation_title' => $formationTitle,
-                'payment_reference' => $paiement->reference,
-                'payment_amount' => $paiement->amount,
-            ]);
-
-            Log::info('=== FIN paymentSuccess - Redirection avec succès ===');
-            Log::info('Message de succès:', ['message' => $successMessage]);
-
-            // Rediriger vers le dashboard général qui redirigera vers client.dashboard
-            return redirect()->route('dashboard')
-                ->with('success', $successMessage)
-                ->with('payment_completed', true);
-        } catch (\Exception $e) {
-            Log::error('Erreur paymentSuccess Stripe: ' . $e->getMessage(), [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            return redirect()->route('formation')
-                ->with('error', 'Nous n\'avons pas pu valider votre paiement. Veuillez contacter notre support.');
-        }
+        return redirect()->route('payment.success', ['session_id' => $request->get('session_id')]);
     }
 
     /**
-     * Accorder l'accès à la formation et envoyer les emails
-     */
-    private function grantFormationAccess(Paiement $paiement)
-    {
-        Log::info('=== DÉBUT grantFormationAccess ===');
-        Log::info('Paiement:', [
-            'reference' => $paiement->reference,
-            'formation_id' => $paiement->formation_id,
-            'user_id' => $paiement->user_id,
-            'customer_email' => $paiement->customer_info['email'] ?? 'N/A',
-        ]);
-
-        $user = $paiement->user ?? null;
-        $emailSent = false;
-
-        if (!$user && isset($paiement->customer_info['email'])) {
-            Log::info('Recherche de l\'utilisateur par email: ' . $paiement->customer_info['email']);
-
-            $user = \App\Models\User::where('email', $paiement->customer_info['email'])->first();
-
-            if ($user) {
-                Log::info('Utilisateur trouvé par email, mise à jour du paiement avec user_id: ' . $user->id);
-                $paiement->update(['user_id' => $user->id]);
-            } else {
-                Log::warning('Aucun utilisateur trouvé pour l\'email: ' . $paiement->customer_info['email']);
-            }
-        }
-
-        $userFormation = null;
-        if ($user) {
-            Log::info('Vérification si l\'utilisateur a déjà accès à cette formation...');
-
-            $userFormation = UserFormation::where('user_id', $user->id)
-                ->where('formation_id', $paiement->formation_id)
-                ->where('status', 'active')
-                ->first();
-
-            if (!$userFormation) {
-                Log::info('Création de l\'accès utilisateur à la formation...');
-
-                $userFormation = UserFormation::create([
-                    'user_id' => $user->id,
-                    'formation_id' => $paiement->formation_id,
-                    'paiement_id' => $paiement->id,
-                    'status' => 'active',
-                    'access_start' => now(),
-                    'access_end' => now()->addYear(),
-                    'progress' => 0,
-                ]);
-
-                Log::info('Accès utilisateur créé avec succès');
-            } else {
-                Log::info('L\'utilisateur a déjà accès à cette formation');
-            }
-
-            // Mettre à jour le participant avec l'user_id
-            $participant = Participant::where('paiement_id', $paiement->id)
-                ->orWhere('email', $paiement->customer_info['email'] ?? null)
-                ->first();
-
-            if ($participant && !$participant->user_id) {
-                $participant->update(['user_id' => $user->id]);
-                Log::info('Participant mis à jour avec user_id:', ['participant_id' => $participant->id]);
-            }
-        }
-
-        // ENVOI DES EMAILS POUR L'E-LEARNING
-        try {
-            $formation = $paiement->formation;
-
-            // 1. Email de confirmation au client
-            $clientEmail = $user ? $user->email : ($paiement->customer_info['email'] ?? null);
-
-            if ($clientEmail) {
-                Mail::to($clientEmail)->send(new ElearningPurchaseConfirmation($formation, $paiement, $user));
-                Log::info('Email de confirmation e-learning envoyé à: ' . $clientEmail);
-                $emailSent = true;
-            } else {
-                Log::warning('Impossible d\'envoyer l\'email de confirmation: email client non disponible');
-            }
-
-            // 2. Email de notification à l'admin
-            $adminEmail = config('mail.admin_email', 'admin@djokprestige.com');
-            Mail::to($adminEmail)->send(new ElearningPurchaseAdminNotification($formation, $paiement, $user, $userFormation, $emailSent));
-            Log::info('Email de notification admin e-learning envoyé à: ' . $adminEmail);
-        } catch (\Exception $emailException) {
-            Log::error('Erreur lors de l\'envoi des emails e-learning', [
-                'error' => $emailException->getMessage(),
-                'paiement_id' => $paiement->id,
-                'formation_id' => $paiement->formation_id,
-            ]);
-        }
-
-        Log::info('=== FIN grantFormationAccess ===');
-    }
-
-    /**
-     * Annulation du paiement
+     * Redirection pour annulation (utilise PaymentController)
      */
     public function paymentCancel()
     {
         Log::info('Paiement annulé par l\'utilisateur');
-        return view('formations.payment-cancel');
+        return redirect()->route('payment.cancel');
     }
 
     /**
-     * Webhook Stripe
-     */
-    public function webhook(Request $request)
-    {
-        Log::info('=== WEBHOOK STRIPE RECU ===');
-        $payload = $request->getContent();
-        $sigHeader = $request->header('Stripe-Signature');
-
-        Log::info('En-tête Stripe-Signature: ' . $sigHeader);
-        Log::info('Payload (premiers 500 caractères): ' . substr($payload, 0, 500));
-
-        return $this->stripeService->handleWebhook($payload, $sigHeader);
-    }
-
-    /**
-     * Mes formations (pour utilisateur connecté) - SUPPRIMER
-     */
-    public function mesFormations()
-    {
-        if (!auth()->check()) {
-            return redirect()->route('login');
-        }
-
-        $userFormations = UserFormation::where('user_id', auth()->id())
-            ->with('formation')
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return view('formations.mes-formations', compact('userFormations'));
-    }
-
-    /**
-     * Accéder à une formation achetée (version publique - redirige vers client)
-     */
-    public function accederFormation($id)
-    {
-        if (!auth()->check()) {
-            return redirect()->route('login');
-        }
-
-        $user = auth()->user();
-
-        // Chercher la UserFormation
-        $userFormation = UserFormation::where('user_id', $user->id)
-            ->where('formation_id', $id)
-            ->where('status', 'active')
-            ->first();
-
-        if (!$userFormation) {
-            // Peut-être que l'ID est un UserFormation ID
-            $userFormation = UserFormation::where('user_id', $user->id)
-                ->where('id', $id)
-                ->where('status', 'active')
-                ->first();
-
-            if (!$userFormation) {
-                // Rediriger vers le dashboard client
-                return redirect()->route('client.dashboard')
-                    ->with('error', 'Vous n\'avez pas accès à cette formation.');
-            }
-        }
-
-        // Rediriger vers la page d'accès de l'espace client
-        return redirect()->route('client.formations.acceder', $userFormation->id);
-    }
-
-    /**
-     * Corriger le slug d'une formation spécifique (accès public)
+     * Corriger le slug d'une formation spécifique
      */
     public function fixSlug($id)
     {
@@ -723,7 +417,7 @@ class FormationController extends Controller
     }
 
     /**
-     * Corriger tous les slugs des formations (accès public)
+     * Corriger tous les slugs des formations
      */
     public function fixAllSlugs()
     {
@@ -797,7 +491,7 @@ class FormationController extends Controller
     }
 
     /**
-     * Vérifier les doublons de slugs (accès public)
+     * Vérifier les doublons de slugs
      */
     public function checkSlugDuplicates()
     {

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vérifiez votre email - DJOK PRESTIGE</title>
+    <title>{{ __('verify.title') }} - DJOK PRESTIGE</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -83,6 +83,15 @@
         .btn-scale:hover {
             transform: scale(1.05);
         }
+
+        /* Style pour l'image en cercle */
+        .circle-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
     </style>
 </head>
 
@@ -90,26 +99,23 @@
     <!-- Section Formulaire (50%) - GAUCHE -->
     <div class="w-full lg:w-1/2 h-full flex justify-center bg-gray-50 animate-fade-in-left overflow-y-auto p-6 lg:p-8">
         <div class="w-full max-w-md pt-32 pb-16">
-            <!-- BLOC DESCENDU -->
-
             <!-- En-tête -->
             <div class="text-center mb-10">
-                <div
-                    class="w-24 h-24 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-6 animate-float shadow-xl">
-                    <i class="fas fa-envelope-open-text text-white text-4xl"></i>
+                <!-- Image DP2.webp en cercle -->
+                <div class="mb-6 animate-float">
+                    <img src="{{ asset('DP2.webp') }}" alt="Security Person" class="circle-image mx-auto">
                 </div>
-                <h1 class="text-4xl font-bold text-gray-800 mb-3">Vérifiez votre email</h1>
+                <h1 class="text-4xl font-bold text-gray-800 mb-3">{{ __('verify.heading') }}</h1>
                 <p class="text-gray-600 text-lg leading-relaxed">
-                    Merci pour votre inscription !<br>
-                    Avant de commencer, veuillez cliquer sur le lien que nous venons de vous envoyer par email.
+                    {!! __('verify.welcome_message') !!}
                 </p>
             </div>
 
             <!-- Message principal -->
             <div class="bg-blue-50 border border-blue-300 text-blue-800 p-5 rounded-xl mb-6 text-center shadow-sm">
                 <p class="text-sm font-medium">
-                    Vous n’avez pas reçu l’email ?<br>
-                    <span class="text-blue-900">Nous pouvons vous en renvoyer un.</span>
+                    {{ __('verify.not_received_message') }}<br>
+                    <span class="text-blue-900">{{ __('verify.resend_offer') }}</span>
                 </p>
             </div>
 
@@ -118,7 +124,7 @@
             <div
                 class="bg-green-50 border border-green-300 text-green-800 p-4 rounded-xl mb-6 text-center shadow-sm animate-pulse">
                 <p class="text-sm font-bold">
-                    Un nouveau lien de vérification a été envoyé à votre adresse email.
+                    {{ __('verify.resend_success') }}
                 </p>
             </div>
             @endif
@@ -130,7 +136,7 @@
                     @csrf
                     <x-primary-button
                         class="w-full sm:w-auto justify-center py-4 px-8 text-lg font-semibold bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white rounded-xl shadow-lg btn-scale">
-                        Renvoyer l’email
+                        {{ __('verify.resend_button') }}
                     </x-primary-button>
                 </form>
 
@@ -139,7 +145,7 @@
                     @csrf
                     <button type="submit"
                         class="text-orange-600 hover:text-orange-800 font-medium text-sm underline transition-colors duration-200">
-                        Se déconnecter
+                        {{ __('verify.logout_button') }}
                     </button>
                 </form>
             </div>
@@ -149,11 +155,11 @@
                 class="mt-10 p-6 bg-gradient-to-r from-teal-50 to-green-50 rounded-xl border border-teal-200 shadow-inner">
                 <div class="flex items-center text-teal-800 mb-3">
                     <i class="fas fa-shield-alt text-teal-600 text-xl mr-3"></i>
-                    <span class="font-semibold">Sécurité renforcée</span>
+                    <span class="font-semibold">{{ __('verify.benefit_security') }}</span>
                 </div>
                 <div class="flex items-center text-teal-800">
                     <i class="fas fa-envelope text-teal-600 text-xl mr-3"></i>
-                    <span class="font-semibold">Accès immédiat après vérification</span>
+                    <span class="font-semibold">{{ __('verify.benefit_access') }}</span>
                 </div>
             </div>
         </div>
@@ -162,7 +168,7 @@
     <!-- Section Image (50%) - DROITE -->
     <div class="hidden lg:block w-1/2 h-full relative animate-fade-in-right">
         <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80"
-            alt="DJOK PRESTIGE - Espace Client" class="w-full h-full object-cover">
+            alt="{{ __('verify.image_alt') }}" class="w-full h-full object-cover">
         <!-- Overlay sombre -->
         <div class="absolute inset-0 bg-black/40"></div>
 
@@ -173,28 +179,27 @@
                     class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-8 backdrop-blur-sm border border-white/30">
                     <i class="fas fa-rocket text-3xl text-yellow-300 animate-float"></i>
                 </div>
-                <h2 class="text-5xl font-bold mb-6">Votre Succès<br>Commence Ici</h2>
+                <h2 class="text-5xl font-bold mb-6">{!! __('verify.right_title') !!}</h2>
                 <p class="text-xl mb-8 text-gray-200 leading-relaxed">
-                    Rejoignez une communauté de professionnels et développez vos compétences
-                    avec DJOK PRESTIGE. Accédez à des formations exclusives et boostez votre carrière.
+                    {{ __('verify.right_description') }}
                 </p>
 
                 <div class="grid grid-cols-2 gap-6 text-base mb-10">
                     <div class="flex items-center justify-start">
                         <i class="fas fa-check-circle text-yellow-300 text-xl mr-3"></i>
-                        <span class="text-lg">Formations certifiantes</span>
+                        <span class="text-lg">{{ __('verify.feature_trainings') }}</span>
                     </div>
                     <div class="flex items-center justify-start">
                         <i class="fas fa-check-circle text-yellow-300 text-xl mr-3"></i>
-                        <span class="text-lg">Support expert 24/7</span>
+                        <span class="text-lg">{{ __('verify.feature_support') }}</span>
                     </div>
                     <div class="flex items-center justify-start">
                         <i class="fas fa-check-circle text-yellow-300 text-xl mr-3"></i>
-                        <span class="text-lg">Réseau professionnel</span>
+                        <span class="text-lg">{{ __('verify.feature_network') }}</span>
                     </div>
                     <div class="flex items-center justify-start">
                         <i class="fas fa-check-circle text-yellow-300 text-xl mr-3"></i>
-                        <span class="text-lg">Opportunités business</span>
+                        <span class="text-lg">{{ __('verify.feature_opportunities') }}</span>
                     </div>
                 </div>
 
@@ -202,15 +207,15 @@
                 <div class="grid grid-cols-3 gap-8 text-center">
                     <div>
                         <div class="text-3xl font-bold text-yellow-300 mb-2">5000+</div>
-                        <div class="text-gray-300">Membres actifs</div>
+                        <div class="text-gray-300">{{ __('verify.stats_members') }}</div>
                     </div>
                     <div>
                         <div class="text-3xl font-bold text-yellow-300 mb-2">95%</div>
-                        <div class="text-gray-300">Taux de satisfaction</div>
+                        <div class="text-gray-300">{{ __('verify.stats_satisfaction') }}</div>
                     </div>
                     <div>
                         <div class="text-3xl font-bold text-yellow-300 mb-2">24/7</div>
-                        <div class="text-gray-300">Support disponible</div>
+                        <div class="text-gray-300">{{ __('verify.stats_support') }}</div>
                     </div>
                 </div>
             </div>

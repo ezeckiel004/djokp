@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'DJOK PRESTIGE - VTC, Formations & Entrepreneuriat')</title>
+    <title>@yield('title', trans('main.default_title'))</title>
 
     <!-- Google Font Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -311,10 +311,10 @@
     <!-- Bouton flottant unique - Caché sur mobile avec hidden md:flex -->
     <div class="floating-buttons-container hidden md:flex">
         <!-- Bouton Certification unique -->
-        <button class="certification-btn" title="Téléchargez notre certification officielle">
+        <button class="certification-btn" title="{{ trans('main.certification_button_title') }}">
             <i class="fas fa-download"></i>
             <div class="certification-text" id="certificationText">
-                Téléchargez notre certification
+                {{ trans('main.certification_text') }}
             </div>
         </button>
     </div>

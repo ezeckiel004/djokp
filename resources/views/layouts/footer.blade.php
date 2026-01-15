@@ -4,58 +4,52 @@
         <!-- Logo -->
         <div class="footer-logo">
             <!-- Remplacez l'URL par le chemin de votre logo -->
-            <img src="{{ asset('DP2.webp') }}" alt="DJOK PRESTIGE" />
+            <img src="{{ asset('DP2.webp') }}" alt="{{ __('footer.logo_alt') }}" />
         </div>
 
         <!-- Services -->
         <div>
-            <h4>Services</h4>
+            <h4>{{ __('footer.services_title') }}</h4>
             <ul>
-                <li><a href="{{ route('location') }}">Location de véhicules</a></li>
-                <li><a href="{{ route('reservation') }}">Aéroport / Gare</a></li>
-                <li><a href="{{ route('reservation') }}">Mise à disposition</a></li>
-                <li><a href="{{ route('reservation') }}">Longue distance</a></li>
-                <li><a href="{{ route('conciergerie') }}">Conciergerie</a></li>
-                <li><a href="{{ route('performance') }}">Nos Chiffres clefs VTC</a></li>
+                <li><a href="{{ route('formation') }}">{{ __('footer.formations') }}</a></li>
+                <li><a href="{{ route('formation.international') }}">{{ __('footer.international_training') }}</a></li>
+                <li><a href="{{ route('reservation') }}">{{ __('footer.vtc_booking') }}</a></li>
+                <li><a href="{{ route('location') }}">{{ __('footer.rental') }}</a></li>
+                <li><a href="{{ route('conciergerie') }}">{{ __('footer.conciergerie') }}</a></li>
             </ul>
         </div>
 
         <!-- Formations -->
         <div>
-            <h4>Nos Formations</h4>
+            <h4>{{ __('footer.training_title') }}</h4>
             <ul>
-                <li><a href="{{ route('cgv') }}">C.G.V</a></li>
-                <li><a href="{{ route('cgu') }}">C.G.U</a></li>
-                <li><a href="{{ route('mentions-legales') }}">Mentions légales</a></li>
-                <li><a href="{{ route('rgpd') }}">R.G.P.D</a></li>
-                <li><a href="{{ route('performance') }}">Indicateurs de performance</a></li>
-                <li><a href="{{ route('reclamation') }}">Réclamation</a></li>
+                <li><a href="{{ route('cgv') }}">{{ __('footer.cgv') }}</a></li>
+                <li><a href="{{ route('cgu') }}">{{ __('footer.cgu') }}</a></li>
+                <li><a href="{{ route('mentions-legales') }}">{{ __('footer.legal_notices') }}</a></li>
+                <li><a href="{{ route('rgpd') }}">{{ __('footer.rgpd') }}</a></li>
+                <li><a href="{{ route('performance') }}">{{ __('footer.performance_indicators') }}</a></li>
+                <li><a href="{{ route('reclamation') }}">{{ __('footer.complaint') }}</a></li>
             </ul>
         </div>
 
         <!-- Contact -->
         <div>
-            <h4>Nous Contacter</h4>
-            <p>Email: contact@djokprestige.com</p>
-            <p>Téléphone: 06.99.16.44.55</p>
-            <p>Lun–Sam : 9h – 19h</p>
+            <h4>{{ __('footer.contact_title') }}</h4>
+            <p>{{ __('footer.email') }}: {{ __('footer.email_value') }}</p>
+            <p>{{ __('footer.phone') }}: {{ __('footer.phone_value') }}</p>
+            <p>{{ __('footer.hours') }}</p>
 
             <!-- Certification -->
             <div style="margin-top: 20px; padding: 12px; background: #111; border-radius: 4px;">
-                <p style="font-size: 12px; color: #caa24d; font-weight: 600;">Centre de formation certifié Qualiopi</p>
-                <p style="font-size: 11px; color: #ccc; margin-top: 4px;">Agréé VTC par la Préfecture</p>
+                <p style="font-size: 12px; color: #caa24d; font-weight: 600;">{{ __('footer.certification_title') }}</p>
+                <p style="font-size: 11px; color: #ccc; margin-top: 4px;">{{ __('footer.certification_subtitle') }}</p>
             </div>
         </div>
     </div>
 
     <!-- Copyright -->
     <div class="copyright">
-        Copyright –
-        <a href="https://vibecro.com/" target="_blank" rel="noopener noreferrer"
-            style="color: inherit; text-decoration: none; font-weight: 600;">
-            VIBECRO-INC
-        </a>
-        {{ date('Y') }}
+        © {{ __('footer.year') }} <a href="https://vibecro.com/"><strong>VIBECRO SARL</strong></a> .  {{ __('footer.all_rights_reserved') }}
     </div>
 </footer>
 

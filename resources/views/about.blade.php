@@ -1,13 +1,13 @@
 @extends('layouts.main')
 
-@section('title', 'À Propos - DJOK PRESTIGE')
+@section('title', __('about.title'))
 
 @section('content')
 <!-- Hero Section - Style sobre -->
 <header class="relative min-h-screen flex items-center" style="background: #000;">
     <div class="absolute inset-0 bg-black">
         <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
-            alt="DJOK PRESTIGE About" class="w-full h-full object-cover opacity-40">
+            alt="{{ __('about.hero_title') }}" class="w-full h-full object-cover opacity-40">
         <div class="absolute inset-0" style="background: rgba(0, 0, 0, 0.7);"></div>
     </div>
 
@@ -15,10 +15,10 @@
     <div class="container mx-auto px-4 md:px-6 py-20 relative z-10">
         <div class="max-w-5xl mx-auto text-center">
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-8" style="color: var(--gold);">
-                À Propos de DJOK PRESTIGE
+                {{ __('about.hero_title') }}
             </h1>
             <p class="text-lg md:text-xl text-gray-300 mb-12 max-w-3xl mx-auto">
-                Votre partenaire de confiance depuis 2020 pour VTC, formations et entrepreneuriat en Afrique
+                {{ __('about.hero_subtitle') }}
             </p>
 
             <!-- Boutons - Style sobre -->
@@ -26,12 +26,12 @@
                 <a href="#mission"
                     class="w-full sm:w-auto px-8 py-3 font-semibold text-center transition duration-300 hover:scale-105"
                     style="background: var(--gold); color: black;">
-                    Notre Mission
+                    {{ __('about.our_mission') }}
                 </a>
                 <a href="#histoire"
                     class="w-full sm:w-auto px-8 py-3 font-semibold text-center border transition duration-300 hover:scale-105"
                     style="border-color: var(--gold); color: var(--gold);">
-                    Notre Histoire
+                    {{ __('about.our_history') }}
                 </a>
             </div>
         </div>
@@ -39,7 +39,7 @@
 
     <!-- Scroll Indicator -->
     <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <a href="#mission" class="text-white transition duration-300 hover:text-var(--gold)">
+        <a href="#mission" class="text-white transition duration-300 hover:text-var(--gold)" aria-label="{{ __('about.scroll_down') }}">
             <i class="text-xl fas fa-chevron-down animate-bounce"></i>
         </a>
     </div>
@@ -50,34 +50,64 @@
     <div class="container mx-auto px-4 md:px-6">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-12">
-                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Notre Mission</h2>
+                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{ __('about.mission_title') }}</h2>
                 <p class="text-lg text-gray-300 max-w-3xl mx-auto">
-                    DJOK PRESTIGE accompagne les professionnels et entrepreneurs dans leur développement à travers des
-                    services de transport premium, des formations certifiantes et un accompagnement personnalisé pour
-                    les
-                    projets en Afrique.
+                    {{ __('about.mission_description') }}
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                @foreach([
-                ['Excellence', 'Un service d\'exception dans tous nos formats', 'fas fa-medal'],
-                ['Accompagnement', 'Un soutien personnalisé pour chaque défi et étape', 'fas fa-hands-helping'],
-                ['Partenariat', 'Des relations basées sur la confiance mutuelle', 'fas fa-handshake'],
-                ['Durabilité', 'Engagement pour un développement responsable', 'fas fa-leaf']
-                ] as $value)
+                <!-- Excellence -->
                 <div class="p-8 transition-all duration-300 hover:scale-105 hover:shadow-xl"
                     style="background: #111; border: 1px solid #333;">
                     <div class="flex flex-col items-center text-center">
                         <div class="w-16 h-16 flex items-center justify-center rounded-lg mb-6"
                             style="background: var(--gold);">
-                            <i class="{{ $value[2] }} text-black text-2xl"></i>
+                            <i class="fas fa-medal text-black text-2xl"></i>
                         </div>
-                        <h3 class="text-xl font-bold mb-4" style="color: white;">{{ $value[0] }}</h3>
-                        <p class="text-gray-400">{{ $value[1] }}</p>
+                        <h3 class="text-xl font-bold mb-4" style="color: white;">{{ __('about.value_excellence') }}</h3>
+                        <p class="text-gray-400">{{ __('about.value_excellence_desc') }}</p>
                     </div>
                 </div>
-                @endforeach
+
+                <!-- Accompagnement -->
+                <div class="p-8 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                    style="background: #111; border: 1px solid #333;">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-16 h-16 flex items-center justify-center rounded-lg mb-6"
+                            style="background: var(--gold);">
+                            <i class="fas fa-hands-helping text-black text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4" style="color: white;">{{ __('about.value_support') }}</h3>
+                        <p class="text-gray-400">{{ __('about.value_support_desc') }}</p>
+                    </div>
+                </div>
+
+                <!-- Partenariat -->
+                <div class="p-8 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                    style="background: #111; border: 1px solid #333;">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-16 h-16 flex items-center justify-center rounded-lg mb-6"
+                            style="background: var(--gold);">
+                            <i class="fas fa-handshake text-black text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4" style="color: white;">{{ __('about.value_partnership') }}</h3>
+                        <p class="text-gray-400">{{ __('about.value_partnership_desc') }}</p>
+                    </div>
+                </div>
+
+                <!-- Durabilité -->
+                <div class="p-8 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                    style="background: #111; border: 1px solid #333;">
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-16 h-16 flex items-center justify-center rounded-lg mb-6"
+                            style="background: var(--gold);">
+                            <i class="fas fa-leaf text-black text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-4" style="color: white;">{{ __('about.value_sustainability') }}</h3>
+                        <p class="text-gray-400">{{ __('about.value_sustainability_desc') }}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -88,9 +118,9 @@
     <div class="container mx-auto px-4 md:px-6">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-12">
-                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Notre Histoire</h2>
+                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{ __('about.history_title') }}</h2>
                 <p class="text-lg text-gray-300 max-w-3xl mx-auto">
-                    Découvrez notre parcours et notre croissance depuis nos débuts
+                    {{ __('about.history_subtitle') }}
                 </p>
             </div>
 
@@ -98,26 +128,65 @@
                 <!-- Timeline -->
                 <div class="p-8" style="background: #1a1a1a; border: 1px solid #333;">
                     <div class="space-y-8">
-                        @foreach([
-                        ['2020', 'Création de DJOK PRESTIGE', 'Lancement avec une flotte de véhicules haut de gamme'],
-                        ['2021', 'Centre de Formation', 'Ouverture du centre avec certification officielle VTC'],
-                        ['2022', 'Expansion Afrique', 'Lancement de l\'accompagnement entrepreneurial'],
-                        ['2024', 'Leader du Secteur', 'Plus de 500 clients accompagnés avec succès']
-                        ] as $item)
+                        <!-- 2020 -->
                         <div class="flex items-start space-x-6 group">
                             <div class="flex-shrink-0">
                                 <div class="w-14 h-14 flex items-center justify-center rounded-lg transition-all duration-300 group-hover:scale-110"
                                     style="background: var(--gold);">
-                                    <span class="font-bold text-black text-lg">{{ $item[0] }}</span>
+                                    <span class="font-bold text-black text-lg">{{ __('about.timeline_2020') }}</span>
                                 </div>
                             </div>
                             <div class="flex-1">
                                 <h3 class="text-xl font-bold mb-3 group-hover:text-var(--gold) transition-colors duration-300"
-                                    style="color: white;">{{ $item[1] }}</h3>
-                                <p class="text-gray-400">{{ $item[2] }}</p>
+                                    style="color: white;">{{ __('about.timeline_2020_title') }}</h3>
+                                <p class="text-gray-400">{{ __('about.timeline_2020_desc') }}</p>
                             </div>
                         </div>
-                        @endforeach
+
+                        <!-- 2021 -->
+                        <div class="flex items-start space-x-6 group">
+                            <div class="flex-shrink-0">
+                                <div class="w-14 h-14 flex items-center justify-center rounded-lg transition-all duration-300 group-hover:scale-110"
+                                    style="background: var(--gold);">
+                                    <span class="font-bold text-black text-lg">{{ __('about.timeline_2021') }}</span>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-3 group-hover:text-var(--gold) transition-colors duration-300"
+                                    style="color: white;">{{ __('about.timeline_2021_title') }}</h3>
+                                <p class="text-gray-400">{{ __('about.timeline_2021_desc') }}</p>
+                            </div>
+                        </div>
+
+                        <!-- 2022 -->
+                        <div class="flex items-start space-x-6 group">
+                            <div class="flex-shrink-0">
+                                <div class="w-14 h-14 flex items-center justify-center rounded-lg transition-all duration-300 group-hover:scale-110"
+                                    style="background: var(--gold);">
+                                    <span class="font-bold text-black text-lg">{{ __('about.timeline_2022') }}</span>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-3 group-hover:text-var(--gold) transition-colors duration-300"
+                                    style="color: white;">{{ __('about.timeline_2022_title') }}</h3>
+                                <p class="text-gray-400">{{ __('about.timeline_2022_desc') }}</p>
+                            </div>
+                        </div>
+
+                        <!-- 2024 -->
+                        <div class="flex items-start space-x-6 group">
+                            <div class="flex-shrink-0">
+                                <div class="w-14 h-14 flex items-center justify-center rounded-lg transition-all duration-300 group-hover:scale-110"
+                                    style="background: var(--gold);">
+                                    <span class="font-bold text-black text-lg">{{ __('about.timeline_2024') }}</span>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-3 group-hover:text-var(--gold) transition-colors duration-300"
+                                    style="color: white;">{{ __('about.timeline_2024_title') }}</h3>
+                                <p class="text-gray-400">{{ __('about.timeline_2024_desc') }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -128,24 +197,39 @@
                             style="background: rgba(202, 162, 77, 0.1);">
                             <i class="text-5xl fas fa-chart-line" style="color: var(--gold);"></i>
                         </div>
-                        <h3 class="text-2xl font-bold mb-6 text-center" style="color: white;">Notre Croissance</h3>
+                        <h3 class="text-2xl font-bold mb-6 text-center" style="color: white;">{{ __('about.growth_title') }}</h3>
                         <p class="text-gray-300 text-center mb-8">
-                            Une évolution constante marquée par l'innovation et l'excellence du service
+                            {{ __('about.growth_description') }}
                         </p>
 
                         <div class="grid grid-cols-2 gap-6 w-full max-w-sm">
-                            @foreach([
-                            ['5000+', 'Clients satisfaits'],
-                            ['500+', 'Formations dispensées'],
-                            ['50+', 'Projets en Afrique'],
-                            ['99%', 'Taux de satisfaction']
-                            ] as $stat)
+                            <!-- Clients satisfaits -->
                             <div class="text-center p-5 transition-all duration-300 hover:scale-105"
                                 style="background: #111; border: 1px solid #333;">
-                                <div class="text-3xl font-bold mb-2" style="color: var(--gold);">{{ $stat[0] }}</div>
-                                <div class="text-sm text-gray-400">{{ $stat[1] }}</div>
+                                <div class="text-3xl font-bold mb-2" style="color: var(--gold);">5000+</div>
+                                <div class="text-sm text-gray-400">{{ __('about.satisfied_clients') }}</div>
                             </div>
-                            @endforeach
+
+                            <!-- Formations dispensées -->
+                            <div class="text-center p-5 transition-all duration-300 hover:scale-105"
+                                style="background: #111; border: 1px solid #333;">
+                                <div class="text-3xl font-bold mb-2" style="color: var(--gold);">500+</div>
+                                <div class="text-sm text-gray-400">{{ __('about.trainings_delivered') }}</div>
+                            </div>
+
+                            <!-- Projets en Afrique -->
+                            <div class="text-center p-5 transition-all duration-300 hover:scale-105"
+                                style="background: #111; border: 1px solid #333;">
+                                <div class="text-3xl font-bold mb-2" style="color: var(--gold);">50+</div>
+                                <div class="text-sm text-gray-400">{{ __('about.africa_projects') }}</div>
+                            </div>
+
+                            <!-- Taux de satisfaction -->
+                            <div class="text-center p-5 transition-all duration-300 hover:scale-105"
+                                style="background: #111; border: 1px solid #333;">
+                                <div class="text-3xl font-bold mb-2" style="color: var(--gold);">99%</div>
+                                <div class="text-sm text-gray-400">{{ __('about.satisfaction_rate') }}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -159,32 +243,68 @@
     <div class="container mx-auto px-4 md:px-6">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-12">
-                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Notre Équipe</h2>
+                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{ __('about.team_title') }}</h2>
                 <p class="text-lg text-gray-300 max-w-3xl mx-auto">
-                    Une équipe d'experts passionnés à votre service
+                    {{ __('about.team_subtitle') }}
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                @foreach([
-                ['Djibril Kone', 'Expert transport et services VTC', 'fas fa-user-tie'],
-                ['Sarah Martin', 'Spécialiste formation professionnelle', 'fas fa-user-graduate'],
-                ['Ahmed Benali', 'Expert économie africaine', 'fas fa-chart-line'],
-                ['Marie Dubois', 'Gestion de flotte & optimisation services', 'fas fa-cogs']
-                ] as $member)
+                <!-- Djibril Kone -->
                 <div class="p-8 text-center transition-all duration-300 hover:scale-105 hover:shadow-xl"
                     style="background: #111; border: 1px solid #333;">
                     <div class="w-24 h-24 flex items-center justify-center rounded-full mx-auto mb-6 transition-all duration-300 hover:scale-110 hover:rotate-12"
                         style="background: var(--gold);">
-                        <i class="{{ $member[2] }} text-black text-3xl"></i>
+                        <i class="fas fa-user-tie text-black text-3xl"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-3" style="color: white;">{{ $member[0] }}</h3>
-                    <p class="text-gray-400 mb-4">{{ $member[1] }}</p>
+                    <h3 class="text-xl font-bold mb-3" style="color: white;">{{ __('about.member_djibril') }}</h3>
+                    <p class="text-gray-400 mb-4">{{ __('about.member_djibril_role') }}</p>
                     <div class="mt-6">
                         <div class="w-16 h-1 mx-auto" style="background: var(--gold);"></div>
                     </div>
                 </div>
-                @endforeach
+
+                <!-- Sarah Martin -->
+                <div class="p-8 text-center transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                    style="background: #111; border: 1px solid #333;">
+                    <div class="w-24 h-24 flex items-center justify-center rounded-full mx-auto mb-6 transition-all duration-300 hover:scale-110 hover:rotate-12"
+                        style="background: var(--gold);">
+                        <i class="fas fa-user-graduate text-black text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" style="color: white;">{{ __('about.member_sarah') }}</h3>
+                    <p class="text-gray-400 mb-4">{{ __('about.member_sarah_role') }}</p>
+                    <div class="mt-6">
+                        <div class="w-16 h-1 mx-auto" style="background: var(--gold);"></div>
+                    </div>
+                </div>
+
+                <!-- Ahmed Benali -->
+                <div class="p-8 text-center transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                    style="background: #111; border: 1px solid #333;">
+                    <div class="w-24 h-24 flex items-center justify-center rounded-full mx-auto mb-6 transition-all duration-300 hover:scale-110 hover:rotate-12"
+                        style="background: var(--gold);">
+                        <i class="fas fa-chart-line text-black text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" style="color: white;">{{ __('about.member_ahmed') }}</h3>
+                    <p class="text-gray-400 mb-4">{{ __('about.member_ahmed_role') }}</p>
+                    <div class="mt-6">
+                        <div class="w-16 h-1 mx-auto" style="background: var(--gold);"></div>
+                    </div>
+                </div>
+
+                <!-- Marie Dubois -->
+                <div class="p-8 text-center transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                    style="background: #111; border: 1px solid #333;">
+                    <div class="w-24 h-24 flex items-center justify-center rounded-full mx-auto mb-6 transition-all duration-300 hover:scale-110 hover:rotate-12"
+                        style="background: var(--gold);">
+                        <i class="fas fa-cogs text-black text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3" style="color: white;">{{ __('about.member_marie') }}</h3>
+                    <p class="text-gray-400 mb-4">{{ __('about.member_marie_role') }}</p>
+                    <div class="mt-6">
+                        <div class="w-16 h-1 mx-auto" style="background: var(--gold);"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -195,14 +315,16 @@
     <div class="container mx-auto px-4 md:px-6">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-12">
-                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Notre Vision</h2>
+                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{ __('about.vision_title') }}</h2>
                 <p class="text-lg text-gray-300 max-w-3xl mx-auto">
-                    Nos engagements pour l'avenir
+                    {{ __('about.vision_subtitle') }}
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Colonne 1 -->
                 <div class="p-8" style="background: #1a1a1a; border: 1px solid #333;">
+                    <!-- Innovation Continue -->
                     <div class="flex items-start space-x-6 mb-8 group">
                         <div class="flex-shrink-0">
                             <div class="w-14 h-14 flex items-center justify-center rounded-lg transition-all duration-300 group-hover:scale-110"
@@ -212,15 +334,14 @@
                         </div>
                         <div>
                             <h3 class="text-xl font-bold mb-3 group-hover:text-var(--gold) transition-colors duration-300"
-                                style="color: white;">Innovation Continue</h3>
+                                style="color: white;">{{ __('about.vision_innovation') }}</h3>
                             <p class="text-gray-400">
-                                Constamment à la recherche de nouvelles solutions pour répondre aux besoins
-                                évolutifs de nos clients et partenaires. Nous investissons dans la technologie
-                                et l'innovation pour rester à la pointe de notre secteur.
+                                {{ __('about.vision_innovation_desc') }}
                             </p>
                         </div>
                     </div>
 
+                    <!-- Développement Africain -->
                     <div class="flex items-start space-x-6 group">
                         <div class="flex-shrink-0">
                             <div class="w-14 h-14 flex items-center justify-center rounded-lg transition-all duration-300 group-hover:scale-110"
@@ -230,17 +351,17 @@
                         </div>
                         <div>
                             <h3 class="text-xl font-bold mb-3 group-hover:text-var(--gold) transition-colors duration-300"
-                                style="color: white;">Développement Africain</h3>
+                                style="color: white;">{{ __('about.vision_africa') }}</h3>
                             <p class="text-gray-400">
-                                Contribuer activement au développement économique de l'Afrique grâce à des formations
-                                adaptées, un accompagnement personnalisé et des partenariats stratégiques qui
-                                créent de la valeur sur le continent.
+                                {{ __('about.vision_africa_desc') }}
                             </p>
                         </div>
                     </div>
                 </div>
 
+                <!-- Colonne 2 -->
                 <div class="p-8" style="background: #1a1a1a; border: 1px solid #333;">
+                    <!-- Excellence & Qualité -->
                     <div class="flex items-start space-x-6 mb-8 group">
                         <div class="flex-shrink-0">
                             <div class="w-14 h-14 flex items-center justify-center rounded-lg transition-all duration-300 group-hover:scale-110"
@@ -250,15 +371,14 @@
                         </div>
                         <div>
                             <h3 class="text-xl font-bold mb-3 group-hover:text-var(--gold) transition-colors duration-300"
-                                style="color: white;">Excellence & Qualité</h3>
+                                style="color: white;">{{ __('about.vision_quality') }}</h3>
                             <p class="text-gray-400">
-                                Maintenir les plus hauts standards de qualité dans tous nos services.
-                                De la formation au transport en passant par l'accompagnement, chaque
-                                interaction avec DJOK PRESTIGE doit être une expérience exceptionnelle.
+                                {{ __('about.vision_quality_desc') }}
                             </p>
                         </div>
                     </div>
 
+                    <!-- Partenariats Durables -->
                     <div class="flex items-start space-x-6 group">
                         <div class="flex-shrink-0">
                             <div class="w-14 h-14 flex items-center justify-center rounded-lg transition-all duration-300 group-hover:scale-110"
@@ -268,11 +388,9 @@
                         </div>
                         <div>
                             <h3 class="text-xl font-bold mb-3 group-hover:text-var(--gold) transition-colors duration-300"
-                                style="color: white;">Partenariats Durables</h3>
+                                style="color: white;">{{ __('about.vision_partnerships') }}</h3>
                             <p class="text-gray-400">
-                                Construire des relations solides et durables avec nos clients, partenaires
-                                et collaborateurs. Nous croyons en la force des collaborations pour créer
-                                un impact positif à long terme.
+                                {{ __('about.vision_partnerships_desc') }}
                             </p>
                         </div>
                     </div>
@@ -282,71 +400,37 @@
     </div>
 </section>
 
-<!-- Certifications Section - Style sobre -->
-<section class="py-16" style="background: #000;">
-    <div class="container mx-auto px-4 md:px-6">
-        <div class="max-w-6xl mx-auto">
-            <div class="text-center mb-12">
-                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Nos Certifications</h2>
-                <p class="text-lg text-gray-300 max-w-3xl mx-auto">
-                    Garantie de qualité et de professionnalisme
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                @foreach([
-                ['Certification Qualiopi', 'Certification qualité des prestataires de formation', 'fas fa-award',
-                'Garantie de la qualité de nos formations'],
-                ['Agrément Préfectoral', 'Agrément officiel pour la formation VTC', 'fas fa-file-contract',
-                'Reconnaissance des autorités publiques'],
-                ['DataDock', 'Référencement DataDock pour le financement des formations', 'fas fa-database',
-                'Financement facilité pour nos stagiaires']
-                ] as $certification)
-                <div class="p-8 text-center transition-all duration-300 hover:scale-105 hover:shadow-xl"
-                    style="background: #111; border: 1px solid #333;">
-                    <div class="w-20 h-20 flex items-center justify-center rounded-full mx-auto mb-6 transition-all duration-300 hover:scale-110 hover:rotate-12"
-                        style="background: var(--gold);">
-                        <i class="{{ $certification[2] }} text-black text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold mb-4" style="color: white;">{{ $certification[0] }}</h3>
-                    <p class="text-gray-400 mb-3">{{ $certification[1] }}</p>
-                    <p class="text-sm text-gray-500">{{ $certification[3] }}</p>
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-</section>
-
 <!-- CTA Section - Style sobre -->
 <section class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="max-w-4xl mx-auto text-center p-10" style="background: #1a1a1a; border: 1px solid #333;">
-            <h2 class="text-2xl md:text-3xl font-bold mb-6" style="color: var(--gold);">Prêt à commencer avec nous ?
+            <h2 class="text-2xl md:text-3xl font-bold mb-6" style="color: var(--gold);">
+                {{ __('about.cta_title') }}
             </h2>
             <p class="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
-                Que vous ayez besoin de nos services VTC, d'une formation certifiante ou d'un accompagnement
-                pour votre projet en Afrique, notre équipe est à votre disposition.
+                {{ __('about.cta_description') }}
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="{{ route('contact') }}"
                     class="w-full sm:w-auto px-8 py-4 font-semibold text-center transition-all duration-300 hover:scale-105"
                     style="background: var(--gold); color: black;">
-                    Nous Contacter
+                    {{ __('about.contact_us') }}
                 </a>
                 <a href="{{ route('formation') }}"
                     class="w-full sm:w-auto px-8 py-4 font-semibold text-center border transition-all duration-300 hover:scale-105"
                     style="border-color: var(--gold); color: var(--gold);">
-                    Voir nos Formations
+                    {{ __('about.view_trainings') }}
                 </a>
             </div>
             <p class="text-gray-500 text-sm mt-6">
                 <i class="fas fa-phone-alt mr-2"></i>
-                Contactez-nous au 06.99.16.44.55
+                {{ str_replace(':phone', __('common.phone'), __('about.contact_phone')) }}
             </p>
         </div>
     </div>
 </section>
+
+<!-- Les styles CSS restent exactement les mêmes -->
 
 <style>
     /* Animations d'apparition au scroll */

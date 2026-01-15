@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'title' => 'Reset Password',
+    'heading' => 'New Password',
+    'message' => 'Choose a secure password to complete the reset.',
+    'email_label' => 'Email Address',
+    'email_placeholder' => 'your@email.com',
+    'new_password_label' => 'New Password',
+    'confirm_password_label' => 'Confirm Password',
+    'button' => 'Reset Password',
+    'back_link' => 'Back to Login',
+    'benefit_secure' => 'Encrypted and secure password',
+    'benefit_realtime' => 'Real-time confirmation',
+    'image_alt' => 'DJOK PRESTIGE Client Space',
+    'right_title' => 'Your Success<br>Starts Here',
+    'right_description' => 'Join a community of professionals and develop your skills with DJOK PRESTIGE. Access exclusive training and boost your career.',
+    'feature_trainings' => 'Certifying Trainings',
+    'feature_support' => 'Expert Support 24/7',
+    'feature_network' => 'Professional Network',
+    'feature_opportunities' => 'Business Opportunities',
+    'stats_members' => 'Active Members',
+    'stats_satisfaction' => 'Satisfaction Rate',
+    'stats_support' => 'Support Available',
+];

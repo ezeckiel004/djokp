@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'title' => 'Réinitialiser le mot de passe',
+    'heading' => 'Nouveau mot de passe',
+    'message' => 'Choisissez un mot de passe sécurisé pour finaliser la réinitialisation.',
+    'email_label' => 'Adresse email',
+    'email_placeholder' => 'votre@email.com',
+    'new_password_label' => 'Nouveau mot de passe',
+    'confirm_password_label' => 'Confirmer le mot de passe',
+    'button' => 'Réinitialiser le mot de passe',
+    'back_link' => 'Retour à la connexion',
+    'benefit_secure' => 'Mot de passe chiffré et sécurisé',
+    'benefit_realtime' => 'Confirmation en temps réel',
+    'image_alt' => 'Espace Client DJOK PRESTIGE',
+    'right_title' => 'Votre Succès<br>Commence Ici',
+    'right_description' => 'Rejoignez une communauté de professionnels et développez vos compétences avec DJOK PRESTIGE. Accédez à des formations exclusives et boostez votre carrière.',
+    'feature_trainings' => 'Formations certifiantes',
+    'feature_support' => 'Support expert 24/7',
+    'feature_network' => 'Réseau professionnel',
+    'feature_opportunities' => 'Opportunités business',
+    'stats_members' => 'Membres actifs',
+    'stats_satisfaction' => 'Taux de satisfaction',
+    'stats_support' => 'Support disponible',
+];

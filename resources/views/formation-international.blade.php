@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Formation à l’International - DJOK PRESTIGE')
+@section('title', trans('international.title'))
 
 @section('content')
 <!-- Message de succès - Style sobre -->
@@ -15,22 +15,22 @@
                     </div>
                 </div>
                 <div class="ml-3">
-                    <h3 class="text-lg font-semibold text-white">Demande envoyée avec succès !</h3>
+                    <h3 class="text-lg font-semibold text-white">{{ trans('international.success_title') }}</h3>
                     <div class="mt-1 text-green-100">
                         <p>{{ session('success') }}</p>
                         @if(session('email'))
                         <p class="text-sm mt-1">
-                            Un email de confirmation a été envoyé à <strong>{{ session('email') }}</strong>
+                            {!! trans('international.confirmation_email', ['email' => session('email')]) !!}
                         </p>
                         @endif
                         <p class="text-sm mt-1">
-                            Notre équipe vous contactera dans les plus brefs délais.
+                            {{ trans('international.contact_soon') }}
                         </p>
                     </div>
                 </div>
             </div>
             <button type="button" onclick="document.getElementById('success-alert').remove();"
-                class="text-green-300 hover:text-white">
+                class="text-green-300 hover:text-white" aria-label="{{ trans('international.close_alert') }}">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -53,20 +53,18 @@
 <header class="relative min-h-screen flex items-center" style="background: #000;">
     <div class="absolute inset-0 bg-black">
         <img src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&dpr=1"
-            alt="Formation International" class="w-full h-full object-cover opacity-40">
+            alt="{{ trans('international.hero_title') }}" class="w-full h-full object-cover opacity-40">
         <div class="absolute inset-0" style="background: rgba(0, 0, 0, 0.7);"></div>
     </div>
 
     <div class="container mx-auto px-4 md:px-6 py-20 relative z-10">
         <div class="max-w-5xl mx-auto text-center">
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-8" style="color: var(--gold);">
-                Formation à l'international – Vivez l'expérience DJOK PRESTIGE en France
+                {{ trans('international.hero_title') }}
             </h1>
 
             <p class="text-lg md:text-xl text-gray-300 mb-12">
-                Vous rêvez de venir en France pour développer vos compétences, obtenir une qualification reconnue et
-                découvrir un environnement professionnel d'excellence ? DJOK PRESTIGE, centre de formation certifié
-                Qualiopi, vous accueille dans un cadre idéal à Paris et en Île-de-France.
+                {{ trans('international.hero_description') }}
             </p>
 
             <!-- Boutons - Style sobre -->
@@ -74,12 +72,12 @@
                 <a href="#formations"
                     class="w-full sm:w-auto px-8 py-3 font-semibold text-center transition duration-300"
                     style="background: var(--gold); color: black;">
-                    Découvrir les formations
+                    {{ trans('international.discover_formations') }}
                 </a>
                 <a href="#accompagnement"
                     class="w-full sm:w-auto px-8 py-3 font-semibold text-center border transition duration-300"
                     style="border-color: var(--gold); color: var(--gold);">
-                    Accompagnement Visa
+                    {{ trans('international.visa_accompaniment') }}
                 </a>
             </div>
         </div>
@@ -87,7 +85,8 @@
 
     <!-- Scroll Indicator -->
     <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <a href="#formations" class="text-white transition duration-300 hover:text-var(--gold)">
+        <a href="#formations" class="text-white transition duration-300 hover:text-var(--gold)"
+            aria-label="{{ trans('international.scroll_down') }}">
             <i class="text-xl fas fa-chevron-down"></i>
         </a>
     </div>
@@ -97,13 +96,14 @@
 <section id="formations" class="py-16" style="background: #000;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Domaines de formation
-                disponibles</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                trans('international.formation_domains') }}</h2>
         </div>
 
         <!-- Formations principales -->
         <div class="mb-16">
-            <h3 class="text-2xl font-semibold text-center mb-8" style="color: white;">Formations principales</h3>
+            <h3 class="text-2xl font-semibold text-center mb-8" style="color: white;">{{
+                trans('international.main_formations') }}</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @php
                 $formations = App\Models\Formation::where('is_active', true)
@@ -138,12 +138,14 @@
                 @endforeach
                 @else
                 @foreach([
-                ['Formation VTC (chauffeur professionnel)', 'Théorique & pratique'],
-                ['Formation Micro-entreprise & gestion', 'Création et gestion d\'entreprise'],
-                ['Formation Communication & marketing digital', 'Stratégies digitales et communication'],
-                ['Formation Création d\'entreprise & business plan', 'Business plan et développement'],
-                ['Formation Bureautique & Excel professionnel', 'Excel avancé et outils bureautique'],
-                ['Formation Langue & accueil client', 'Français professionnel et service client']
+                [trans('international.formation_vtc'), trans('international.formation_vtc_desc')],
+                [trans('international.formation_micro_entreprise'),
+                trans('international.formation_micro_entreprise_desc')],
+                [trans('international.formation_marketing'), trans('international.formation_marketing_desc')],
+                [trans('international.formation_business_creation'),
+                trans('international.formation_business_creation_desc')],
+                [trans('international.formation_bureautique'), trans('international.formation_bureautique_desc')],
+                [trans('international.formation_language'), trans('international.formation_language_desc')]
                 ] as $formation)
                 <div class="p-6" style="background: #111; border: 1px solid #333;">
                     <div class="flex items-start">
@@ -166,12 +168,17 @@
 
         <!-- Modules optionnels -->
         <div>
-            <h3 class="text-2xl font-semibold text-center mb-8" style="color: white;">Modules optionnels</h3>
+            <h3 class="text-2xl font-semibold text-center mb-8" style="color: white;">{{
+                trans('international.optional_modules') }}</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <ul class="space-y-4">
-                        @foreach(['Leadership et management', 'Développement personnel', 'Vente et négociation
-                        commerciale', 'Finance d\'entreprise et fiscalité'] as $module)
+                        @foreach([
+                        trans('international.module_leadership'),
+                        trans('international.module_personal_development'),
+                        trans('international.module_sales'),
+                        trans('international.module_finance')
+                        ] as $module)
                         <li class="flex items-center p-4" style="background: #111; border: 1px solid #333;">
                             <i class="fas fa-check mr-3" style="color: var(--gold);"></i>
                             <span class="font-medium" style="color: white;">{{ $module }}</span>
@@ -181,8 +188,12 @@
                 </div>
                 <div>
                     <ul class="space-y-4">
-                        @foreach(['Gestion de projet', 'Communication interculturelle', 'Digital transformation',
-                        'Stratégie d\'entreprise'] as $module)
+                        @foreach([
+                        trans('international.module_project_management'),
+                        trans('international.module_intercultural'),
+                        trans('international.module_digital_transformation'),
+                        trans('international.module_business_strategy')
+                        ] as $module)
                         <li class="flex items-center p-4" style="background: #111; border: 1px solid #333;">
                             <i class="fas fa-check mr-3" style="color: var(--gold);"></i>
                             <span class="font-medium" style="color: white;">{{ $module }}</span>
@@ -199,7 +210,8 @@
 <section class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Public visé</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                trans('international.target_audience') }}</h2>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -208,8 +220,8 @@
                     style="background: #1e40af;">
                     <i class="fas fa-user-graduate text-white"></i>
                 </div>
-                <h3 class="text-lg font-bold mb-3" style="color: white;">Étudiants internationaux</h3>
-                <p class="text-gray-400">Bénéficiez d'une immersion professionnelle certifiée et reconnue en France.</p>
+                <h3 class="text-lg font-bold mb-3" style="color: white;">{{ trans('international.students') }}</h3>
+                <p class="text-gray-400">{{ trans('international.students_desc') }}</p>
             </div>
 
             <div class="text-center p-6" style="background: #1a1a1a; border: 1px solid #333;">
@@ -217,9 +229,8 @@
                     style="background: #065f46;">
                     <i class="fas fa-briefcase text-white"></i>
                 </div>
-                <h3 class="text-lg font-bold mb-3" style="color: white;">Entrepreneurs & dirigeants africains</h3>
-                <p class="text-gray-400">Apprenez les standards européens de gestion, d'organisation et de service à la
-                    clientèle.</p>
+                <h3 class="text-lg font-bold mb-3" style="color: white;">{{ trans('international.entrepreneurs') }}</h3>
+                <p class="text-gray-400">{{ trans('international.entrepreneurs_desc') }}</p>
             </div>
 
             <div class="text-center p-6" style="background: #1a1a1a; border: 1px solid #333;">
@@ -227,9 +238,8 @@
                     style="background: #5b21b6;">
                     <i class="fas fa-building text-white"></i>
                 </div>
-                <h3 class="text-lg font-bold mb-3" style="color: white;">Institutions et écoles partenaires</h3>
-                <p class="text-gray-400">Offrez à vos étudiants et bénéficiaires une formation internationale de qualité
-                    avec hébergement inclus.</p>
+                <h3 class="text-lg font-bold mb-3" style="color: white;">{{ trans('international.institutions') }}</h3>
+                <p class="text-gray-400">{{ trans('international.institutions_desc') }}</p>
             </div>
         </div>
     </div>
@@ -240,23 +250,24 @@
     <div class="container mx-auto px-4 md:px-6">
         <div class="max-w-4xl mx-auto">
             <div class="text-center mb-12">
-                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Accompagnement visa &
-                    arrivée</h2>
+                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                    trans('international.visa_title') }}</h2>
                 <p class="text-gray-400 max-w-3xl mx-auto">
-                    DJOK PRESTIGE vous fournit tous les documents nécessaires à votre demande de visa
+                    {{ trans('international.visa_subtitle') }}
                 </p>
             </div>
 
             <div class="p-6 md:p-8 mb-12" style="background: #111; border: 1px solid #333;">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                     <div>
-                        <h3 class="text-xl font-bold mb-6" style="color: white;">Documents fournis</h3>
+                        <h3 class="text-xl font-bold mb-6" style="color: white;">{{
+                            trans('international.documents_provided') }}</h3>
                         <ul class="space-y-4">
                             @foreach([
-                            'Lettre d\'inscription et de formation',
-                            'Attestation d\'hébergement',
-                            'Attestation de paiement (si demandée par le consulat)',
-                            'Assistance logistique pour le trajet et la réception à l\'aéroport'
+                            trans('international.document_inscription'),
+                            trans('international.document_accommodation'),
+                            trans('international.document_payment'),
+                            trans('international.document_logistic')
                             ] as $document)
                             <li class="flex items-start">
                                 <i class="fas fa-file-alt mt-1 mr-3" style="color: #3b82f6;"></i>
@@ -267,23 +278,24 @@
                     </div>
 
                     <div>
-                        <h3 class="text-xl font-bold mb-6" style="color: white;">Support continu</h3>
+                        <h3 class="text-xl font-bold mb-6" style="color: white;">{{
+                            trans('international.support_continuous') }}</h3>
                         <ul class="space-y-4">
                             <li class="flex items-start">
                                 <i class="fab fa-whatsapp mt-1 mr-3" style="color: #25D366;"></i>
-                                <span style="color: white;">Support WhatsApp pour le suivi de votre arrivée</span>
+                                <span style="color: white;">{{ trans('international.support_whatsapp') }}</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-plane-arrival mt-1 mr-3" style="color: #3b82f6;"></i>
-                                <span style="color: white;">Accueil à l'aéroport</span>
+                                <span style="color: white;">{{ trans('international.support_airport') }}</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-map-signs mt-1 mr-3" style="color: #3b82f6;"></i>
-                                <span style="color: white;">Orientation et installation</span>
+                                <span style="color: white;">{{ trans('international.support_orientation') }}</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-headset mt-1 mr-3" style="color: #3b82f6;"></i>
-                                <span style="color: white;">Assistance 24/7</span>
+                                <span style="color: white;">{{ trans('international.support_247') }}</span>
                             </li>
                         </ul>
                     </div>
@@ -293,7 +305,7 @@
                     <a href="#contact"
                         class="inline-flex items-center px-6 md:px-8 py-3 font-semibold transition-all duration-300"
                         style="background: var(--gold); color: black;">
-                        Je souhaite être accompagné dans ma demande de visa
+                        {{ trans('international.visa_button') }}
                     </a>
                 </div>
             </div>
@@ -305,20 +317,21 @@
 <section class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Pourquoi choisir DJOK PRESTIGE ?
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                trans('international.why_title') }}
             </h2>
         </div>
 
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             @foreach([
-            ['Centre certifié Qualiopi', 'fas fa-award'],
-            ['Équipe franco-africaine expérimentée', 'fas fa-users'],
-            ['Formations adaptées aux réalités du terrain africain', 'fas fa-globe-africa'],
-            ['Hébergement & transport intégrés', 'fas fa-home'],
-            ['Service conciergerie & accompagnement personnalisé', 'fas fa-concierge-bell'],
-            ['Témoignages vidéos de stagiaires internationaux', 'fas fa-video'],
-            ['Réseau de partenaires Afrique–France', 'fas fa-handshake'],
-            ['Transport & logistique simplifiés', 'fas fa-shipping-fast']
+            [trans('international.why_certified'), 'fas fa-award'],
+            [trans('international.why_team'), 'fas fa-users'],
+            [trans('international.why_adapted'), 'fas fa-globe-africa'],
+            [trans('international.why_accommodation'), 'fas fa-home'],
+            [trans('international.why_concierge'), 'fas fa-concierge-bell'],
+            [trans('international.why_testimonials'), 'fas fa-video'],
+            [trans('international.why_network'), 'fas fa-handshake'],
+            [trans('international.why_logistics'), 'fas fa-shipping-fast']
             ] as $avantage)
             <div class="flex flex-col items-center text-center">
                 <div class="w-12 h-12 md:w-14 md:h-14 flex items-center justify-center rounded-full mb-3"
@@ -336,8 +349,8 @@
 <section id="contact" class="py-16" style="background: #000;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="max-w-4xl mx-auto p-6 md:p-8" style="background: #111; border: 1px solid #333;">
-            <h2 class="text-2xl md:text-3xl font-bold text-center mb-8" style="color: var(--gold);">Demander un
-                programme personnalisé</h2>
+            <h2 class="text-2xl md:text-3xl font-bold text-center mb-8" style="color: var(--gold);">{{
+                trans('international.contact_title') }}</h2>
 
             @if(session('error'))
             <div class="p-4 mb-6" style="background: #7f1d1d; border: 1px solid #991b1b;" id="error-message">
@@ -347,7 +360,7 @@
                         <i class="fas fa-exclamation-circle text-white"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-white">Erreur</h4>
+                        <h4 class="font-bold text-white">{{ trans('international.error_title') }}</h4>
                         <p class="text-red-100">{{ session('error') }}</p>
                     </div>
                 </div>
@@ -362,7 +375,7 @@
                         <i class="fas fa-exclamation-triangle text-white"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-white">Veuillez corriger les erreurs suivantes :</h4>
+                        <h4 class="font-bold text-white">{{ trans('international.error_correction') }}</h4>
                         <ul class="text-red-100 list-disc list-inside mt-1">
                             @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -379,22 +392,24 @@
                 <div class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Nom complet *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                trans('international.full_name') }}</label>
                             <input type="text" name="nom" required value="{{ old('nom') }}"
                                 class="w-full px-4 py-3 rounded @error('nom') border-red-500 @enderror"
                                 style="background: #1a1a1a; border: 1px solid #444; color: white;"
-                                placeholder="Votre nom et prénom">
+                                placeholder="{{ trans('international.full_name_placeholder') }}">
                             @error('nom')
                             <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Nationalité *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                trans('international.nationality') }}</label>
                             <input type="text" name="nationalite" required value="{{ old('nationalite') }}"
                                 class="w-full px-4 py-3 rounded @error('nationalite') border-red-500 @enderror"
                                 style="background: #1a1a1a; border: 1px solid #444; color: white;"
-                                placeholder="Votre nationalité">
+                                placeholder="{{ trans('international.nationality_placeholder') }}">
                             @error('nationalite')
                             <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -403,22 +418,24 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Email *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">{{ trans('international.email')
+                                }}</label>
                             <input type="email" name="email" required value="{{ old('email') }}"
                                 class="w-full px-4 py-3 rounded @error('email') border-red-500 @enderror"
                                 style="background: #1a1a1a; border: 1px solid #444; color: white;"
-                                placeholder="votre@email.com">
+                                placeholder="{{ trans('international.email_placeholder') }}">
                             @error('email')
                             <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Téléphone (WhatsApp) *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">{{ trans('international.phone')
+                                }}</label>
                             <input type="tel" name="telephone" required value="{{ old('telephone') }}"
                                 class="w-full px-4 py-3 rounded @error('telephone') border-red-500 @enderror"
                                 style="background: #1a1a1a; border: 1px solid #444; color: white;"
-                                placeholder="+33 1 23 45 67 89">
+                                placeholder="{{ trans('international.phone_placeholder') }}">
                             @error('telephone')
                             <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -426,22 +443,24 @@
                     </div>
 
                     <div>
-                        <label class="block mb-2 font-medium" style="color: #ddd;">WhatsApp (si différent)</label>
+                        <label class="block mb-2 font-medium" style="color: #ddd;">{{ trans('international.whatsapp')
+                            }}</label>
                         <input type="tel" name="whatsapp" value="{{ old('whatsapp') }}"
                             class="w-full px-4 py-3 rounded @error('whatsapp') border-red-500 @enderror"
                             style="background: #1a1a1a; border: 1px solid #444; color: white;"
-                            placeholder="+225 07 00 00 00 00">
+                            placeholder="{{ trans('international.whatsapp_placeholder') }}">
                         @error('whatsapp')
                         <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label class="block mb-2 font-medium" style="color: #ddd;">Type de formation souhaitée *</label>
+                        <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                            trans('international.formation_type') }}</label>
                         <select name="formation" required
                             class="w-full px-4 py-3 rounded @error('formation') border-red-500 @enderror"
                             style="background: #1a1a1a; border: 1px solid #444; color: white;">
-                            <option value="" style="color: #666;">Sélectionnez une formation</option>
+                            <option value="" style="color: #666;">{{ trans('international.select_formation') }}</option>
                             <!-- Formations existantes -->
                             @php
                             $formationsList = App\Models\Formation::where('is_active', true)
@@ -451,7 +470,7 @@
                             @endphp
 
                             @if($formationsList->count() > 0)
-                            <optgroup label="Formations disponibles">
+                            <optgroup label="{{ trans('international.available_formations') }}">
                                 @foreach($formationsList as $formation)
                                 <option value="{{ $formation->id }}" {{ old('formation')==$formation->id ? 'selected' :
                                     '' }} style="color: white;">
@@ -461,26 +480,27 @@
                             </optgroup>
                             @endif
 
-                            <optgroup label="Autres formations">
+                            <optgroup label="{{ trans('international.other_formations') }}">
                                 <option value="vtc" {{ old('formation')=='vtc' ? 'selected' : '' }}
-                                    style="color: white;">Formation VTC</option>
+                                    style="color: white;">{{ trans('international.formation_vtc_option') }}</option>
                                 <option value="micro_entreprise" {{ old('formation')=='micro_entreprise' ? 'selected'
                                     : '' }} style="color: white;">
-                                    Formation Micro-entreprise & gestion</option>
+                                    {{ trans('international.formation_micro_option') }}</option>
                                 <option value="marketing" {{ old('formation')=='marketing' ? 'selected' : '' }}
                                     style="color: white;">
-                                    Formation Communication & marketing digital</option>
+                                    {{ trans('international.formation_marketing_option') }}</option>
                                 <option value="creation_entreprise" {{ old('formation')=='creation_entreprise'
                                     ? 'selected' : '' }} style="color: white;">
-                                    Formation Création d'entreprise</option>
+                                    {{ trans('international.formation_business_option') }}</option>
                                 <option value="bureautique" {{ old('formation')=='bureautique' ? 'selected' : '' }}
                                     style="color: white;">
-                                    Formation Bureautique & Excel</option>
+                                    {{ trans('international.formation_bureautique_option') }}</option>
                                 <option value="langue" {{ old('formation')=='langue' ? 'selected' : '' }}
-                                    style="color: white;">Formation Langue & accueil client</option>
+                                    style="color: white;">{{ trans('international.formation_language_option') }}
+                                </option>
                                 <option value="personnalise" {{ old('formation')=='personnalise' ? 'selected' : '' }}
                                     style="color: white;">
-                                    Programme personnalisé</option>
+                                    {{ trans('international.formation_custom') }}</option>
                             </optgroup>
                         </select>
                         @error('formation')
@@ -489,19 +509,19 @@
                     </div>
 
                     <div>
-                        <label class="block mb-2 font-medium" style="color: #ddd;">Services d'accompagnement
-                            nécessaires</label>
+                        <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                            trans('international.services_title') }}</label>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                             @php
                             $oldServices = old('services', []);
                             @endphp
                             @foreach([
-                            'Accompagnement visa',
-                            'Hébergement',
-                            'Transport',
-                            'Service conciergerie',
-                            'Assurance',
-                            'Formation + stage'
+                            trans('international.service_visa'),
+                            trans('international.service_accommodation'),
+                            trans('international.service_transport'),
+                            trans('international.service_concierge'),
+                            trans('international.service_insurance'),
+                            trans('international.service_internship')
                             ] as $service)
                             <label class="flex items-center p-2 rounded cursor-pointer"
                                 style="background: #1a1a1a; border: 1px solid #444; color: white;">
@@ -514,12 +534,12 @@
                     </div>
 
                     <div>
-                        <label class="block mb-2 font-medium" style="color: #ddd;">Votre projet et besoins spécifiques
-                            *</label>
+                        <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                            trans('international.project_title') }}</label>
                         <textarea name="message" rows="4" required
                             class="w-full px-4 py-3 rounded @error('message') border-red-500 @enderror"
                             style="background: #1a1a1a; border: 1px solid #444; color: white;"
-                            placeholder="Décrivez votre projet professionnel, vos attentes, et toute information utile...">{{ old('message') }}</textarea>
+                            placeholder="{{ trans('international.project_placeholder') }}">{{ old('message') }}</textarea>
                         @error('message')
                         <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -527,7 +547,8 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Date de début souhaitée</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                trans('international.start_date') }}</label>
                             <input type="date" name="date_debut" value="{{ old('date_debut') }}"
                                 class="w-full px-4 py-3 rounded @error('date_debut') border-red-500 @enderror"
                                 style="background: #1a1a1a; border: 1px solid #444; color: white;">
@@ -537,21 +558,23 @@
                         </div>
 
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Durée estimée du séjour</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                trans('international.duration') }}</label>
                             <select name="duree"
                                 class="w-full px-4 py-3 rounded @error('duree') border-red-500 @enderror"
                                 style="background: #1a1a1a; border: 1px solid #444; color: white;">
-                                <option value="" style="color: #666;">Sélectionnez une durée</option>
+                                <option value="" style="color: #666;">{{ trans('international.select_duration') }}
+                                </option>
                                 <option value="1-2 semaines" {{ old('duree')=='1-2 semaines' ? 'selected' : '' }}
-                                    style="color: white;">1-2 semaines</option>
+                                    style="color: white;">{{ trans('international.duration_1_2') }}</option>
                                 <option value="1 mois" {{ old('duree')=='1 mois' ? 'selected' : '' }}
-                                    style="color: white;">1 mois</option>
+                                    style="color: white;">{{ trans('international.duration_1_month') }}</option>
                                 <option value="3 mois" {{ old('duree')=='3 mois' ? 'selected' : '' }}
-                                    style="color: white;">3 mois</option>
+                                    style="color: white;">{{ trans('international.duration_3_months') }}</option>
                                 <option value="6 mois" {{ old('duree')=='6 mois' ? 'selected' : '' }}
-                                    style="color: white;">6 mois</option>
+                                    style="color: white;">{{ trans('international.duration_6_months') }}</option>
                                 <option value="1 an" {{ old('duree')=='1 an' ? 'selected' : '' }} style="color: white;">
-                                    1 an</option>
+                                    {{ trans('international.duration_1_year') }}</option>
                             </select>
                             @error('duree')
                             <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
@@ -566,18 +589,18 @@
                             style="background: var(--gold); color: black;">
                             <span id="btn-text" class="flex items-center justify-center">
                                 <i class="fas fa-paper-plane mr-3"></i>
-                                Envoyer ma demande de programme
+                                {{ trans('international.submit_button') }}
                             </span>
                             <span id="btn-loading" class="hidden flex items-center justify-center">
                                 <i class="fas fa-spinner fa-spin mr-3"></i>
-                                Traitement en cours...
+                                {{ trans('international.processing') }}
                             </span>
                         </button>
                     </div>
 
                     <p class="text-center text-sm mt-4" style="color: #888;">
                         <i class="fas fa-shield-alt mr-2"></i>
-                        Vos informations sont sécurisées et ne seront pas partagées avec des tiers.
+                        {{ trans('international.security_notice') }}
                     </p>
                 </div>
             </form>
@@ -591,7 +614,8 @@
                         style="background: #1e40af;">
                         <i class="fas fa-phone text-white"></i>
                     </div>
-                    <h3 class="text-lg font-bold mb-2" style="color: white;">Téléphone international</h3>
+                    <h3 class="text-lg font-bold mb-2" style="color: white;">{{
+                        trans('international.international_phone') }}</h3>
                     <a href="tel:+33176380017" class="font-semibold hover:text-blue-300" style="color: #60a5fa;">+33 1
                         76 38 00 17</a>
                 </div>
@@ -602,7 +626,7 @@
                         <i class="fab fa-whatsapp text-white"></i>
                     </div>
                     <h3 class="text-lg font-bold mb-2" style="color: white;">WhatsApp</h3>
-                    <p class="font-semibold" style="color: #86efac;">Disponible 24h/24</p>
+                    <p class="font-semibold" style="color: #86efac;">{{ trans('international.whatsapp_available') }}</p>
                 </div>
 
                 <div class="text-center p-6" style="background: #111; border: 1px solid #333;">
@@ -610,7 +634,8 @@
                         style="background: var(--gold);">
                         <i class="fas fa-envelope text-black"></i>
                     </div>
-                    <h3 class="text-lg font-bold mb-2" style="color: white;">Email</h3>
+                    <h3 class="text-lg font-bold mb-2" style="color: white;">{{ trans('international.email_label') }}
+                    </h3>
                     <a href="mailto:international@djokprestige.com" class="font-semibold hover:text-yellow-300"
                         style="color: var(--gold);">
                         international@djokprestige.com

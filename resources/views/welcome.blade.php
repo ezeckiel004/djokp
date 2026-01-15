@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'DJOK PRESTIGE - VTC, Formations & Entrepreneuriat')
+@section('title', __('home.title'))
 
 @section('content')
 <!-- Header avec bannières superposées -->
@@ -12,19 +12,19 @@
             <!-- Fond avec opacité ajustée -->
             <div class="absolute inset-0 bg-black">
                 <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=1600&q=80"
-                    alt="Formation VTC" class="object-cover w-full h-full opacity-50">
+                    alt="{{ __('home.vtc_training') }}" class="object-cover w-full h-full opacity-50">
                 <!-- Overlay doré avec opacité réduite pour correspondre à la bannière 2 -->
-                <div class="absolute inset-0" style="background: rgba(182, 146, 70, 0.85); mix-blend-mode: multiply;"></div>
+                <div class="absolute inset-0" style="background: rgba(182, 146, 70, 0.85); mix-blend-mode: multiply;">
+                </div>
                 <!-- Overlay noir supplémentaire pour correspondre à l'opacité de la bannière 2 -->
                 <div class="absolute inset-0 bg-gradient-to-b from-black/90 via-black/70 to-black/50"></div>
             </div>
 
             <div class="hero-left relative z-10">
-                <h1>FORMATION VTC</h1>
-                <p class="hero-subtitle">Devenez Chauffeur VTC Professionnel</p>
+                <h1>{{ __('home.vtc_training') }}</h1>
+                <p class="hero-subtitle">{{ __('home.become_vtc_driver') }}</p>
                 <p class="hero-description">
-                    Obtenez votre carte VTC avec une formation complète, certifiée Qualiopi,
-                    agréée par la préfecture et finançable par le CPF
+                    {{ __('home.vtc_description') }}
                 </p>
             </div>
 
@@ -34,85 +34,67 @@
                         <!-- Slide 1 -->
                         <div class="swiper-slide slide">
                             <div>
-                                <h2>INSCRIPTION À L'EXAMEN VTC & FORMATION VTC</h2>
-                                <p>Constituez votre dossier d'inscription :</p>
+                                <h2>{{ __('home.slide1_title') }}</h2>
+                                <p>{{ __('home.slide1_subtitle') }}</p>
                                 <ul class="document-list">
-                                    <li>CNI ou titre de séjour valide</li>
-                                    <li>Justificatif de domicile de moins de 3 mois</li>
-                                    <li>Permis de conduire de plus de 3 ans</li>
-                                    <li>Photo d'identité</li>
-                                    <li>Nom, prénom et signature</li>
+                                    <li>{{ __('home.document1') }}</li>
+                                    <li>{{ __('home.document2') }}</li>
+                                    <li>{{ __('home.document3') }}</li>
+                                    <li>{{ __('home.document4') }}</li>
+                                    <li>{{ __('home.document5') }}</li>
                                 </ul>
                             </div>
                             <div>
-                                <a href="{{ route('formation') }}" class="btn">DÉCOUVRIR L'EXAMEN VTC</a>
-                                <a href="{{ route('contact') }}" class="btn">DEMANDER PLUS D'INFOS</a>
+                                <a href="{{ route('formation') }}" class="btn">{{ __('home.discover_exam') }}</a>
+                                <a href="{{ route('contact') }}" class="btn">{{ __('home.more_info') }}</a>
                             </div>
                         </div>
 
                         <!-- Slide 2 -->
                         <div class="swiper-slide slide">
                             <div>
-                                <h2>L'EXAMEN VTC THÉORIQUE</h2>
-                                <p>
-                                    Première épreuve de l'examen VTC, l'épreuve théorique VTC est
-                                    en tronc commun avec l'examen Taxi et repose sur 6 matières.
-                                </p>
+                                <h2>{{ __('home.slide2_title') }}</h2>
+                                <p>{{ __('home.slide2_text') }}</p>
                                 <div class="objective">
-                                    <strong>Objectif : au moins 10/20</strong>
+                                    <strong>{{ __('home.objective') }}</strong>
                                 </div>
-                                <p class="question">Voir les dates des examens VTC</p>
+                                <p class="question">{{ __('home.exam_dates') }}</p>
                             </div>
                             <div>
-                                <a href="{{ route('formation') }}" class="btn">LES FORMATIONS THÉORIQUES</a>
-                                <a href="{{ route('contact') }}" class="btn">DEMANDER UN DEVIS</a>
+                                <a href="{{ route('formation') }}" class="btn">{{ __('home.theoretical_training') }}</a>
+                                <a href="{{ route('contact') }}" class="btn">{{ __('home.request_quote') }}</a>
                             </div>
                         </div>
 
                         <!-- Slide 3 -->
                         <div class="swiper-slide slide">
                             <div>
-                                <h2>L'EXAMEN VTC PRATIQUE</h2>
-                                <p>
-                                    Félicitations, vous êtes admissible à l'examen VTC pratique,
-                                    épreuve de conduite professionnelle évaluée par 2
-                                    examinateurs, à bord d'un véhicule double commande fourni par
-                                    le candidat.
-                                </p>
+                                <h2>{{ __('home.slide3_title') }}</h2>
+                                <p>{{ __('home.slide3_text') }}</p>
                                 <div class="objective">
-                                    <strong>Objectif : au moins 12/20</strong>
+                                    <strong>{{ __('home.objective') }}</strong>
                                 </div>
-                                <p class="question">
-                                    Voir les résultats des précédents examens
-                                </p>
+                                <p class="question">{{ __('home.exam_dates') }}</p>
                             </div>
                             <div>
-                                <a href="{{ route('formation') }}" class="btn">LES FORMATIONS PRATIQUES</a>
-                                <a href="{{ route('location') }}" class="btn">LOUER UN VÉHICULE</a>
+                                <a href="{{ route('formation') }}" class="btn">{{ __('home.practice_training') }}</a>
+                                <a href="{{ route('location') }}" class="btn">{{ __('home.rent_vehicle') }}</a>
                             </div>
                         </div>
 
                         <!-- Slide 4 -->
                         <div class="swiper-slide slide">
                             <div>
-                                <h2>EXERCER EN TANT QUE CHAUFFEUR VTC</h2>
-                                <p>
-                                    Vous avez réussi l'examen VTC, Félicitations ! Vous êtes
-                                    chauffeur VTC. DJOK PRESTIGE vous accompagne et répond à vos
-                                    interrogations…
-                                </p>
-                                <p class="question">
-                                    Comment obtenir la carte professionnelle VTC ?
-                                </p>
-                                <p class="question">Comment s'inscrire au registre VTC ?</p>
-                                <p class="question">Comment créer mon entreprise ?</p>
-                                <p class="question">
-                                    La formation continue est-elle obligatoire ?
-                                </p>
+                                <h2>{{ __('home.slide4_title') }}</h2>
+                                <p>{{ __('home.slide4_text') }}</p>
+                                <p class="question">{{ __('home.question1') }}</p>
+                                <p class="question">{{ __('home.question2') }}</p>
+                                <p class="question">{{ __('home.question3') }}</p>
+                                <p class="question">{{ __('home.question4') }}</p>
                             </div>
                             <div>
-                                <a href="{{ route('formation') }}" class="btn">LA FORMATION CONTINUE</a>
-                                <a href="{{ route('formation') }}" class="btn">TOUTES MES DÉMARCHES</a>
+                                <a href="{{ route('formation') }}" class="btn">{{ __('home.continuous_training') }}</a>
+                                <a href="{{ route('formation') }}" class="btn">{{ __('home.my_procedures') }}</a>
                             </div>
                         </div>
                     </div>
@@ -122,27 +104,29 @@
             </div>
 
             <!-- BOUTON DEVIS -->
-            <a href="{{ route('contact') }}" class="devis-btn">Demandez un devis gratuit</a>
+            <a href="{{ route('contact') }}" class="devis-btn">{{ __('home.quote_btn') }}</a>
 
             <!-- ICÔNES FLOTTANTES -->
             <div class="floating-icons">
-                <a href="https://www.google.com/maps/place//data=!4m3!3m2!1s0x47e613e5ed89e9fb:0xf5ac01ba78653a2b!12e1" class="icon-item">
-                    <i class="fa-solid fa-location-dot"></i><span>TROUVER UN CENTRE</span>
+                <a href="https://www.google.com/maps/place//data=!4m3!3m2!1s0x47e613e5ed89e9fb:0xf5ac01ba78653a2b!12e1"
+                    class="icon-item">
+                    <i class="fa-solid fa-location-dot"></i><span>{{ __('home.find_center') }}</span>
                 </a>
                 <a href="{{ route('formation') }}" class="icon-item">
-                    <i class="fa-solid fa-book-open"></i><span>NOS FORMATIONS</span>
+                    <i class="fa-solid fa-book-open"></i><span>{{ __('home.our_trainings') }}</span>
                 </a>
                 <a href="{{ route('contact') }}" class="icon-item">
-                    <i class="fa-solid fa-envelope"></i><span>CONTACT</span>
+                    <i class="fa-solid fa-envelope"></i><span>{{ __('home.contact') }}</span>
                 </a>
                 <a href="tel:+33123456789" class="icon-item">
-                    <i class="fa-solid fa-phone"></i><span>APPELER</span>
+                    <i class="fa-solid fa-phone"></i><span>{{ __('home.call') }}</span>
                 </a>
             </div>
 
             <!-- Indicateur de défilement -->
             <div class="absolute z-20 transform -translate-x-1/2 bottom-10 left-1/2 animate-bounce">
-                <a href="#banner-2" class="text-white hover:text-var(--gold) transition">
+                <a href="#banner-2" class="text-white hover:text-var(--gold) transition"
+                    aria-label="{{ __('home.scroll_down') }}">
                     <i class="text-3xl fas fa-chevron-down"></i>
                 </a>
             </div>
@@ -158,7 +142,7 @@
             </div>
 
             <div class="absolute inset-0 bg-black">
-                <img src="https://images.unsplash.com/photo-1555212697-194d092e3b8f" alt="Location VTC"
+                <img src="https://images.unsplash.com/photo-1555212697-194d092e3b8f" alt="{{ __('home.rental_tag') }}"
                     class="object-cover w-full h-full opacity-50">
                 <div class="absolute inset-0 bg-gradient-to-b from-black/90 via-black/70 to-black/50"></div>
             </div>
@@ -168,17 +152,16 @@
                     <span
                         class="inline-block px-4 py-2 mb-4 text-sm font-semibold tracking-wider uppercase rounded-full"
                         style="background: rgba(182, 146, 70, 0.3); color: #b69246;">
-                        Location Véhicules Premium
+                        {{ __('home.rental_tag') }}
                     </span>
                 </div>
 
                 <h1 class="mb-8 text-4xl font-bold md:text-5xl lg:text-6xl" style="color: #b69246;">
-                    Louez votre véhicule VTC<br>haut de gamme
+                    {!! __('home.rental_title') !!}
                 </h1>
 
                 <p class="max-w-3xl mx-auto mb-16 text-lg leading-relaxed md:text-xl lg:text-2xl">
-                    Véhicules récents, prêts à l'emploi avec offres flexibles,
-                    tarifs compétitifs et entretien inclus
+                    {{ __('home.rental_description') }}
                 </p>
 
                 <!-- Nouvelles cartes avec images - CORRIGÉ POUR MOBILE -->
@@ -187,7 +170,7 @@
                     <div
                         class="relative overflow-hidden transition-all duration-300 border group rounded-xl border-white/10 bg-white/5 backdrop-blur-sm hover:transform hover:scale-105 hover:border-b69246/30 mx-auto w-full max-w-md md:max-w-none">
                         <div class="relative h-48 overflow-hidden">
-                            <img src="{{ asset('v_electrique.webp') }}" alt="Véhicule Électrique VTC"
+                            <img src="{{ asset('v_electrique.webp') }}" alt="{{ __('home.electric_vehicle') }}"
                                 class="absolute inset-0 object-cover w-full h-full transition-transform duration-500 group-hover:scale-110">
                             <!-- Overlay pour rendre le texte lisible -->
                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
@@ -196,22 +179,22 @@
                             <div class="absolute flex items-center justify-between bottom-4 left-4 right-4">
                                 <div class="flex items-center px-3 py-1 space-x-2 rounded-full bg-black/70">
                                     <i class="text-sm fas fa-users" style="color: #b69246;"></i>
-                                    <span class="text-sm font-semibold">3 passagers</span>
+                                    <span class="text-sm font-semibold">3 {{ __('home.passengers') }}</span>
                                 </div>
                                 <div class="flex items-center px-3 py-1 space-x-2 rounded-full bg-black/70">
                                     <i class="text-sm fas fa-suitcase" style="color: #b69246;"></i>
-                                    <span class="text-sm font-semibold">3 bagages</span>
+                                    <span class="text-sm font-semibold">3 {{ __('home.luggage') }}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="p-6">
-                            <h3 class="mb-3 text-xl font-bold">Véhicule Électrique</h3>
+                            <h3 class="mb-3 text-xl font-bold">{{ __('home.electric_vehicle') }}</h3>
                             <p class="mb-4 text-sm text-gray-300">
-                                Écologique et économique, idéal pour les trajets urbains avec un confort optimal.
+                                {{ __('home.electric_description') }}
                             </p>
                             <div class="flex items-center text-sm">
                                 <i class="mr-2 fas fa-bolt" style="color: #b69246;"></i>
-                                <span>100% électrique • Autonomie 400km</span>
+                                <span>{{ __('home.fully_electric') }}</span>
                             </div>
                         </div>
                     </div>
@@ -220,7 +203,7 @@
                     <div
                         class="relative overflow-hidden transition-all duration-300 border group rounded-xl border-white/10 bg-white/5 backdrop-blur-sm hover:transform hover:scale-105 hover:border-b69246/30 mx-auto w-full max-w-md md:max-w-none">
                         <div class="relative h-48 overflow-hidden">
-                            <img src="{{ asset('v_berline.webp') }}" alt="Berline VTC Premium"
+                            <img src="{{ asset('v_berline.webp') }}" alt="{{ __('home.premium_sedan') }}"
                                 class="absolute inset-0 object-cover w-full h-full transition-transform duration-500 group-hover:scale-110">
                             <!-- Overlay pour rendre le texte lisible -->
                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
@@ -229,22 +212,22 @@
                             <div class="absolute flex items-center justify-between bottom-4 left-4 right-4">
                                 <div class="flex items-center px-3 py-1 space-x-2 rounded-full bg-black/70">
                                     <i class="text-sm fas fa-users" style="color: #b69246;"></i>
-                                    <span class="text-sm font-semibold">3 passagers</span>
+                                    <span class="text-sm font-semibold">3 {{ __('home.passengers') }}</span>
                                 </div>
                                 <div class="flex items-center px-3 py-1 space-x-2 rounded-full bg-black/70">
                                     <i class="text-sm fas fa-suitcase" style="color: #b69246;"></i>
-                                    <span class="text-sm font-semibold">3 bagages</span>
+                                    <span class="text-sm font-semibold">3 {{ __('home.luggage') }}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="p-6">
-                            <h3 class="mb-3 text-xl font-bold">Berline Premium</h3>
+                            <h3 class="mb-3 text-xl font-bold">{{ __('home.premium_sedan') }}</h3>
                             <p class="mb-4 text-sm text-gray-300">
-                                Luxe et confort pour vos déplacements professionnels ou événements spéciaux.
+                                {{ __('home.sedan_description') }}
                             </p>
                             <div class="flex items-center text-sm">
                                 <i class="mr-2 fas fa-star" style="color: #b69246;"></i>
-                                <span>Classe affaires • Intérieur cuir</span>
+                                <span>{{ __('home.business_class') }}</span>
                             </div>
                         </div>
                     </div>
@@ -253,7 +236,7 @@
                     <div
                         class="relative overflow-hidden transition-all duration-300 border group rounded-xl border-white/10 bg-white/5 backdrop-blur-sm hover:transform hover:scale-105 hover:border-b69246/30 mx-auto w-full max-w-md md:max-w-none">
                         <div class="relative h-48 overflow-hidden">
-                            <img src="{{ asset('v_VAN.webp') }}" alt="VAN VTC 7 places"
+                            <img src="{{ asset('v_VAN.webp') }}" alt="{{ __('home.van_7seats') }}"
                                 class="absolute inset-0 object-cover w-full h-full transition-transform duration-500 group-hover:scale-110">
                             <!-- Overlay pour rendre le texte lisible -->
                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
@@ -262,22 +245,22 @@
                             <div class="absolute flex items-center justify-between bottom-4 left-4 right-4">
                                 <div class="flex items-center px-3 py-1 space-x-2 rounded-full bg-black/70">
                                     <i class="text-sm fas fa-users" style="color: #b69246;"></i>
-                                    <span class="text-sm font-semibold">7 passagers</span>
+                                    <span class="text-sm font-semibold">7 {{ __('home.passengers') }}</span>
                                 </div>
                                 <div class="flex items-center px-3 py-1 space-x-2 rounded-full bg-black/70">
                                     <i class="text-sm fas fa-suitcase" style="color: #b69246;"></i>
-                                    <span class="text-sm font-semibold">7 bagages</span>
+                                    <span class="text-sm font-semibold">7 {{ __('home.luggage') }}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="p-6">
-                            <h3 class="mb-3 text-xl font-bold">VAN 7 Places</h3>
+                            <h3 class="mb-3 text-xl font-bold">{{ __('home.van_7seats') }}</h3>
                             <p class="mb-4 text-sm text-gray-300">
-                                Parfait pour les groupes, familles ou transferts aéroport avec beaucoup de bagages.
+                                {{ __('home.van_description') }}
                             </p>
                             <div class="flex items-center text-sm">
                                 <i class="mr-2 fas fa-shield-alt" style="color: #b69246;"></i>
-                                <span>Confort groupe • Espace optimisé</span>
+                                <span>{{ __('home.group_comfort') }}</span>
                             </div>
                         </div>
                     </div>
@@ -287,19 +270,19 @@
                 <div class="grid max-w-3xl grid-cols-2 gap-4 mx-auto mb-12 md:grid-cols-4">
                     <div class="p-4 text-center">
                         <i class="mb-3 text-2xl fas fa-tools" style="color: #b69246;"></i>
-                        <p class="text-sm font-semibold">Entretien inclus</p>
+                        <p class="text-sm font-semibold">{{ __('home.maintenance_included') }}</p>
                     </div>
                     <div class="p-4 text-center">
                         <i class="mb-3 text-2xl fas fa-euro-sign" style="color: #b69246;"></i>
-                        <p class="text-sm font-semibold">Tarifs compétitifs</p>
+                        <p class="text-sm font-semibold">{{ __('home.competitive_prices') }}</p>
                     </div>
                     <div class="p-4 text-center">
                         <i class="mb-3 text-2xl fas fa-calendar-alt" style="color: #b69246;"></i>
-                        <p class="text-sm font-semibold">Flexibilité totale</p>
+                        <p class="text-sm font-semibold">{{ __('home.total_flexibility') }}</p>
                     </div>
                     <div class="p-4 text-center">
                         <i class="mb-3 text-2xl fas fa-shield-alt" style="color: #b69246;"></i>
-                        <p class="text-sm font-semibold">Assurance complète</p>
+                        <p class="text-sm font-semibold">{{ __('home.full_insurance') }}</p>
                     </div>
                 </div>
 
@@ -310,7 +293,7 @@
                             style="background: #b69246; color: white; border: 2px solid #b69246;"
                             onmouseover="this.style.background='transparent'; this.style.color='#b69246';"
                             onmouseout="this.style.background='#b69246'; this.style.color='white';">
-                            <i class="mr-2 fas fa-search"></i> Voir les véhicules
+                            <i class="mr-2 fas fa-search"></i> {{ __('home.view_vehicles') }}
                         </button>
                     </a>
                     <a href="{{ route('location') }}">
@@ -318,7 +301,7 @@
                             style="border: 2px solid #b69246; color: #b69246; background: transparent;"
                             onmouseover="this.style.background='#b69246'; this.style.color='white';"
                             onmouseout="this.style.background='transparent'; this.style.color='#b69246';">
-                            <i class="mr-2 fas fa-calendar-check"></i> Réserver maintenant
+                            <i class="mr-2 fas fa-calendar-check"></i> {{ __('home.book_now') }}
                         </button>
                     </a>
                 </div>
@@ -326,7 +309,8 @@
 
             <!-- Indicateur de défilement -->
             <div class="absolute z-20 transform -translate-x-1/2 bottom-10 left-1/2 animate-bounce">
-                <a href="#banner-3" class="text-white transition hover:text-b69246">
+                <a href="#services" class="text-white transition hover:text-b69246"
+                    aria-label="{{ __('home.scroll_down') }}">
                     <i class="text-3xl fas fa-chevron-down"></i>
                 </a>
             </div>
@@ -334,149 +318,148 @@
     </div>
 </header>
 
-
 <!-- SERVICES SECTION AVEC NOUVEAU DESIGN - CORRIGÉ POUR MOBILE -->
 <section id="services" class="py-20 bg-black">
     <div class="px-4 mx-auto max-w-7xl">
-        <h2 class="mb-4 text-4xl font-bold text-center" style="color: var(--gold);">NOS SERVICES</h2>
+        <h2 class="mb-4 text-4xl font-bold text-center" style="color: var(--gold);">{{ __('home.our_services') }}</h2>
         <p class="max-w-3xl mx-auto mt-4 text-lg text-center text-gray-300">
-            Découvrez notre gamme complète de services conçus pour répondre à tous vos besoins professionnels et
-            personnels
+            {{ __('home.services_description') }}
         </p>
 
         <div class="grid grid-cols-1 gap-10 mt-16 md:grid-cols-2 lg:grid-cols-3 justify-items-center">
             <!-- Formations -->
-            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none" style="border-color: var(--gold);">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none"
+                style="border-color: var(--gold);">
                 <div class="h-48">
-                    <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg" alt="Formations"
-                        class="object-cover w-full h-full">
+                    <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg"
+                        alt="{{ __('home.trainings') }}" class="object-cover w-full h-full">
                 </div>
                 <div class="flex flex-col justify-center flex-grow p-6 text-center">
-                    <h3 class="mb-3 text-2xl font-bold">Formations</h3>
+                    <h3 class="mb-3 text-2xl font-bold">{{ __('home.trainings') }}</h3>
                     <p class="mb-6 text-gray-700">
-                        Formations professionnelles certifiantes pour développer vos compétences et booster votre
-                        carrière.
+                        {{ __('home.trainings_description') }}
                     </p>
                     <a href="{{ route('formation') }}">
                         <button class="self-center px-8 py-3 font-semibold transition-all duration-300"
                             style="background: var(--gold); color: black; border: 2px solid black;"
                             onmouseover="this.style.background='black'; this.style.color='var(--gold)'; this.style.borderColor='var(--gold)'"
                             onmouseout="this.style.background='var(--gold)'; this.style.color='black'; this.style.borderColor='black'">
-                            Voir les formations
+                            {{ __('home.view_trainings') }}
                         </button>
                     </a>
                 </div>
             </div>
 
             <!-- Formation Internationale -->
-            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none" style="border-color: var(--gold);">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none"
+                style="border-color: var(--gold);">
                 <div class="h-48">
                     <img src="https://images.pexels.com/photos/210182/pexels-photo-210182.jpeg"
-                        alt="Formation Internationale" class="object-cover w-full h-full">
+                        alt="{{ __('home.international_training') }}" class="object-cover w-full h-full">
                 </div>
                 <div class="flex flex-col justify-center flex-grow p-6 text-center">
-                    <h3 class="mb-3 text-2xl font-bold">Formation Internationale</h3>
+                    <h3 class="mb-3 text-2xl font-bold">{{ __('home.international_training') }}</h3>
                     <p class="mb-6 text-gray-700">
-                        Formations ouvertes à l' international, combinant expertise mondiale et adaptation aux réalités
-                        locales.
+                        {{ __('home.international_description') }}
                     </p>
                     <a href="{{ route('formation.international') }}">
                         <button class="self-center px-8 py-3 font-semibold transition-all duration-300"
                             style="background: var(--gold); color: black; border: 2px solid black;"
                             onmouseover="this.style.background='black'; this.style.color='var(--gold)'; this.style.borderColor='var(--gold)'"
                             onmouseout="this.style.background='var(--gold)'; this.style.color='black'; this.style.borderColor='black'">
-                            Découvrir
+                            {{ __('home.discover') }}
                         </button>
                     </a>
                 </div>
             </div>
 
             <!-- VTC & Location -->
-            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none" style="border-color: var(--gold);">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none"
+                style="border-color: var(--gold);">
                 <div class="h-48">
-                    <img src="https://images.pexels.com/photos/125779/pexels-photo-125779.jpeg" alt="VTC & Location"
-                        class="object-cover w-full h-full">
+                    <img src="https://images.pexels.com/photos/125779/pexels-photo-125779.jpeg"
+                        alt="{{ __('home.vtc_reservation') }}" class="object-cover w-full h-full">
                 </div>
                 <div class="flex flex-col justify-center flex-grow p-6 text-center">
-                    <h3 class="mb-3 text-2xl font-bold">Reservation VTC</h3>
+                    <h3 class="mb-3 text-2xl font-bold">{{ __('home.vtc_reservation') }}</h3>
                     <p class="mb-6 text-gray-700">
-                        Services de véhicules haut de gamme, déplacements professionnels et personnels avec chauffeurs
-                        expérimentés.
+                        {{ __('home.vtc_reservation_description') }}
                     </p>
                     <a href="{{ route('reservation') }}">
                         <button class="self-center px-8 py-3 font-semibold transition-all duration-300"
                             style="background: var(--gold); color: black; border: 2px solid black;"
                             onmouseover="this.style.background='black'; this.style.color='var(--gold)'; this.style.borderColor='var(--gold)'"
                             onmouseout="this.style.background='var(--gold)'; this.style.color='black'; this.style.borderColor='black'">
-                            Réserver maintenant
+                            {{ __('home.reserve_now') }}
                         </button>
                     </a>
                 </div>
             </div>
 
             <!-- Location (Nouvelle carte) -->
-            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none" style="border-color: var(--gold);">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none"
+                style="border-color: var(--gold);">
                 <div class="h-48">
-                    <img src="https://images.pexels.com/photos/164634/pexels-photo-164634.jpeg" alt="Location"
-                        class="object-cover w-full h-full">
+                    <img src="https://images.pexels.com/photos/164634/pexels-photo-164634.jpeg"
+                        alt="{{ __('home.rental') }}" class="object-cover w-full h-full">
                 </div>
                 <div class="flex flex-col justify-center flex-grow p-6 text-center">
-                    <h3 class="mb-3 text-2xl font-bold">Location</h3>
+                    <h3 class="mb-3 text-2xl font-bold">{{ __('home.rental') }}</h3>
                     <p class="mb-6 text-gray-700">
-                        Location de véhicules de prestige pour vos événements spéciaux, mariages, cérémonies ou
-                        besoins professionnels. Parc varié de luxe.
+                        {{ __('home.rental_description') }}
                     </p>
                     <a href="{{ route('location') }}">
                         <button class="self-center px-8 py-3 font-semibold transition-all duration-300"
                             style="background: var(--gold); color: black; border: 2px solid black;"
                             onmouseover="this.style.background='black'; this.style.color='var(--gold)'; this.style.borderColor='var(--gold)'"
                             onmouseout="this.style.background='var(--gold)'; this.style.color='black'; this.style.borderColor='black'">
-                            Louer un véhicule
+                            {{ __('home.rent_vehicle_btn') }}
                         </button>
                     </a>
                 </div>
             </div>
 
             <!-- Conciergerie (Nouvelle carte) -->
-            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none" style="border-color: var(--gold);">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none"
+                style="border-color: var(--gold);">
                 <div class="h-48">
-                    <img src="https://images.pexels.com/photos/5273464/pexels-photo-5273464.jpeg" alt="Conciergerie"
-                        class="object-cover w-full h-full">
+                    <img src="https://images.pexels.com/photos/5273464/pexels-photo-5273464.jpeg"
+                        alt="{{ __('home.concierge') }}" class="object-cover w-full h-full">
                 </div>
                 <div class="flex flex-col justify-center flex-grow p-6 text-center">
-                    <h3 class="mb-3 text-2xl font-bold">Conciergerie</h3>
+                    <h3 class="mb-3 text-2xl font-bold">{{ __('home.concierge') }}</h3>
                     <p class="mb-6 text-gray-700">
-                        Service de conciergerie personnalisé : réservation de restaurants, organisation d'événements,
-                        assistance personnelle et bien plus encore.
+                        {{ __('home.concierge_description') }}
                     </p>
                     <a href="{{ route('conciergerie') }}">
                         <button class="self-center px-8 py-3 font-semibold transition-all duration-300"
                             style="background: var(--gold); color: black; border: 2px solid black;"
                             onmouseover="this.style.background='black'; this.style.color='var(--gold)'; this.style.borderColor='var(--gold)'"
                             onmouseout="this.style.background='var(--gold)'; this.style.color='black'; this.style.borderColor='black'">
-                            Découvrir nos services
+                            {{ __('home.discover_services') }}
                         </button>
                     </a>
                 </div>
             </div>
 
             <!-- Espace Client -->
-            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none" style="border-color: var(--gold);">
+            <div class="flex flex-col bg-white text-black min-h-[280px] border-2 w-full max-w-md md:max-w-none"
+                style="border-color: var(--gold);">
                 <div class="h-48">
-                    <img src="https://images.pexels.com/photos/3768916/pexels-photo-3768916.jpeg" alt="Espace Client"
-                        class="object-cover w-full h-full">
+                    <img src="https://images.pexels.com/photos/3768916/pexels-photo-3768916.jpeg"
+                        alt="{{ __('home.client_space') }}" class="object-cover w-full h-full">
                 </div>
                 <div class="flex flex-col justify-center flex-grow p-6 text-center">
-                    <h3 class="mb-3 text-2xl font-bold">Espace Client</h3>
+                    <h3 class="mb-3 text-2xl font-bold">{{ __('home.client_space') }}</h3>
                     <p class="mb-6 text-gray-700">
-                        Connectez-vous à votre espace personnel pour gérer vos réservations, formations et séminaires.
+                        {{ __('home.client_space_description') }}
                     </p>
                     <a href="{{ route('espaceclient') }}">
                         <button
                             class="self-center px-8 py-3 font-semibold text-white transition-all duration-300 bg-black border-2 border-black hover:bg-white hover:text-black hover:border-black"
                             onmouseover="this.style.background='white'; this.style.color='black'; this.style.borderColor='black'"
                             onmouseout="this.style.background='black'; this.style.color='white'; this.style.borderColor='black'">
-                            Se connecter
+                            {{ __('home.login') }}
                         </button>
                     </a>
                 </div>
@@ -488,25 +471,92 @@
 <!-- Statistics Section -->
 <section id="stats" class="py-20 text-white bg-dark">
     <div class="px-4 mx-auto max-w-7xl">
-        <h2 class="mb-4 text-4xl font-bold text-center" style="color: #b69246;">DJOK PRESTIGE en Chiffres</h2>
-        <p class="mt-4 text-center text-gray-300">Notre expertise se reflète dans nos résultats</p>
+        <h2 class="mb-4 text-4xl font-bold text-center" style="color: #b69246;">{{ __('home.numbers_title') }}</h2>
+        <p class="mt-4 text-center text-gray-300">{{ __('home.numbers_subtitle') }}</p>
 
         <div class="grid grid-cols-1 gap-8 mt-12 md:grid-cols-2 lg:grid-cols-4">
             <div class="text-center">
                 <div class="mb-2 text-4xl font-bold" style="color: #b69246;">5000+</div>
-                <p class="text-gray-300">Clients satisfaits</p>
+                <p class="text-gray-300">{{ __('home.satisfied_clients') }}</p>
             </div>
             <div class="text-center">
                 <div class="mb-2 text-4xl font-bold" style="color: #b69246;">500+</div>
-                <p class="text-gray-300">Formations dispensées</p>
+                <p class="text-gray-300">{{ __('home.trainings_delivered') }}</p>
             </div>
             <div class="text-center">
                 <div class="mb-2 text-4xl font-bold" style="color: #b69246;">50+</div>
-                <p class="text-gray-300">Projets accompagnés en Afrique</p>
+                <p class="text-gray-300">{{ __('home.africa_projects') }}</p>
             </div>
             <div class="text-center">
                 <div class="mb-2 text-4xl font-bold" style="color: #b69246;">99%</div>
-                <p class="text-gray-300">Taux de satisfaction</p>
+                <p class="text-gray-300">{{ __('home.satisfaction_rate') }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Certifications Section - Avec images et lien PDF -->
+<section class="py-16" style="background: #000;">
+    <div class="container mx-auto px-4 md:px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">
+                    {{ __('home.certifications_title') }}
+                </h2>
+                <p class="text-lg text-gray-300 max-w-3xl mx-auto">
+                    {{ __('home.certifications_subtitle') }}
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 - Qualiopi -->
+                <div class="p-8 text-center transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                    style="background: #111; border: 1px solid #333;">
+                    <div class="w-20 h-20 flex items-center justify-center rounded-full mx-auto mb-6 overflow-hidden transition-all duration-300 hover:scale-110 hover:rotate-12"
+                        style="background: var(--gold);">
+                        <img src="{{ asset('ac1.WEBP') }}" alt="Qualiopi Certification"
+                            class="object-cover w-full h-full rounded-full">
+                    </div>
+                    <h3 class="text-xl font-bold mb-4" style="color: white;">{{ __('home.qualiopi') }}</h3>
+                    <p class="text-gray-400 mb-3">{{ __('home.qualiopi_description') }}</p>
+                    <p class="text-sm text-gray-500">{{ __('home.qualiopi_detail') }}</p>
+                </div>
+
+                <!-- Card 2 - Préfectoral (avec lien PDF) -->
+                <a href="{{ route('pdf.arrete-modificatif') }}" target="_blank" class="block no-underline">
+                    <div class="p-8 text-center transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer"
+                        style="background: #111; border: 1px solid #333;">
+                        <div class="w-20 h-20 flex items-center justify-center rounded-full mx-auto mb-6 overflow-hidden transition-all duration-300 hover:scale-110 hover:rotate-12"
+                            style="background: var(--gold);">
+                            <img src="{{ asset('ac2.PNG') }}" alt="Arrêté Préfectoral"
+                                class="object-cover w-full h-full rounded-full">
+                        </div>
+                        <h3 class="text-xl font-bold mb-4" style="color: white;">{{ __('home.prefectoral') }}</h3>
+                        <p class="text-gray-400 mb-3">{{ __('home.prefectoral_description') }}</p>
+                        <p class="text-sm text-gray-500">{{ __('home.prefectoral_detail') }}</p>
+                        <div class="mt-4 text-sm text-var(--gold) flex items-center justify-center">
+                            <i class="fas fa-file-pdf mr-2"></i>
+                            <span>{{ __('home.view_arrete_pdf') }}</span>
+                        </div>
+                        <div class="mt-1 text-xs text-gray-500">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            {{ __('home.pdf_label') }}
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Card 3 - Datadock -->
+                <div class="p-8 text-center transition-all duration-300 hover:scale-105 hover:shadow-xl"
+                    style="background: #111; border: 1px solid #333;">
+                    <div class="w-20 h-20 flex items-center justify-center rounded-full mx-auto mb-6 overflow-hidden transition-all duration-300 hover:scale-110 hover:rotate-12"
+                        style="background: var(--gold);">
+                        <img src="{{ asset('ac3.JPG') }}" alt="Datadock Certification"
+                            class="object-cover w-full h-full rounded-full">
+                    </div>
+                    <h3 class="text-xl font-bold mb-4" style="color: white;">{{ __('home.datadock') }}</h3>
+                    <p class="text-gray-400 mb-3">{{ __('home.datadock_description') }}</p>
+                    <p class="text-sm text-gray-500">{{ __('home.datadock_detail') }}</p>
+                </div>
             </div>
         </div>
     </div>
@@ -524,15 +574,15 @@
                         <i class="text-2xl text-white fas fa-user"></i>
                     </div>
                     <div class="company-info text-center md:text-left">
-                        <h3 class="mb-2 text-2xl font-bold">Djok Prestige SAS</h3>
+                        <h3 class="mb-2 text-2xl font-bold">{{ __('home.company_name') }}</h3>
                         <div class="mb-1 text-2xl stars" style="color: #b69246;">★★★★★</div>
-                        <small class="text-sm text-gray-400">15 avis Google</small>
+                        <small class="text-sm text-gray-400">{{ __('home.google_reviews') }}</small>
                         <br>
                         <a href="https://www.google.com/maps/place//data=!4m3!3m2!1s0x47e613e5ed89e9fb:0xf5ac01ba78653a2b!12e1"
                             target="_blank" rel="noopener noreferrer" class="inline-block mt-3">
                             <button
                                 class="px-6 py-2 text-white transition-all duration-300 bg-transparent border border-white btn-review hover:bg-white hover:text-black">
-                                Écrire un avis
+                                {{ __('home.write_review') }}
                             </button>
                         </a>
                     </div>
@@ -565,7 +615,7 @@
                             </div>
                             <div>
                                 <h4 class="font-bold">Lalla Guindo</h4>
-                                <small class="text-sm text-gray-400">il y a 2 ans</small>
+                                <small class="text-sm text-gray-400">{{ __('home.years_ago', ['count' => 2]) }}</small>
                             </div>
                             <i class="ml-auto fab fa-google" style="color: #4285F4;"></i>
                         </div>
@@ -573,7 +623,7 @@
                             <span class="text-xl" style="color: #b69246;">★★★★★</span>
                             <i class="ml-1 text-sm fas fa-check-circle" style="color: #4285F4;"></i>
                         </div>
-                        <p class="text-gray-300">Entreprise au top ! Service impeccable et professionnel.</p>
+                        <p class="text-gray-300">{{ __('home.review1_text') }}</p>
                     </div>
 
                     <!-- Avis 2 -->
@@ -585,7 +635,7 @@
                             </div>
                             <div>
                                 <h4 class="font-bold">Bruno Bouet</h4>
-                                <small class="text-sm text-gray-400">il y a 2 ans</small>
+                                <small class="text-sm text-gray-400">{{ __('home.years_ago', ['count' => 2]) }}</small>
                             </div>
                             <i class="ml-auto fab fa-google" style="color: #4285F4;"></i>
                         </div>
@@ -593,7 +643,7 @@
                             <span class="text-xl" style="color: #b69246;">★★★★★</span>
                             <i class="ml-1 text-sm fas fa-check-circle" style="color: #4285F4;"></i>
                         </div>
-                        <p class="text-gray-300">Directrice très expérimentée et très compétente. Je recommande !</p>
+                        <p class="text-gray-300">{{ __('home.review2_text') }}</p>
                     </div>
 
                     <!-- Avis 3 -->
@@ -605,7 +655,7 @@
                             </div>
                             <div>
                                 <h4 class="font-bold">Aminta B.</h4>
-                                <small class="text-sm text-gray-400">il y a 2 ans</small>
+                                <small class="text-sm text-gray-400">{{ __('home.years_ago', ['count' => 2]) }}</small>
                             </div>
                             <i class="ml-auto fab fa-google" style="color: #4285F4;"></i>
                         </div>
@@ -613,8 +663,7 @@
                             <span class="text-xl" style="color: #b69246;">★★★★★</span>
                             <i class="ml-1 text-sm fas fa-check-circle" style="color: #4285F4;"></i>
                         </div>
-                        <p class="text-gray-300">J'ai fait appel à Djok Prestige pour une prestation ! Je recommande
-                            fortement !!</p>
+                        <p class="text-gray-300">{{ __('home.review3_text') }}</p>
                     </div>
 
                     <!-- Avis 4 -->
@@ -626,7 +675,7 @@
                             </div>
                             <div>
                                 <h4 class="font-bold">Marie Dubois</h4>
-                                <small class="text-sm text-gray-400">il y a 1 an</small>
+                                <small class="text-sm text-gray-400">{{ __('home.year_ago') }}</small>
                             </div>
                             <i class="ml-auto fab fa-google" style="color: #4285F4;"></i>
                         </div>
@@ -634,7 +683,7 @@
                             <span class="text-xl" style="color: #b69246;">★★★★★</span>
                             <i class="ml-1 text-sm fas fa-check-circle" style="color: #4285F4;"></i>
                         </div>
-                        <p class="text-gray-300">Service de VTC excellent, ponctuel et très professionnel.</p>
+                        <p class="text-gray-300">{{ __('home.review4_text') }}</p>
                     </div>
 
                     <!-- Avis 5 -->
@@ -646,7 +695,7 @@
                             </div>
                             <div>
                                 <h4 class="font-bold">Thomas Martin</h4>
-                                <small class="text-sm text-gray-400">il y a 8 mois</small>
+                                <small class="text-sm text-gray-400">{{ __('home.months_ago', ['count' => 8]) }}</small>
                             </div>
                             <i class="ml-auto fab fa-google" style="color: #4285F4;"></i>
                         </div>
@@ -654,8 +703,7 @@
                             <span class="text-xl" style="color: #b69246;">★★★★★</span>
                             <i class="ml-1 text-sm fas fa-check-circle" style="color: #4285F4;"></i>
                         </div>
-                        <p class="text-gray-300">Formation VTC de qualité, équipe pédagogique compétente et à l'écoute.
-                        </p>
+                        <p class="text-gray-300">{{ __('home.review5_text') }}</p>
                     </div>
 
                     <!-- Avis 6 -->
@@ -667,7 +715,7 @@
                             </div>
                             <div>
                                 <h4 class="font-bold">Sophie Laurent</h4>
-                                <small class="text-sm text-gray-400">il y a 6 mois</small>
+                                <small class="text-sm text-gray-400">{{ __('home.months_ago', ['count' => 6]) }}</small>
                             </div>
                             <i class="ml-auto fab fa-google" style="color: #4285F4;"></i>
                         </div>
@@ -675,8 +723,7 @@
                             <span class="text-xl" style="color: #b69246;">★★★★★</span>
                             <i class="ml-1 text-sm fas fa-check-circle" style="color: #4285F4;"></i>
                         </div>
-                        <p class="text-gray-300">Location de véhicule sans souci, entretien parfait et tarif compétitif.
-                        </p>
+                        <p class="text-gray-300">{{ __('home.review6_text') }}</p>
                     </div>
 
                     <!-- Avis 7 -->
@@ -688,7 +735,7 @@
                             </div>
                             <div>
                                 <h4 class="font-bold">Karim S.</h4>
-                                <small class="text-sm text-gray-400">il y a 3 mois</small>
+                                <small class="text-sm text-gray-400">{{ __('home.months_ago', ['count' => 3]) }}</small>
                             </div>
                             <i class="ml-auto fab fa-google" style="color: #4285F4;"></i>
                         </div>
@@ -696,8 +743,7 @@
                             <span class="text-xl" style="color: #b69246;">★★★★★</span>
                             <i class="ml-1 text-sm fas fa-check-circle" style="color: #4285F4;"></i>
                         </div>
-                        <p class="text-gray-300">Accompagnement entrepreneurial exceptionnel pour mon projet en Afrique.
-                        </p>
+                        <p class="text-gray-300">{{ __('home.review7_text') }}</p>
                     </div>
 
                     <!-- Avis 8 -->
@@ -709,7 +755,7 @@
                             </div>
                             <div>
                                 <h4 class="font-bold">Jean Dupont</h4>
-                                <small class="text-sm text-gray-400">il y a 1 mois</small>
+                                <small class="text-sm text-gray-400">{{ __('home.months_ago', ['count' => 1]) }}</small>
                             </div>
                             <i class="ml-auto fab fa-google" style="color: #4285F4;"></i>
                         </div>
@@ -717,8 +763,7 @@
                             <span class="text-xl" style="color: #b69246;">★★★★★</span>
                             <i class="ml-1 text-sm fas fa-check-circle" style="color: #4285F4;"></i>
                         </div>
-                        <p class="text-gray-300">Service conciergerie parfait pour mon arrivée en France. Très
-                            professionnel.</p>
+                        <p class="text-gray-300">{{ __('home.review8_text') }}</p>
                     </div>
 
                     <!-- Avis 9 -->
@@ -730,7 +775,7 @@
                             </div>
                             <div>
                                 <h4 class="font-bold">Alice R.</h4>
-                                <small class="text-sm text-gray-400">il y a 2 semaines</small>
+                                <small class="text-sm text-gray-400">{{ __('home.weeks_ago', ['count' => 2]) }}</small>
                             </div>
                             <i class="ml-auto fab fa-google" style="color: #4285F4;"></i>
                         </div>
@@ -738,8 +783,7 @@
                             <span class="text-xl" style="color: #b69246;">★★★★★</span>
                             <i class="ml-1 text-sm fas fa-check-circle" style="color: #4285F4;"></i>
                         </div>
-                        <p class="text-gray-300">Chauffeur VTC très courtois, voiture propre et trajet en toute
-                            sécurité.</p>
+                        <p class="text-gray-300">{{ __('home.review9_text') }}</p>
                     </div>
 
                     <!-- Avis 10 -->
@@ -751,7 +795,7 @@
                             </div>
                             <div>
                                 <h4 class="font-bold">Paul G.</h4>
-                                <small class="text-sm text-gray-400">il y a 1 semaine</small>
+                                <small class="text-sm text-gray-400">{{ __('home.weeks_ago', ['count' => 1]) }}</small>
                             </div>
                             <i class="ml-auto fab fa-google" style="color: #4285F4;"></i>
                         </div>
@@ -759,8 +803,7 @@
                             <span class="text-xl" style="color: #b69246;">★★★★★</span>
                             <i class="ml-1 text-sm fas fa-check-circle" style="color: #4285F4;"></i>
                         </div>
-                        <p class="text-gray-300">Excellent rapport qualité-prix, je reviendrai certainement pour mes
-                            futurs besoins.</p>
+                        <p class="text-gray-300">{{ __('home.review10_text') }}</p>
                     </div>
                 </div>
             </div>
@@ -768,7 +811,8 @@
     </div>
 </section>
 
-<!-- Styles exactement comme le code original avec pagination -->
+<!-- Les styles CSS restent exactement les mêmes -->
+
 <style>
     /* HERO SECTION - MODIFIÉ POUR CORRIGER L'OPACITÉ */
     .hero {
@@ -1078,32 +1122,32 @@
             max-width: 420px;
             margin: 0 auto;
         }
-        
+
         .grid-cols-1 {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-        
+
         .max-w-md {
             max-width: 320px;
         }
-        
+
         .reviews-slider {
             padding: 0 16px;
         }
-        
+
         .review {
             min-width: 280px;
         }
-        
+
         /* Ajustement pour la carte entreprise sur mobile */
         .company-card {
             align-items: center;
             text-align: center;
             margin-bottom: 20px;
         }
-        
+
         .company-info {
             text-align: center !important;
         }
@@ -1182,7 +1226,7 @@
         .arrow.right {
             display: none;
         }
-        
+
         /* Correction pour le conteneur des cartes de services */
         .justify-items-center {
             justify-items: center;
@@ -1216,6 +1260,11 @@
 
     .arrow {
         transition: all 0.3s ease;
+    }
+
+    /* Styles pour les images de certification */
+    .w-20.h-20 img {
+        object-fit: cover;
     }
 </style>
 

@@ -203,7 +203,8 @@
             <!-- Call to action -->
             @if($newStatus === 'confirme' || $newStatus === 'termine')
             <div style="text-align: center; margin: 30px 0;">
-                <a href="{{ route('formations.mes-formations') }}" class="btn">
+                <!-- CORRECTION ICI : Remplacement de la route problématique -->
+                <a href="{{ url('/dashboard') }}" class="btn">
                     @if($newStatus === 'confirme')
                     Accéder à ma formation
                     @else

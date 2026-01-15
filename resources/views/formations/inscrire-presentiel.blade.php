@@ -1,398 +1,540 @@
 @extends('layouts.main')
 
-@section('title', 'Inscription ' . $formation->title . ' | DJOK PRESTIGE')
+@section('title', __('inscription.title') . ' - ' . $formation->title . ' | DJOK PRESTIGE')
 
 @section('content')
 <div class="min-h-screen bg-gray-50 py-12">
-    <div class="container mx-auto px-6">
-        <div class="max-w-4xl mx-auto">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
             <!-- Breadcrumb -->
             <nav class="mb-8">
                 <ol class="flex items-center space-x-2 text-sm text-gray-600">
                     <li>
-                        <a href="{{ route('home') }}" class="hover:text-yellow-600">Accueil</a>
+                        <a href="{{ route('home') }}" class="hover:text-yellow-600">
+                            @lang('inscription.breadcrumb.home')
+                        </a>
                     </li>
                     <li class="flex items-center">
                         <i class="fas fa-chevron-right text-xs mx-2"></i>
-                        <a href="{{ route('formation') }}" class="hover:text-yellow-600">Formations</a>
+                        <a href="{{ route('formation') }}" class="hover:text-yellow-600">
+                            @lang('inscription.breadcrumb.trainings')
+                        </a>
                     </li>
                     <li class="flex items-center">
                         <i class="fas fa-chevron-right text-xs mx-2"></i>
-                        <span class="text-gray-900 font-medium">{{ $formation->title }}</span>
+                        <a href="{{ route('formation.show', $formation->slug) }}" class="hover:text-yellow-600">
+                            {{ $formation->title }}
+                        </a>
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fas fa-chevron-right text-xs mx-2"></i>
+                        <span class="text-gray-900 font-medium">@lang('inscription.breadcrumb.registration')</span>
                     </li>
                 </ol>
             </nav>
 
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-                <!-- En-tête -->
-                <div class="bg-gradient-to-r from-yellow-600 to-yellow-700 px-8 py-6">
-                    <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">Inscription : {{ $formation->title }}
-                    </h1>
-                    <div class="flex items-center text-yellow-200">
-                        <i class="fas fa-chalkboard-teacher mr-2"></i>
-                        <span>Formation présentielle • {{ $formation->duree }}</span>
-                    </div>
-                </div>
+            <!-- En-tête -->
+            <div class="mb-8 text-center">
+                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                    @lang('inscription.header.title')
+                </h1>
+                <h2 class="text-2xl md:text-3xl font-semibold text-blue-600">
+                    {{ $formation->title }}
+                </h2>
+                <p class="text-gray-600 mt-2">
+                    @lang('inscription.header.format') • {{ $formation->duree }}
+                </p>
+            </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 p-8">
-                    <!-- Colonne gauche : Détails formation -->
-                    <div class="lg:col-span-2">
-                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Formulaire d'inscription</h2>
-
-                        @if(session('success'))
-                        <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle text-green-600 text-xl mr-3"></i>
-                                <div>
-                                    <h4 class="font-bold text-green-800">Inscription envoyée !</h4>
-                                    <p class="text-green-700">{{ session('success') }}</p>
-                                </div>
-                            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Colonne gauche : Formulaire -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+                        <div class="bg-gradient-to-r from-blue-600 to-blue-800 px-8 py-6">
+                            <h2 class="text-2xl md:text-3xl font-bold text-white">
+                                @lang('inscription.form.title')
+                            </h2>
+                            <p class="text-blue-200 mt-2">
+                                @lang('inscription.form.subtitle')
+                            </p>
                         </div>
-                        @endif
 
-                        @if(session('error'))
-                        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="fas fa-exclamation-circle text-red-600 text-xl mr-3"></i>
-                                <div>
-                                    <h4 class="font-bold text-red-800">Erreur</h4>
-                                    <p class="text-red-700">{{ session('error') }}</p>
-                                </div>
-                            </div>
-                        </div>
-                        @endif
-
-                        <form action="{{ route('formation.inscrire.presentiel.store', $formation->id) }}" method="POST">
-                            @csrf
-
-                            <div class="space-y-6">
-                                <!-- Informations personnelles -->
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">
-                                        <i class="fas fa-user mr-2"></i>Informations personnelles
-                                    </h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label class="block text-gray-700 mb-2">Nom *</label>
-                                            <input type="text" name="nom" required
-                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent @error('nom') border-red-500 @enderror"
-                                                value="{{ old('nom') }}" placeholder="Votre nom">
-                                            @error('nom')
-                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-                                        <div>
-                                            <label class="block text-gray-700 mb-2">Prénom *</label>
-                                            <input type="text" name="prenom" required
-                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent @error('prenom') border-red-500 @enderror"
-                                                value="{{ old('prenom') }}" placeholder="Votre prénom">
-                                            @error('prenom')
-                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Contact -->
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">
-                                        <i class="fas fa-address-card mr-2"></i>Coordonnées
-                                    </h3>
-                                    <div class="space-y-4">
-                                        <div>
-                                            <label class="block text-gray-700 mb-2">Email *</label>
-                                            <input type="email" name="email" required
-                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent @error('email') border-red-500 @enderror"
-                                                value="{{ old('email') }}" placeholder="votre@email.com">
-                                            @error('email')
-                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-                                        <div>
-                                            <label class="block text-gray-700 mb-2">Téléphone *</label>
-                                            <input type="tel" name="telephone" required
-                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent @error('telephone') border-red-500 @enderror"
-                                                value="{{ old('telephone') }}" placeholder="01 23 45 67 89">
-                                            @error('telephone')
-                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-                                        <div>
-                                            <label class="block text-gray-700 mb-2">Adresse *</label>
-                                            <input type="text" name="adresse" required
-                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent @error('adresse') border-red-500 @enderror"
-                                                value="{{ old('adresse') }}" placeholder="Numéro et nom de la rue">
-                                            @error('adresse')
-                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                            <div>
-                                                <label class="block text-gray-700 mb-2">Code postal *</label>
-                                                <input type="text" name="code_postal" required
-                                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent @error('code_postal') border-red-500 @enderror"
-                                                    value="{{ old('code_postal') }}" placeholder="75001">
-                                                @error('code_postal')
-                                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                                @enderror
-                                            </div>
-                                            <div class="md:col-span-2">
-                                                <label class="block text-gray-700 mb-2">Ville *</label>
-                                                <input type="text" name="ville" required
-                                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent @error('ville') border-red-500 @enderror"
-                                                    value="{{ old('ville') }}" placeholder="Paris">
-                                                @error('ville')
-                                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Informations spécifiques -->
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">
-                                        <i class="fas fa-id-card mr-2"></i>Informations administratives
-                                    </h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label class="block text-gray-700 mb-2">Date de naissance *</label>
-                                            <input type="date" name="date_naissance" required
-                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent @error('date_naissance') border-red-500 @enderror"
-                                                value="{{ old('date_naissance') }}"
-                                                max="{{ date('Y-m-d', strtotime('-18 years')) }}">
-                                            <small class="text-gray-500 text-sm">Vous devez avoir au moins 18
-                                                ans</small>
-                                            @error('date_naissance')
-                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-                                        <div>
-                                            <label class="block text-gray-700 mb-2">Date d'obtention du permis *</label>
-                                            <input type="date" name="permis_date" required
-                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent @error('permis_date') border-red-500 @enderror"
-                                                value="{{ old('permis_date') }}" max="{{ date('Y-m-d') }}">
-                                            <small class="text-gray-500 text-sm">Permis B depuis au moins 3 ans pour
-                                                VTC</small>
-                                            @error('permis_date')
-                                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Message -->
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">
-                                        <i class="fas fa-comment mr-2"></i>Informations complémentaires
-                                    </h3>
+                        <div class="p-8">
+                            @if(session('error'))
+                            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-exclamation-circle text-red-600 mr-3"></i>
                                     <div>
-                                        <label class="block text-gray-700 mb-2">Message (optionnel)</label>
-                                        <textarea name="message" rows="4"
-                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent @error('message') border-red-500 @enderror"
-                                            placeholder="Précisions, questions, disponibilités...">{{ old('message') }}</textarea>
-                                        @error('message')
-                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                                        @enderror
+                                        <p class="font-medium text-red-800">@lang('inscription.messages.error')</p>
+                                        <p class="text-red-700">{{ session('error') }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+
+                            @if(session('success'))
+                            <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                                    <div>
+                                        <p class="font-medium text-green-800">@lang('inscription.messages.success')</p>
+                                        <p class="text-green-700">{{ session('success') }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            @endif
+
+                            <!-- Note pour utilisateurs connectés -->
+                            @auth
+                            <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-info-circle text-blue-600 mr-3"></i>
+                                    <div>
+                                        <p class="font-medium text-blue-800">@lang('inscription.form.prefilled_info')
+                                        </p>
+                                        <p class="text-blue-700">
+                                            @lang('inscription.form.connected_as') <strong>{{ auth()->user()->email
+                                                }}</strong>.
+                                            @lang('inscription.form.info_prefilled')
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            @endauth
+
+                            <form action="{{ route('formation.inscrire.presentiel.store', $formation->id) }}"
+                                method="POST" class="space-y-6">
+                                @csrf
+
+                                <!-- Section 1: Informations personnelles -->
+                                <div class="border-b border-gray-200 pb-6">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                                        <i class="fas fa-user mr-2 text-blue-600"></i>
+                                        @lang('inscription.form.sections.personal_info')
+                                    </h3>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <!-- Civilité -->
+                                        <div>
+                                            <label class="block text-gray-700 mb-2">
+                                                @lang('inscription.form.fields.civility') <span
+                                                    class="text-red-500">*</span>
+                                            </label>
+                                            <div class="flex space-x-4">
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="civilite" value="monsieur"
+                                                        class="h-4 w-4 text-blue-600" {{ old('civilite',
+                                                        auth()->user()->civilite ?? 'monsieur')=='monsieur' ? 'checked'
+                                                    : '' }}>
+                                                    <span
+                                                        class="ml-2 text-gray-700">@lang('inscription.form.options.mr')</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="radio" name="civilite" value="madame"
+                                                        class="h-4 w-4 text-blue-600" {{ old('civilite',
+                                                        auth()->user()->civilite ?? '')=='madame' ? 'checked' : '' }}>
+                                                    <span
+                                                        class="ml-2 text-gray-700">@lang('inscription.form.options.mrs')</span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Nom -->
+                                        <div>
+                                            <label for="nom" class="block text-gray-700 mb-2">
+                                                @lang('inscription.form.fields.last_name') <span
+                                                    class="text-red-500">*</span>
+                                            </label>
+                                            <input type="text" name="nom" id="nom" required
+                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                placeholder="@lang('inscription.form.placeholders.last_name')"
+                                                value="{{ old('nom', auth()->user()->name ?? '') }}">
+                                            @error('nom')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Prénom -->
+                                        <div>
+                                            <label for="prenom" class="block text-gray-700 mb-2">
+                                                @lang('inscription.form.fields.first_name') <span
+                                                    class="text-red-500">*</span>
+                                            </label>
+                                            <input type="text" name="prenom" id="prenom" required
+                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                placeholder="@lang('inscription.form.placeholders.first_name')"
+                                                value="{{ old('prenom', auth()->user()->prenom ?? '') }}">
+                                            @error('prenom')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Email -->
+                                        <div>
+                                            <label for="email" class="block text-gray-700 mb-2">
+                                                @lang('inscription.form.fields.email') <span
+                                                    class="text-red-500">*</span>
+                                            </label>
+                                            <input type="email" name="email" id="email" required
+                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                placeholder="@lang('inscription.form.placeholders.email')"
+                                                value="{{ old('email', auth()->user()->email ?? '') }}">
+                                            @error('email')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Téléphone -->
+                                        <div>
+                                            <label for="telephone" class="block text-gray-700 mb-2">
+                                                @lang('inscription.form.fields.phone') <span
+                                                    class="text-red-500">*</span>
+                                            </label>
+                                            <input type="tel" name="telephone" id="telephone" required
+                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                placeholder="@lang('inscription.form.placeholders.phone')"
+                                                value="{{ old('telephone', auth()->user()->phone ?? '') }}">
+                                            @error('telephone')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Date de naissance -->
+                                        <div>
+                                            <label for="date_naissance" class="block text-gray-700 mb-2">
+                                                @lang('inscription.form.fields.birth_date') <span
+                                                    class="text-red-500">*</span>
+                                            </label>
+                                            <input type="date" name="date_naissance" id="date_naissance" required
+                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value="{{ old('date_naissance', auth()->user()->date_naissance ?? '') }}"
+                                                max="{{ date('Y-m-d', strtotime('-16 years')) }}"
+                                                min="{{ date('Y-m-d', strtotime('-70 years')) }}">
+                                            <p class="mt-1 text-xs text-gray-500">
+                                                @lang('inscription.form.placeholders.date_format') •
+                                                @lang('inscription.form.placeholders.min_age')
+                                            </p>
+                                            @error('date_naissance')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Date d'obtention du permis -->
+                                        <div>
+                                            <label for="permis_date" class="block text-gray-700 mb-2">
+                                                @lang('inscription.form.fields.license_date') <span
+                                                    class="text-red-500">*</span>
+                                            </label>
+                                            <input type="date" name="permis_date" id="permis_date" required
+                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                value="{{ old('permis_date', auth()->user()->permis_date ?? '') }}"
+                                                max="{{ date('Y-m-d') }}"
+                                                min="{{ date('Y-m-d', strtotime('-50 years')) }}">
+                                            @error('permis_date')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Financement -->
-                                <div>
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-4 border-b pb-2">
-                                        <i class="fas fa-euro-sign mr-2"></i>Financement
+                                <!-- Section 2: Adresse -->
+                                <div class="border-b border-gray-200 pb-6">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                                        <i class="fas fa-home mr-2 text-blue-600"></i>
+                                        @lang('inscription.form.sections.address')
                                     </h3>
+
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <!-- Adresse -->
+                                        <div class="md:col-span-2">
+                                            <label for="adresse" class="block text-gray-700 mb-2">
+                                                @lang('inscription.form.fields.address') <span
+                                                    class="text-red-500">*</span>
+                                            </label>
+                                            <input type="text" name="adresse" id="adresse" required
+                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                placeholder="@lang('inscription.form.placeholders.address')"
+                                                value="{{ old('adresse', auth()->user()->address ?? '') }}">
+                                            @error('adresse')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Code postal -->
+                                        <div>
+                                            <label for="code_postal" class="block text-gray-700 mb-2">
+                                                @lang('inscription.form.fields.zip_code') <span
+                                                    class="text-red-500">*</span>
+                                            </label>
+                                            <input type="text" name="code_postal" id="code_postal" required
+                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                placeholder="@lang('inscription.form.placeholders.zip_code')"
+                                                value="{{ old('code_postal', auth()->user()->code_postal ?? '') }}">
+                                            @error('code_postal')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+
+                                        <!-- Ville -->
+                                        <div>
+                                            <label for="ville" class="block text-gray-700 mb-2">
+                                                @lang('inscription.form.fields.city') <span
+                                                    class="text-red-500">*</span>
+                                            </label>
+                                            <input type="text" name="ville" id="ville" required
+                                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                placeholder="@lang('inscription.form.placeholders.city')"
+                                                value="{{ old('ville', auth()->user()->city ?? '') }}">
+                                            @error('ville')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Section 3: Financement -->
+                                <div class="border-b border-gray-200 pb-6">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                                        <i class="fas fa-euro-sign mr-2 text-blue-600"></i>
+                                        @lang('inscription.form.sections.funding')
+                                    </h3>
+
                                     <div class="space-y-3">
-                                        <div
-                                            class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-                                            <input type="radio" id="financement_perso" name="financement" value="perso"
-                                                {{ old('financement', 'perso' )==='perso' ? 'checked' : '' }}
-                                                class="h-5 w-5 text-yellow-600 focus:ring-yellow-500">
-                                            <label for="financement_perso"
-                                                class="ml-3 block text-gray-900 cursor-pointer">
-                                                <span class="font-medium">Financement personnel</span>
-                                                <p class="text-sm text-gray-600">Paiement direct</p>
-                                            </label>
-                                        </div>
-                                        <div
-                                            class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-                                            <input type="radio" id="financement_cpf" name="financement" value="cpf" {{
-                                                old('financement')==='cpf' ? 'checked' : '' }}
-                                                class="h-5 w-5 text-yellow-600 focus:ring-yellow-500">
-                                            <label for="financement_cpf"
-                                                class="ml-3 block text-gray-900 cursor-pointer">
-                                                <span class="font-medium">CPF (Compte Personnel de Formation)</span>
-                                                <p class="text-sm text-gray-600">Nous vous accompagnerons dans les
-                                                    démarches</p>
-                                            </label>
-                                        </div>
-                                        <div
-                                            class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-                                            <input type="radio" id="financement_pole_emploi" name="financement"
-                                                value="pole_emploi" {{ old('financement')==='pole_emploi' ? 'checked'
-                                                : '' }} class="h-5 w-5 text-yellow-600 focus:ring-yellow-500">
-                                            <label for="financement_pole_emploi"
-                                                class="ml-3 block text-gray-900 cursor-pointer">
-                                                <span class="font-medium">Pôle Emploi</span>
-                                                <p class="text-sm text-gray-600">Aide à la formation</p>
-                                            </label>
-                                        </div>
+                                        <label
+                                            class="flex items-center p-4 border border-gray-200 rounded-lg hover:border-blue-500 cursor-pointer">
+                                            <input type="radio" name="financement" value="perso"
+                                                class="h-4 w-4 text-blue-600" {{ old('financement', 'perso' )=='perso'
+                                                ? 'checked' : '' }}>
+                                            <div class="ml-3">
+                                                <span
+                                                    class="font-medium text-gray-900">@lang('inscription.form.funding.personal')</span>
+                                                <p class="text-sm text-gray-600">
+                                                    @lang('inscription.form.funding.personal_desc')</p>
+                                            </div>
+                                        </label>
+
+                                        <label
+                                            class="flex items-center p-4 border border-gray-200 rounded-lg hover:border-blue-500 cursor-pointer">
+                                            <input type="radio" name="financement" value="cpf"
+                                                class="h-4 w-4 text-blue-600" {{ old('financement')=='cpf' ? 'checked'
+                                                : '' }}>
+                                            <div class="ml-3">
+                                                <span
+                                                    class="font-medium text-gray-900">@lang('inscription.form.funding.cpf')</span>
+                                                <p class="text-sm text-gray-600">
+                                                    @lang('inscription.form.funding.cpf_desc')</p>
+                                            </div>
+                                        </label>
+
+                                        <label
+                                            class="flex items-center p-4 border border-gray-200 rounded-lg hover:border-blue-500 cursor-pointer">
+                                            <input type="radio" name="financement" value="pole_emploi"
+                                                class="h-4 w-4 text-blue-600" {{ old('financement')=='pole_emploi'
+                                                ? 'checked' : '' }}>
+                                            <div class="ml-3">
+                                                <span
+                                                    class="font-medium text-gray-900">@lang('inscription.form.funding.pole_emploi')</span>
+                                                <p class="text-sm text-gray-600">
+                                                    @lang('inscription.form.funding.pole_emploi_desc')</p>
+                                            </div>
+                                        </label>
                                     </div>
                                     @error('financement')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
 
-                                <!-- CGV -->
-                                <div>
-                                    <div class="flex items-start p-3 bg-gray-50 rounded-lg">
-                                        <input type="checkbox" id="terms" name="terms" value="1" required {{
-                                            old('terms') ? 'checked' : '' }}
-                                            class="mt-1 mr-3 h-5 w-5 text-yellow-600 rounded focus:ring-yellow-500 @error('terms') border-red-500 @enderror">
+                                <!-- Section 4: Message supplémentaire -->
+                                <div class="border-b border-gray-200 pb-6">
+                                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                                        <i class="fas fa-comment-alt mr-2 text-blue-600"></i>
+                                        @lang('inscription.form.sections.additional_info')
+                                    </h3>
+
+                                    <div>
+                                        <label for="message" class="block text-gray-700 mb-2">
+                                            @lang('inscription.form.fields.message') <span
+                                                class="text-gray-500 text-sm">(@lang('inscription.form.fields.optional'))</span>
+                                        </label>
+                                        <textarea name="message" id="message" rows="4"
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            placeholder="@lang('inscription.form.placeholders.message')">{{ old('message') }}</textarea>
+                                        <p class="mt-1 text-xs text-gray-500">
+                                            @lang('inscription.form.placeholders.message_desc')
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Section 5: CGV -->
+                                <div class="pb-6">
+                                    <div class="flex items-start">
+                                        <input type="checkbox" name="terms" id="terms" required
+                                            class="mt-1 mr-3 h-5 w-5 text-blue-600 rounded focus:ring-blue-500" {{
+                                            old('terms') ? 'checked' : '' }}>
                                         <label for="terms" class="text-gray-700">
-                                            J'accepte les <a href="{{ route('cgu') }}" target="_blank"
-                                                class="text-yellow-600 hover:underline font-medium">conditions générales
-                                                d'utilisation</a>
-                                            et j'ai pris connaissance de la <a href="{{ route('rgpd') }}"
-                                                target="_blank"
-                                                class="text-yellow-600 hover:underline font-medium">politique de
-                                                confidentialité</a>.
+                                            @lang('inscription.form.terms.accept')
+                                            <a href="{{ route('cgu') }}"
+                                                class="text-blue-600 hover:underline font-medium">
+                                                @lang('inscription.form.terms.terms')
+                                            </a>
+                                            @lang('inscription.form.terms.and')
+                                            <a href="{{ route('rgpd') }}"
+                                                class="text-blue-600 hover:underline font-medium">
+                                                @lang('inscription.form.terms.privacy')
+                                            </a>
+                                            . <span class="text-red-500">*</span>
                                         </label>
                                     </div>
                                     @error('terms')
-                                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
 
                                 <!-- Bouton de soumission -->
-                                <div>
+                                <div class="pt-4">
                                     <button type="submit"
-                                        class="w-full py-4 bg-yellow-600 text-white font-bold rounded-lg hover:bg-yellow-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                                        id="submit-btn">
+                                        class="w-full py-4 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center">
                                         <i class="fas fa-paper-plane mr-3"></i>
-                                        <span id="submit-text">Envoyer ma demande d'inscription</span>
-                                        <span id="loading-spinner" class="hidden ml-3">
-                                            <i class="fas fa-spinner fa-spin"></i>
-                                        </span>
+                                        @lang('inscription.form.submit')
                                     </button>
-                                    <p class="text-center text-sm text-gray-600 mt-3">
-                                        Notre équipe vous contactera sous 48h pour confirmer votre inscription.
+                                    <p class="mt-3 text-center text-sm text-gray-600">
+                                        @lang('inscription.form.confirmation')
                                     </p>
                                 </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colonne droite : Informations -->
+                <div class="space-y-6">
+                    <!-- Résumé formation -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                            <i class="fas fa-info-circle mr-2 text-blue-600"></i>
+                            @lang('inscription.summary.title')
+                        </h3>
+
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-1">@lang('inscription.summary.training')</h4>
+                                <p class="text-gray-600">{{ $formation->title }}</p>
                             </div>
-                        </form>
+
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-1">@lang('inscription.summary.duration')</h4>
+                                <p class="text-gray-600">{{ $formation->duree }}</p>
+                            </div>
+
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-1">@lang('inscription.summary.format')</h4>
+                                <p class="text-gray-600">{{ $formation->format_affichage ??
+                                    __('inscription.summary.in_person') }}</p>
+                            </div>
+
+                            <div>
+                                <h4 class="font-medium text-gray-900 mb-1">@lang('inscription.summary.price')</h4>
+                                <p class="text-2xl font-bold text-yellow-600">
+                                    {{ $formation->price ? number_format((float) $formation->price, 0, ',', ' ') . ' €'
+                                    : __('inscription.summary.quote') }}
+                                </p>
+                                @if($formation->frais_examen && (float) $formation->frais_examen > 0)
+                                <p class="text-sm text-gray-600">
+                                    + {{ number_format((float) $formation->frais_examen, 0, ',', ' ') }} €
+                                    @lang('inscription.summary.exam_fees')
+                                </p>
+                                @endif
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Colonne droite : Récapitulatif -->
-                    <div>
-                        <div class="bg-gray-50 rounded-xl p-6 sticky top-6">
-                            <h3 class="text-xl font-bold text-gray-900 mb-6">Récapitulatif</h3>
+                    <!-- Programme -->
+                    @if($formation->program && count($formation->program) > 0)
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                            <i class="fas fa-list-alt mr-2 text-blue-600"></i>
+                            @lang('inscription.program.title')
+                        </h3>
 
-                            <!-- Formation -->
-                            <div class="mb-6 p-4 bg-white rounded-lg border border-gray-200">
-                                <h4 class="font-bold text-gray-900 mb-2">{{ $formation->title }}</h4>
-                                <div class="space-y-2 text-sm text-gray-600">
-                                    <div class="flex justify-between">
-                                        <span>Durée :</span>
-                                        <span class="font-medium">{{ $formation->duree }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span>Format :</span>
-                                        <span class="font-medium">{{ $formation->format_affichage }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span>Frais examen :</span>
-                                        <span
-                                            class="{{ $formation->frais_examen == 'Inclus' ? 'text-green-600' : 'text-gray-500' }}">
-                                            {{ $formation->frais_examen }}
-                                        </span>
-                                    </div>
+                        <ul class="space-y-2">
+                            @foreach(array_slice($formation->program, 0, 5) as $module)
+                            <li class="flex items-start text-sm">
+                                <i class="fas fa-check text-green-500 mr-2 mt-1 text-xs"></i>
+                                <span class="text-gray-600">{{ $module }}</span>
+                            </li>
+                            @endforeach
+                            @if(count($formation->program) > 5)
+                            <li class="text-sm text-blue-600 font-medium">
+                                + {{ count($formation->program) - 5 }} @lang('inscription.program.other_modules')
+                            </li>
+                            @endif
+                        </ul>
+                    </div>
+                    @endif
+
+                    <!-- Documents requis -->
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                            <i class="fas fa-file-alt mr-2 text-yellow-600"></i>
+                            @lang('inscription.documents.title')
+                        </h3>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center text-sm">
+                                <i class="fas fa-id-card text-yellow-600 mr-3 text-sm"></i>
+                                <span class="text-gray-700">@lang('inscription.documents.id_copy')</span>
+                            </div>
+                            <div class="flex items-center text-sm">
+                                <i class="fas fa-home text-yellow-600 mr-3 text-sm"></i>
+                                <span class="text-gray-700">@lang('inscription.documents.residence_proof')</span>
+                            </div>
+                            <div class="flex items-center text-sm">
+                                <i class="fas fa-car text-yellow-600 mr-3 text-sm"></i>
+                                <span class="text-gray-700">@lang('inscription.documents.driving_license')</span>
+                            </div>
+                            <div class="flex items-center text-sm">
+                                <i class="fas fa-camera text-yellow-600 mr-3 text-sm"></i>
+                                <span class="text-gray-700">@lang('inscription.documents.id_photo')</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 p-3 bg-white rounded-lg">
+                            <p class="text-sm text-gray-700">
+                                <i class="fas fa-envelope mr-2 text-blue-600"></i>
+                                @lang('inscription.documents.send_to')
+                            </p>
+                            <a href="mailto:formations@djokprestige.com"
+                                class="block mt-1 text-blue-600 hover:underline font-medium">
+                                formations@djokprestige.com
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Contact -->
+                    <div class="bg-blue-50 rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                            <i class="fas fa-headset mr-2 text-blue-600"></i>
+                            @lang('inscription.contact.title')
+                        </h3>
+
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-phone-alt text-blue-600"></i>
                                 </div>
-                                <div class="mt-4 pt-4 border-t border-gray-200">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-gray-700">Prix :</span>
-                                        <span class="text-2xl font-bold text-yellow-600">
-                                            {{ number_format($formation->price, 0, ',', ' ') }} €
-                                        </span>
-                                    </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">01 76 38 00 17</p>
+                                    <p class="text-sm text-gray-600">@lang('inscription.contact.phone_hours')</p>
                                 </div>
                             </div>
 
-                            <!-- Avantages -->
-                            <div class="mb-6">
-                                <h4 class="font-bold text-gray-900 mb-3">Inclus dans votre formation</h4>
-                                <ul class="space-y-2">
-                                    @if($formation->included_services && count($formation->included_services) > 0)
-                                    @foreach($formation->included_services as $service)
-                                    <li class="flex items-center">
-                                        <i class="fas fa-check text-green-500 mr-2"></i>
-                                        <span class="text-sm">{{ $service }}</span>
-                                    </li>
-                                    @endforeach
-                                    @else
-                                    <li class="flex items-center">
-                                        <i class="fas fa-check text-green-500 mr-2"></i>
-                                        <span class="text-sm">Manuel de formation complet</span>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <i class="fas fa-check text-green-500 mr-2"></i>
-                                        <span class="text-sm">Support pédagogique</span>
-                                    </li>
-                                    <li class="flex items-center">
-                                        <i class="fas fa-check text-green-500 mr-2"></i>
-                                        <span class="text-sm">Accompagnement administratif</span>
-                                    </li>
-                                    @endif
-                                </ul>
-                            </div>
-
-                            <!-- Procédure -->
-                            <div class="mb-6">
-                                <h4 class="font-bold text-gray-900 mb-3">Procédure d'inscription</h4>
-                                <ol class="space-y-3 text-sm">
-                                    <li class="flex items-start">
-                                        <span
-                                            class="flex-shrink-0 w-6 h-6 bg-yellow-100 text-yellow-800 rounded-full flex items-center justify-center mr-2 text-xs font-bold">1</span>
-                                        <span>Remplissez ce formulaire</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <span
-                                            class="flex-shrink-0 w-6 h-6 bg-yellow-100 text-yellow-800 rounded-full flex items-center justify-center mr-2 text-xs font-bold">2</span>
-                                        <span>Nous vous contactons sous 48h</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <span
-                                            class="flex-shrink-0 w-6 h-6 bg-yellow-100 text-yellow-800 rounded-full flex items-center justify-center mr-2 text-xs font-bold">3</span>
-                                        <span>Validation de votre dossier</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <span
-                                            class="flex-shrink-0 w-6 h-6 bg-yellow-100 text-yellow-800 rounded-full flex items-center justify-center mr-2 text-xs font-bold">4</span>
-                                        <span>Démarrage de la formation</span>
-                                    </li>
-                                </ol>
-                            </div>
-
-                            <!-- Assistance -->
-                            <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                                <h4 class="font-bold text-yellow-900 mb-2">Besoin d'aide ?</h4>
-                                <p class="text-yellow-800 text-sm mb-3">
-                                    Notre équipe est à votre disposition pour toute question.
-                                </p>
-                                <div class="space-y-2">
-                                    <div class="flex items-center text-yellow-800">
-                                        <i class="fas fa-phone-alt text-yellow-600 mr-2"></i>
-                                        <span class="text-sm">01 76 38 00 17</span>
-                                    </div>
-                                    <div class="flex items-center text-yellow-800">
-                                        <i class="fas fa-envelope text-yellow-600 mr-2"></i>
-                                        <span class="text-sm">formation@djokprestige.com</span>
-                                    </div>
-                                    <div class="flex items-center text-yellow-800">
-                                        <i class="fas fa-clock text-yellow-600 mr-2"></i>
-                                        <span class="text-sm">Lun-Ven 9h-19h</span>
-                                    </div>
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-envelope text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">formations@djokprestige.com</p>
+                                    <p class="text-sm text-gray-600">@lang('inscription.contact.email_response')</p>
                                 </div>
                             </div>
                         </div>
@@ -402,10 +544,10 @@
 
             <!-- Retour -->
             <div class="mt-8 text-center">
-                <a href="{{ route('formation') }}"
+                <a href="{{ route('formation.show', $formation->slug) }}"
                     class="inline-flex items-center px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-300">
                     <i class="fas fa-arrow-left mr-2"></i>
-                    Retour aux formations
+                    @lang('inscription.back_button')
                 </a>
             </div>
         </div>
@@ -414,173 +556,187 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const form = document.querySelector('form');
-        const submitBtn = document.getElementById('submit-btn');
-        const submitText = document.getElementById('submit-text');
-        const loadingSpinner = document.getElementById('loading-spinner');
-        const termsCheckbox = document.getElementById('terms');
-        
-        // Validation avant soumission
-        form.addEventListener('submit', function(e) {
-            // Vérifier les termes
-            if (!termsCheckbox.checked) {
-                e.preventDefault();
-                alert('Veuillez accepter les conditions générales d\'utilisation.');
-                termsCheckbox.focus();
-                return false;
-            }
-            
-            // Vérifier l'âge (au moins 18 ans)
-            const dateNaissance = document.querySelector('input[name="date_naissance"]');
-            if (dateNaissance.value) {
-                const birthDate = new Date(dateNaissance.value);
-                const today = new Date();
-                let age = today.getFullYear() - birthDate.getFullYear();
-                const monthDiff = today.getMonth() - birthDate.getMonth();
-                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-                    age--;
-                }
-                
-                if (age < 18) {
-                    e.preventDefault();
-                    alert('Vous devez avoir au moins 18 ans pour vous inscrire à cette formation.');
-                    dateNaissance.focus();
-                    return false;
-                }
-            }
-            
-            // Vérifier que le permis a au moins 3 ans (pour VTC)
-            const permisDate = document.querySelector('input[name="permis_date"]');
-            if (permisDate.value) {
-                const permis = new Date(permisDate.value);
-                const today = new Date();
-                let years = today.getFullYear() - permis.getFullYear();
-                const monthDiff = today.getMonth() - permis.getMonth();
-                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < permis.getDate())) {
-                    years--;
-                }
-                
-                if (years < 3) {
-                    if (!confirm('Le permis de conduire doit être obtenu depuis au moins 3 ans pour l\'examen VTC. Souhaitez-vous tout de même continuer ?')) {
-                        e.preventDefault();
-                        permisDate.focus();
-                        return false;
-                    }
-                }
-            }
-            
-            // Activer le loading
-            submitBtn.disabled = true;
-            submitText.textContent = 'Envoi en cours...';
-            loadingSpinner.classList.remove('hidden');
-            submitBtn.classList.add('opacity-75', 'cursor-wait');
-        });
-        
-        // Validation en temps réel
-        function validateField(field) {
-            if (field.value.trim() === '') {
+    // Validation des dates
+    const dateNaissance = document.getElementById('date_naissance');
+    const permisDate = document.getElementById('permis_date');
+
+    // Calculer les dates limites
+    const today = new Date();
+    const minNaissance = new Date();
+    minNaissance.setFullYear(today.getFullYear() - 70);
+
+    const maxNaissance = new Date();
+    maxNaissance.setFullYear(today.getFullYear() - 16);
+
+    const minPermis = new Date();
+    minPermis.setFullYear(today.getFullYear() - 50);
+
+    // Formater les dates pour les attributs HTML
+    function formatDateForInput(date) {
+        return date.toISOString().split('T')[0];
+    }
+
+    // Définir les attributs (déjà fait dans le HTML, mais on peut vérifier)
+    if (dateNaissance) {
+        dateNaissance.min = formatDateForInput(minNaissance);
+        dateNaissance.max = formatDateForInput(maxNaissance);
+    }
+
+    if (permisDate) {
+        permisDate.min = formatDateForInput(minPermis);
+        permisDate.max = formatDateForInput(today);
+    }
+
+    // Validation en temps réel
+    const form = document.querySelector('form');
+    const submitBtn = form.querySelector('button[type="submit"]');
+
+    form.addEventListener('submit', function(e) {
+        let isValid = true;
+        let errorMessage = '';
+
+        // Vérifier les champs requis
+        const requiredFields = form.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
                 field.classList.add('border-red-500');
-                return false;
+                errorMessage = '@lang("inscription.validation.required_fields")';
             } else {
                 field.classList.remove('border-red-500');
-                return true;
+            }
+        });
+
+        // Vérifier la date de naissance
+        if (dateNaissance.value) {
+            const birthDate = new Date(dateNaissance.value);
+            const age = today.getFullYear() - birthDate.getFullYear();
+
+            if (age < 16) {
+                isValid = false;
+                dateNaissance.classList.add('border-red-500');
+                errorMessage = '@lang("inscription.validation.min_age")';
             }
         }
-        
-        // Écouter les changements sur les champs requis
-        const requiredFields = form.querySelectorAll('input[required], textarea[required]');
-        requiredFields.forEach(field => {
-            field.addEventListener('blur', function() {
-                validateField(this);
-            });
-        });
-        
-        // Mettre à jour l'état du bouton en fonction des termes
-        termsCheckbox.addEventListener('change', function() {
-            submitBtn.disabled = !this.checked;
-        });
-        
-        // Initialiser l'état du bouton
-        submitBtn.disabled = !termsCheckbox.checked;
-        
-        // Formatage automatique du téléphone
-        const phoneInput = document.querySelector('input[name="telephone"]');
-        phoneInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 2) {
-                value = value.match(/(\d{0,2})(\d{0,2})(\d{0,2})(\d{0,2})(\d{0,2})/);
-                e.target.value = !value[2] ? value[1] : value[1] + ' ' + value[2] + (value[3] ? ' ' + value[3] : '') + (value[4] ? ' ' + value[4] : '') + (value[5] ? ' ' + value[5] : '');
+
+        // Vérifier la date du permis
+        if (permisDate.value) {
+            const permis = new Date(permisDate.value);
+            if (permis > today) {
+                isValid = false;
+                permisDate.classList.add('border-red-500');
+                errorMessage = '@lang("inscription.validation.license_future")';
             }
-        });
-        
-        // Limiter la date de naissance (au moins 18 ans)
-        const birthDateInput = document.querySelector('input[name="date_naissance"]');
-        const maxBirthDate = new Date();
-        maxBirthDate.setFullYear(maxBirthDate.getFullYear() - 18);
-        birthDateInput.max = maxBirthDate.toISOString().split('T')[0];
-        
-        // Limiter la date du permis (pas dans le futur)
-        const permisDateInput = document.querySelector('input[name="permis_date"]');
-        const today = new Date().toISOString().split('T')[0];
-        permisDateInput.max = today;
-        
-        // Auto-sélection de Paris pour le code postal
-        const codePostalInput = document.querySelector('input[name="code_postal"]');
-        const villeInput = document.querySelector('input[name="ville"]');
-        
-        codePostalInput.addEventListener('change', function() {
-            const code = this.value.trim();
-            if (code.startsWith('75')) {
-                villeInput.value = 'Paris';
+        }
+
+        if (!isValid) {
+            e.preventDefault();
+
+            // Afficher un message d'erreur
+            let errorDiv = document.querySelector('.error-message');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message mb-4 p-3 bg-red-50 text-red-700 rounded-lg';
+                form.prepend(errorDiv);
             }
-        });
-        
-        // Restaurer les données en cas de retour arrière
-        window.addEventListener('pageshow', function(event) {
-            if (event.persisted) {
-                location.reload();
-            }
-        });
+            errorDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span>${errorMessage}</span>
+                </div>
+            `;
+
+            // Scroll vers l'erreur
+            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
     });
+
+    // Animation d'entrée
+    const cards = document.querySelectorAll('.bg-white, .bg-yellow-50, .bg-blue-50');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+
+        setTimeout(() => {
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, 100 * index);
+    });
+});
 </script>
 
 <style>
-    /* Styles pour les champs invalid */
+    /* Styles pour améliorer la visibilité des champs */
+    input,
+    textarea,
+    select {
+        background-color: white !important;
+        color: #374151 !important;
+        border-color: #d1d5db !important;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: #9ca3af !important;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        background-color: white !important;
+        color: #374151 !important;
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    }
+
+    /* Pour les champs en mode sombre si activé */
+    @media (prefers-color-scheme: dark) {
+
+        input,
+        textarea,
+        select {
+            background-color: white !important;
+            color: #374151 !important;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #6b7280 !important;
+        }
+    }
+
+    /* Styles existants */
     input:invalid,
     textarea:invalid {
-        border-color: #f87171;
+        border-color: #e53e3e;
     }
 
     input:valid,
     textarea:valid {
-        border-color: #d1d5db;
+        border-color: #cbd5e0;
     }
 
-    /* Animation du bouton */
-    @keyframes pulse {
+    .error-message {
+        animation: slideIn 0.3s ease;
+    }
 
-        0%,
-        100% {
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
             opacity: 1;
-        }
-
-        50% {
-            opacity: 0.8;
+            transform: translateY(0);
         }
     }
 
-    #submit-btn:disabled {
-        animation: pulse 2s infinite;
-    }
-
-    /* Style pour les radios sélectionnées */
-    input[type="radio"]:checked+label {
-        font-weight: 600;
-    }
-
-    /* Style pour les champs focus */
-    .focus\:ring-yellow-500:focus {
-        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+    @media (max-width: 768px) {
+        .grid {
+            grid-template-columns: 1fr;
+        }
     }
 </style>
 @endsection

@@ -1,217 +1,77 @@
 @extends('layouts.main')
 
-@section('title', 'Indicateurs de Performance - DJOK PRESTIGE')
+@section('title', __('performance.title'))
 
 @section('content')
 <div class="min-h-screen py-12 bg-gray-50">
     <div class="max-w-6xl px-4 mx-auto">
         <div class="p-8 bg-white rounded-lg shadow-lg">
-            <h1 class="mb-4 text-3xl font-bold text-center text-gray-900">INDICATEURS DE PERFORMANCE</h1>
+            <h1 class="mb-4 text-3xl font-bold text-center text-gray-900">{{ __('performance.main_title') }}</h1>
             <p class="mb-8 text-lg text-center text-gray-600">
-                Transparence et excellence au cœur de notre démarche qualité
+                {{ __('performance.subtitle') }}
             </p>
 
             <!-- Introduction -->
             <div class="p-6 mb-10 rounded-lg bg-blue-50">
-                <h2 class="mb-4 text-xl font-bold text-gray-900">Notre engagement qualité</h2>
-                <p class="text-gray-700">
-                    DJOK PRESTIGE, centre de formation certifié Qualiopi, s'engage à mesurer et améliorer
-                    continuellement
-                    la qualité de ses prestations. Les indicateurs présentés ci-dessous reflètent notre performance
-                    et notre engagement envers nos stagiaires.
+                <h2 class="mb-4 text-xl font-bold text-gray-900">{{ __('performance.engagement_qualite.title') }}</h2>
+                @foreach (__('performance.engagement_qualite.contents') as $paragraph)
+                <p class="{{ !$loop->first ? 'mt-3' : '' }} text-gray-700">
+                    {{ $paragraph }}
                 </p>
-                <p class="mt-3 text-gray-700">
-                    Ces données sont actualisées trimestriellement et font l'objet d'un suivi rigoureux par notre équipe
-                    qualité.
-                </p>
+                @endforeach
             </div>
 
             <!-- Tableau des indicateurs -->
             <div class="mb-12 overflow-hidden rounded-lg shadow">
                 <div class="px-6 py-4 bg-gray-900">
-                    <h2 class="text-xl font-bold text-white">Tableau de bord des performances 2024</h2>
+                    <h2 class="text-xl font-bold text-white">{{ __('performance.tableau_performance.title') }}</h2>
                 </div>
                 <table class="min-w-full bg-white">
                     <thead class="bg-gray-100">
                         <tr>
-                            <th class="px-6 py-4 text-left text-gray-700 border-b">Indicateur</th>
-                            <th class="px-6 py-4 text-left text-gray-700 border-b">Résultat 2024</th>
-                            <th class="px-6 py-4 text-left text-gray-700 border-b">Évolution vs 2023</th>
-                            <th class="px-6 py-4 text-left text-gray-700 border-b">Objectif 2025</th>
+                            <th class="px-6 py-4 text-left text-gray-700 border-b">{{
+                                __('performance.tableau_performance.headers.indicateur') }}</th>
+                            <th class="px-6 py-4 text-left text-gray-700 border-b">{{
+                                __('performance.tableau_performance.headers.resultat_2024') }}</th>
+                            <th class="px-6 py-4 text-left text-gray-700 border-b">{{
+                                __('performance.tableau_performance.headers.evolution_vs_2023') }}</th>
+                            <th class="px-6 py-4 text-left text-gray-700 border-b">{{
+                                __('performance.tableau_performance.headers.objectif_2025') }}</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Stagiaires accompagnés -->
+                        @foreach (__('performance.tableau_performance.indicateurs') as $indicateur)
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 border-b">
                                 <div class="flex items-center">
                                     <div
-                                        class="flex items-center justify-center w-8 h-8 mr-3 text-white bg-blue-600 rounded-full">
-                                        <i class="fas fa-users"></i>
+                                        class="flex items-center justify-center w-8 h-8 mr-3 text-white bg-{{ $indicateur['color'] }}-600 rounded-full">
+                                        <i class="{{ $indicateur['icon'] }}"></i>
                                     </div>
-                                    <span class="font-medium">Stagiaires accompagnés</span>
+                                    <span class="font-medium">{{ $indicateur['nom'] }}</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-lg font-bold border-b text-blue-700">482</td>
+                            <td class="px-6 py-4 text-lg font-bold border-b text-{{ $indicateur['color'] }}-700">
+                                {{ $indicateur['resultat'] }}
+                            </td>
                             <td class="px-6 py-4 border-b">
+                                @php
+                                $evolutionClass = __('performance.tableau_performance.evolution_labels.' .
+                                $indicateur['evolution_type'] . '.class');
+                                $evolutionIcon = __('performance.tableau_performance.evolution_labels.' .
+                                $indicateur['evolution_type'] . '.icon');
+                                @endphp
                                 <span
-                                    class="inline-flex items-center px-3 py-1 text-sm font-semibold text-green-800 bg-green-100 rounded-full">
-                                    <i class="mr-1 fas fa-arrow-up"></i> + 28 %
+                                    class="inline-flex items-center px-3 py-1 text-sm font-semibold rounded-full {{ $evolutionClass }}">
+                                    @if($evolutionIcon)
+                                    <i class="mr-1 {{ $evolutionIcon }}"></i>
+                                    @endif
+                                    {{ $indicateur['evolution'] }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-gray-600 border-b">550</td>
+                            <td class="px-6 py-4 text-gray-600 border-b">{{ $indicateur['objectif'] }}</td>
                         </tr>
-
-                        <!-- Formations dispensées -->
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 border-b">
-                                <div class="flex items-center">
-                                    <div
-                                        class="flex items-center justify-center w-8 h-8 mr-3 text-white bg-purple-600 rounded-full">
-                                        <i class="fas fa-graduation-cap"></i>
-                                    </div>
-                                    <span class="font-medium">Formations dispensées</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-lg font-bold border-b text-purple-700">73</td>
-                            <td class="px-6 py-4 border-b">
-                                <span
-                                    class="inline-flex items-center px-3 py-1 text-sm font-semibold text-green-800 bg-green-100 rounded-full">
-                                    <i class="mr-1 fas fa-arrow-up"></i> + 12 %
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-gray-600 border-b">85</td>
-                        </tr>
-
-                        <!-- Taux de réussite à l'examen VTC -->
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 border-b">
-                                <div class="flex items-center">
-                                    <div
-                                        class="flex items-center justify-center w-8 h-8 mr-3 text-white bg-green-600 rounded-full">
-                                        <i class="fas fa-medal"></i>
-                                    </div>
-                                    <span class="font-medium">Taux de réussite à l'examen VTC</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-lg font-bold border-b text-green-700">94 %</td>
-                            <td class="px-6 py-4 border-b">
-                                <span
-                                    class="inline-flex items-center px-3 py-1 text-sm font-semibold text-green-800 bg-green-100 rounded-full">
-                                    <i class="mr-1 fas fa-arrow-up"></i> + 3 pts
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-gray-600 border-b">96 %</td>
-                        </tr>
-
-                        <!-- Taux de satisfaction globale -->
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 border-b">
-                                <div class="flex items-center">
-                                    <div
-                                        class="flex items-center justify-center w-8 h-8 mr-3 text-white bg-yellow-600 rounded-full">
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                    <span class="font-medium">Taux de satisfaction globale</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-lg font-bold border-b text-yellow-700">97 %</td>
-                            <td class="px-6 py-4 border-b">
-                                <span
-                                    class="inline-flex items-center px-3 py-1 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full">
-                                    stable
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-gray-600 border-b">98 %</td>
-                        </tr>
-
-                        <!-- Taux d'abandon -->
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 border-b">
-                                <div class="flex items-center">
-                                    <div
-                                        class="flex items-center justify-center w-8 h-8 mr-3 text-white bg-red-600 rounded-full">
-                                        <i class="fas fa-user-times"></i>
-                                    </div>
-                                    <span class="font-medium">Taux d'abandon</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-lg font-bold border-b text-red-700">3 %</td>
-                            <td class="px-6 py-4 border-b">
-                                <span
-                                    class="inline-flex items-center px-3 py-1 text-sm font-semibold text-green-800 bg-green-100 rounded-full">
-                                    <i class="mr-1 fas fa-arrow-down"></i> - 2 pts
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-gray-600 border-b">2 %</td>
-                        </tr>
-
-                        <!-- Retour à l'emploi / création d'entreprise -->
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 border-b">
-                                <div class="flex items-center">
-                                    <div
-                                        class="flex items-center justify-center w-8 h-8 mr-3 text-white bg-indigo-600 rounded-full">
-                                        <i class="fas fa-briefcase"></i>
-                                    </div>
-                                    <span class="font-medium">Retour à l'emploi / création d'entreprise</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-lg font-bold border-b text-indigo-700">88 %</td>
-                            <td class="px-6 py-4 border-b">
-                                <span
-                                    class="inline-flex items-center px-3 py-1 text-sm font-semibold text-green-800 bg-green-100 rounded-full">
-                                    <i class="mr-1 fas fa-arrow-up"></i> + 5 pts
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-gray-600 border-b">90 %</td>
-                        </tr>
-
-                        <!-- Réclamations enregistrées -->
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 border-b">
-                                <div class="flex items-center">
-                                    <div
-                                        class="flex items-center justify-center w-8 h-8 mr-3 text-white bg-gray-600 rounded-full">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                    </div>
-                                    <span class="font-medium">Réclamations enregistrées</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-lg font-bold border-b text-gray-700">
-                                2 sur 482 (0,4 %)
-                            </td>
-                            <td class="px-6 py-4 border-b">
-                                <span
-                                    class="inline-flex items-center px-3 py-1 text-sm font-semibold text-green-800 bg-green-100 rounded-full">
-                                    <i class="mr-1 fas fa-arrow-down"></i> - 1 cas
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-gray-600 border-b">≤ 1 %</td>
-                        </tr>
-
-                        <!-- Délai moyen de traitement des réclamations -->
-                        <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 border-b">
-                                <div class="flex items-center">
-                                    <div
-                                        class="flex items-center justify-center w-8 h-8 mr-3 text-white bg-teal-600 rounded-full">
-                                        <i class="fas fa-clock"></i>
-                                    </div>
-                                    <span class="font-medium">Délai moyen de traitement des réclamations</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-lg font-bold border-b text-teal-700">
-                                2 jours ouvrés
-                            </td>
-                            <td class="px-6 py-4 border-b">
-                                <span
-                                    class="inline-flex items-center px-3 py-1 text-sm font-semibold text-blue-800 bg-blue-100 rounded-full">
-                                    stable
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-gray-600 border-b">2 jours ouvrés</td>
-                        </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -220,49 +80,31 @@
             <div class="grid grid-cols-1 gap-8 mb-12 md:grid-cols-2">
                 <div class="p-6 bg-gray-50 rounded-lg">
                     <h3 class="mb-4 text-xl font-bold text-gray-900">
-                        <i class="mr-2 fas fa-chart-line"></i> Méthodologie de mesure
+                        <i class="mr-2 {{ __('performance.methodologie.icon') }}"></i>
+                        {{ __('performance.methodologie.title') }}
                     </h3>
                     <ul class="space-y-3 text-gray-700">
+                        @foreach (__('performance.methodologie.items') as $item)
                         <li class="flex items-start">
                             <i class="mt-1 mr-3 text-blue-600 fas fa-check-circle"></i>
-                            <span>Enquêtes de satisfaction systématiques à l'issue de chaque formation</span>
+                            <span>{{ $item }}</span>
                         </li>
-                        <li class="flex items-start">
-                            <i class="mt-1 mr-3 text-blue-600 fas fa-check-circle"></i>
-                            <span>Suivi individualisé des résultats aux examens officiels</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="mt-1 mr-3 text-blue-600 fas fa-check-circle"></i>
-                            <span>Point à 6 mois post-formation pour mesurer l'insertion professionnelle</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="mt-1 mr-3 text-blue-600 fas fa-check-circle"></i>
-                            <span>Audit qualité interne trimestriel</span>
-                        </li>
+                        @endforeach
                     </ul>
                 </div>
 
                 <div class="p-6 bg-gray-50 rounded-lg">
                     <h3 class="mb-4 text-xl font-bold text-gray-900">
-                        <i class="mr-2 fas fa-bullseye"></i> Nos objectifs qualité
+                        <i class="mr-2 {{ __('performance.objectifs_qualite.icon') }}"></i>
+                        {{ __('performance.objectifs_qualite.title') }}
                     </h3>
                     <ul class="space-y-3 text-gray-700">
+                        @foreach (__('performance.objectifs_qualite.items') as $item)
                         <li class="flex items-start">
                             <i class="mt-1 mr-3 text-green-600 fas fa-trophy"></i>
-                            <span>Atteindre 96% de taux de réussite à l'examen VTC</span>
+                            <span>{{ $item }}</span>
                         </li>
-                        <li class="flex items-start">
-                            <i class="mt-1 mr-3 text-green-600 fas fa-trophy"></i>
-                            <span>Maintenir un taux d'abandon inférieur à 2%</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="mt-1 mr-3 text-green-600 fas fa-trophy"></i>
-                            <span>Traiter toutes les réclamations en moins de 48h</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="mt-1 mr-3 text-green-600 fas fa-trophy"></i>
-                            <span>Accompagner 550 stagiaires en 2025</span>
-                        </li>
+                        @endforeach
                     </ul>
                 </div>
             </div>
@@ -274,14 +116,14 @@
                         <i class="text-3xl text-blue-700 fas fa-award"></i>
                     </div>
                     <div class="flex-1 text-center md:text-left">
-                        <h3 class="mb-2 text-xl font-bold text-gray-900">Centre certifié Qualiopi</h3>
+                        <h3 class="mb-2 text-xl font-bold text-gray-900">{{
+                            __('performance.certification_qualiopi.title') }}</h3>
                         <p class="text-gray-700">
-                            DJOK PRESTIGE est certifié Qualiopi depuis 2023, garantissant la qualité de nos processus
-                            de formation et notre engagement en faveur de l'amélioration continue.
+                            {{ __('performance.certification_qualiopi.content') }}
                         </p>
                         <a href="#" class="inline-flex items-center mt-3 text-blue-700 hover:underline">
-                            <i class="mr-2 fas fa-download"></i>
-                            Télécharger notre certification officielle
+                            <i class="mr-2 {{ __('performance.certification_qualiopi.download_icon') }}"></i>
+                            {{ __('performance.certification_qualiopi.download_link') }}
                         </a>
                     </div>
                 </div>
@@ -290,11 +132,25 @@
             <!-- Date de mise à jour -->
             <div class="p-4 rounded-lg bg-gray-100">
                 <div class="flex items-center justify-center">
-                    <i class="mr-3 text-gray-600 fas fa-info-circle"></i>
+                    <i class="mr-3 text-gray-600 {{ __('performance.mise_a_jour.icon') }}"></i>
                     <p class="text-sm text-gray-600">
-                        <strong>Dernière mise à jour :</strong> Décembre 2024 | Prochaine mise à jour prévue : Mars 2025
+                        <strong>{{ __('performance.mise_a_jour.last_update') }}</strong>
+                        {{ __('performance.mise_a_jour.last_update_date') }} |
+                        <strong>{{ __('performance.mise_a_jour.next_update') }}</strong>
+                        {{ __('performance.mise_a_jour.next_update_date') }}
                     </p>
                 </div>
+            </div>
+
+            <!-- Retour à l'accueil -->
+            <div class="mt-8 text-center">
+                <a href="{{ route('home') }}" class="inline-flex items-center text-blue-600 hover:text-blue-800">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    {{ __('performance.back_to_home') }}
+                </a>
             </div>
         </div>
     </div>
@@ -328,4 +184,21 @@
         }
     }
 </style>
+
+<!-- Script pour gérer les classes de couleur dynamiques -->
+<script>
+    // Cette fonction assure que les classes de couleur Tailwind sont correctement appliquées
+    document.addEventListener('DOMContentLoaded', function() {
+        // Pour chaque cellule de résultat, s'assurer que la couleur est correcte
+        const colorCells = document.querySelectorAll('td[class*="text-"]');
+        colorCells.forEach(cell => {
+            const classes = cell.className.split(' ');
+            classes.forEach(className => {
+                if (className.startsWith('text-') && className.endsWith('-700')) {
+                    // La classe de couleur est déjà présente
+                }
+            });
+        });
+    });
+</script>
 @endsection

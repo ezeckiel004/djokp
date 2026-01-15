@@ -15,6 +15,9 @@
                 </h3>
                 <p class="mt-1 text-sm text-gray-500">
                     Créée le {{ $inscription->created_at->format('d/m/Y à H:i') }}
+                    @if($inscription->updated_at->gt($inscription->created_at))
+                    | Modifiée le {{ $inscription->updated_at->format('d/m/Y à H:i') }}
+                    @endif
                 </p>
             </div>
             <div class="flex items-center space-x-3">
@@ -27,12 +30,29 @@
                         class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-djok-yellow hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-djok-yellow">
                         <i class="fas fa-edit mr-2"></i> Modifier
                     </a>
+
+                    <!-- Bouton pour renvoyer l'email de statut -->
+                    <button type="button" onclick="resendStatusEmail()"
+                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        <i class="fas fa-paper-plane mr-2"></i> Renvoyer l'email
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="px-4 py-5 sm:p-6">
+        <!-- Notification d'email envoyé -->
+        <div id="email-notification" class="hidden mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                <div>
+                    <p class="font-medium text-green-800">Email envoyé</p>
+                    <p id="email-message" class="text-green-700"></p>
+                </div>
+            </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Informations étudiant -->
             <div class="bg-gray-50 rounded-lg p-6">
@@ -45,10 +65,19 @@
                     <div>
                         <p class="text-sm font-medium text-gray-500">Email</p>
                         <p class="mt-1 text-sm text-gray-900">{{ $inscription->user->email }}</p>
+                        <a href="mailto:{{ $inscription->user->email }}"
+                            class="text-blue-600 hover:text-blue-800 text-sm">
+                            <i class="fas fa-envelope mr-1"></i> Envoyer un email
+                        </a>
                     </div>
                     <div>
                         <p class="text-sm font-medium text-gray-500">Téléphone</p>
                         <p class="mt-1 text-sm text-gray-900">{{ $inscription->user->phone ?? 'Non renseigné' }}</p>
+                        @if($inscription->user->phone)
+                        <a href="tel:{{ $inscription->user->phone }}" class="text-blue-600 hover:text-blue-800 text-sm">
+                            <i class="fas fa-phone mr-1"></i> Appeler
+                        </a>
+                        @endif
                     </div>
                     <div>
                         <p class="text-sm font-medium text-gray-500">Date de naissance</p>
@@ -78,6 +107,12 @@
                         <p class="text-sm font-medium text-gray-500">Description</p>
                         <p class="mt-1 text-sm text-gray-900">{{ Str::limit($inscription->formation->description, 200)
                             }}</p>
+                    </div>
+                    <div>
+                        <a href="{{ route('formation.show', $inscription->formation->slug) }}" target="_blank"
+                            class="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm">
+                            <i class="fas fa-external-link-alt mr-1"></i> Voir la formation
+                        </a>
                     </div>
                 </div>
             </div>
@@ -115,6 +150,10 @@
                             @endif
                         </p>
                     </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Dernière mise à jour</p>
+                        <p class="mt-1 text-sm text-gray-900">{{ $inscription->updated_at->format('d/m/Y H:i') }}</p>
+                    </div>
                 </div>
             </div>
 
@@ -144,6 +183,18 @@
                             $inscription->payment_method }}</p>
                     </div>
                     @endif
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Progression du paiement</p>
+                        <div class="mt-2 w-full bg-gray-200 rounded-full h-2.5">
+                            @php
+                            $progress = $inscription->formation->price > 0
+                            ? min(100, ($inscription->amount_paid / $inscription->formation->price) * 100)
+                            : 0;
+                            @endphp
+                            <div class="bg-green-600 h-2.5 rounded-full" style="width: {{ $progress }}%"></div>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">{{ number_format($progress, 1) }}% payé</p>
+                    </div>
                 </div>
             </div>
 
@@ -151,7 +202,7 @@
             <div class="md:col-span-2 bg-gray-50 rounded-lg p-6">
                 <h4 class="text-lg font-medium text-gray-900 mb-4">Transfert de formation</h4>
                 <form action="{{ route('admin.inscriptions.transfer', $inscription) }}" method="POST"
-                    onsubmit="return confirm('Êtes-vous sûr de vouloir transférer cette inscription vers une autre formation ?')">
+                    onsubmit="return confirm('Êtes-vous sûr de vouloir transférer cette inscription vers une autre formation ? Un email sera envoyé à l\'étudiant.')">
                     @csrf
                     <div class="flex items-end gap-4">
                         <div class="flex-1">
@@ -163,7 +214,8 @@
                                 <option value="">Sélectionner une nouvelle formation</option>
                                 @foreach($formations as $formation)
                                 <option value="{{ $formation->id }}">
-                                    {{ $formation->title }} - {{ $formation->type }}
+                                    {{ $formation->title }} - {{ $formation->type }} ({{
+                                    number_format($formation->price, 2) }}€)
                                 </option>
                                 @endforeach
                             </select>
@@ -174,7 +226,8 @@
                         </button>
                     </div>
                     <p class="mt-2 text-sm text-gray-500">
-                        Le statut sera réinitialisé à "En attente" après le transfert.
+                        Le statut sera réinitialisé à "En attente" après le transfert. Un email de notification sera
+                        envoyé à l'étudiant.
                     </p>
                 </form>
             </div>
@@ -182,8 +235,14 @@
             <!-- Notes -->
             @if($inscription->notes)
             <div class="md:col-span-2 bg-gray-50 rounded-lg p-6">
-                <h4 class="text-lg font-medium text-gray-900 mb-4">Notes</h4>
-                <div class="bg-white rounded border p-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h4 class="text-lg font-medium text-gray-900">Notes</h4>
+                    <button type="button" onclick="copyNotes()"
+                        class="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 bg-white hover:bg-gray-50">
+                        <i class="fas fa-copy mr-1"></i> Copier
+                    </button>
+                </div>
+                <div id="notes-content" class="bg-white rounded border p-4">
                     <p class="text-sm text-gray-900 whitespace-pre-line">{{ $inscription->notes }}</p>
                 </div>
             </div>
@@ -200,20 +259,20 @@
             </div>
             <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                 <!-- Bouton Certificat -->
-                <button type="button"
+                <button type="button" onclick="generateCertificate()"
                     class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-djok-yellow">
                     <i class="fas fa-file-certificate mr-2"></i> Générer certificat
                 </button>
 
                 <!-- Bouton Facture -->
-                <button type="button"
+                <button type="button" onclick="generateInvoice()"
                     class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-djok-yellow">
                     <i class="fas fa-file-invoice mr-2"></i> Générer facture
                 </button>
 
                 <!-- Bouton Supprimer -->
                 <form action="{{ route('admin.inscriptions.destroy', $inscription) }}" method="POST"
-                    onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette inscription ? Cette action est irréversible.');">
+                    onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette inscription ? Cette action est irréversible et un email sera envoyé à l\'étudiant.');">
                     @csrf
                     @method('DELETE')
                     <button type="submit"
@@ -225,4 +284,217 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialisation des tooltips si utilisés
+        if (typeof $ !== 'undefined') {
+            $('[data-toggle="tooltip"]').tooltip();
+        }
+    });
+
+    // Fonction pour renvoyer l'email de statut
+    function resendStatusEmail() {
+        if (confirm('Voulez-vous renvoyer l\'email de statut à l\'étudiant ?')) {
+            // Afficher l'indicateur de chargement
+            const button = event.target.closest('button');
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Envoi en cours...';
+            button.disabled = true;
+
+            fetch('{{ route('admin.inscriptions.resend-email', $inscription) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Restaurer le bouton
+                button.innerHTML = originalHTML;
+                button.disabled = false;
+
+                // Afficher la notification
+                const notification = document.getElementById('email-notification');
+                const message = document.getElementById('email-message');
+
+                if (data.success) {
+                    notification.className = 'mb-6 p-4 bg-green-50 border border-green-200 rounded-lg';
+                    message.textContent = data.message;
+                } else {
+                    notification.className = 'mb-6 p-4 bg-red-50 border border-red-200 rounded-lg';
+                    message.textContent = 'Erreur : ' + data.message;
+                }
+
+                notification.classList.remove('hidden');
+
+                // Faire défiler vers la notification
+                notification.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Masquer la notification après 5 secondes
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                }, 5000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+
+                // Restaurer le bouton
+                button.innerHTML = originalHTML;
+                button.disabled = false;
+
+                // Afficher l'erreur
+                const notification = document.getElementById('email-notification');
+                const message = document.getElementById('email-message');
+
+                notification.className = 'mb-6 p-4 bg-red-50 border border-red-200 rounded-lg';
+                message.textContent = 'Une erreur est survenue lors de l\'envoi de l\'email.';
+                notification.classList.remove('hidden');
+
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                }, 5000);
+            });
+        }
+    }
+
+    // Fonction pour copier les notes
+    function copyNotes() {
+        const notesElement = document.getElementById('notes-content');
+        const text = notesElement.textContent || notesElement.innerText;
+
+        // Créer un élément temporaire pour copier le texte
+        const tempTextArea = document.createElement('textarea');
+        tempTextArea.value = text;
+        document.body.appendChild(tempTextArea);
+        tempTextArea.select();
+        tempTextArea.setSelectionRange(0, 99999); // Pour mobile
+
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                // Afficher un message temporaire
+                const button = event.target.closest('button');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check mr-1"></i> Copié !';
+
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                }, 2000);
+            }
+        } catch (err) {
+            console.error('Erreur lors de la copie:', err);
+        }
+
+        document.body.removeChild(tempTextArea);
+    }
+
+    // Fonction pour générer un certificat
+    function generateCertificate() {
+        alert('Fonctionnalité de génération de certificat à implémenter.');
+        // À implémenter : génération de PDF de certificat
+        // window.open('{{ route('admin.inscriptions.certificate', $inscription) }}', '_blank');
+    }
+
+    // Fonction pour générer une facture
+    function generateInvoice() {
+        alert('Fonctionnalité de génération de facture à implémenter.');
+        // À implémenter : génération de PDF de facture
+        // window.open('{{ route('admin.inscriptions.invoice', $inscription) }}', '_blank');
+    }
+
+    // Fonction pour changer le statut rapidement (si ajouté plus tard)
+    function quickChangeStatus(newStatus) {
+        if (confirm('Voulez-vous changer le statut à "' + newStatus + '" ? Un email sera envoyé à l\'étudiant.')) {
+            fetch('{{ route('admin.inscriptions.update-status', $inscription) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Recharger la page pour voir les changements
+                    location.reload();
+                } else {
+                    alert('Erreur lors du changement de statut');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Une erreur est survenue');
+            });
+        }
+    }
+</script>
+
+<style>
+    .badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .badge-warning {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-info {
+        background-color: #dbeafe;
+        color: #1e40af;
+    }
+
+    .badge-primary {
+        background-color: #e9d5ff;
+        color: #6b21a8;
+    }
+
+    .badge-success {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+
+    .badge-danger {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    /* Animation pour la notification */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    #email-notification {
+        animation: slideIn 0.3s ease-out;
+    }
+
+    /* Style pour les boutons désactivés */
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* Style pour les liens d'action */
+    .action-link {
+        transition: all 0.2s ease;
+    }
+
+    .action-link:hover {
+        transform: translateY(-1px);
+    }
+</style>
 @endsection

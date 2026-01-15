@@ -1,21 +1,23 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ app()->getLocale() }}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Programme de formation - {{ $formation->title }} | DJOK PRESTIGE</title>
+    <title>{{ __('programme-pdf.title', ['formation_title' => $formation->title]) }}</title>
     <style>
         /* Styles pour le PDF */
         @page {
             margin: 50px 30px;
             size: A4;
+
             @bottom-right {
                 content: "Page " counter(page) " sur " counter(pages);
                 font-size: 10px;
                 color: #666;
             }
         }
-        
+
         body {
             font-family: 'Helvetica', Arial, sans-serif;
             font-size: 12px;
@@ -24,7 +26,7 @@
             margin: 0;
             padding: 0;
         }
-        
+
         /* En-tête */
         .header {
             border-bottom: 3px solid #D4AF37;
@@ -32,17 +34,17 @@
             margin-bottom: 30px;
             position: relative;
         }
-        
+
         .header-logo {
             text-align: center;
             margin-bottom: 20px;
         }
-        
+
         .header-title {
             text-align: center;
             margin-bottom: 10px;
         }
-        
+
         .header-title h1 {
             color: #D4AF37;
             font-size: 24px;
@@ -51,14 +53,14 @@
             letter-spacing: 1px;
             font-weight: bold;
         }
-        
+
         .header-title h2 {
             color: #333;
             font-size: 18px;
             margin: 0;
             font-weight: normal;
         }
-        
+
         .header-info {
             background-color: #f8f9fa;
             padding: 15px;
@@ -66,29 +68,29 @@
             margin-top: 20px;
             border: 1px solid #dee2e6;
         }
-        
+
         .header-info table {
             width: 100%;
             border-collapse: collapse;
         }
-        
+
         .header-info td {
             padding: 8px;
             border-bottom: 1px solid #dee2e6;
         }
-        
+
         .header-info .label {
             font-weight: bold;
             color: #666;
             width: 40%;
         }
-        
+
         /* Sections */
         .section {
             margin-bottom: 25px;
             page-break-inside: avoid;
         }
-        
+
         .section-title {
             color: #D4AF37;
             font-size: 16px;
@@ -99,7 +101,7 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
+
         /* Tableau des informations générales */
         .info-table {
             width: 100%;
@@ -107,7 +109,7 @@
             margin-bottom: 20px;
             border: 1px solid #dee2e6;
         }
-        
+
         .info-table th {
             background-color: #f8f9fa;
             text-align: left;
@@ -117,13 +119,13 @@
             color: #333;
             width: 30%;
         }
-        
+
         .info-table td {
             padding: 10px;
             border: 1px solid #dee2e6;
             vertical-align: top;
         }
-        
+
         /* Badges inclus/non inclus */
         .badge-inclus {
             display: inline-block;
@@ -134,7 +136,7 @@
             font-size: 11px;
             font-weight: bold;
         }
-        
+
         .badge-noninclus {
             display: inline-block;
             padding: 3px 8px;
@@ -144,7 +146,7 @@
             font-size: 11px;
             font-weight: bold;
         }
-        
+
         .badge-optionnel {
             display: inline-block;
             padding: 3px 8px;
@@ -154,21 +156,21 @@
             font-size: 11px;
             font-weight: bold;
         }
-        
+
         /* Programme */
         .programme-list {
             list-style-type: none;
             padding-left: 0;
             margin: 0;
         }
-        
+
         .programme-item {
             margin-bottom: 8px;
             padding-left: 25px;
             position: relative;
             line-height: 1.6;
         }
-        
+
         .programme-item:before {
             content: "✓";
             color: #D4AF37;
@@ -177,21 +179,21 @@
             left: 0;
             top: 0;
         }
-        
+
         /* Prérequis */
         .prerequis-list {
             list-style-type: none;
             padding-left: 0;
             margin: 0;
         }
-        
+
         .prerequis-item {
             margin-bottom: 8px;
             padding-left: 25px;
             position: relative;
             line-height: 1.6;
         }
-        
+
         .prerequis-item:before {
             content: "•";
             color: #D4AF37;
@@ -201,7 +203,7 @@
             top: 0;
             font-size: 18px;
         }
-        
+
         /* Services inclus */
         .services-grid {
             display: flex;
@@ -209,7 +211,7 @@
             gap: 8px;
             margin: 10px 0;
         }
-        
+
         .service-badge {
             background-color: #D4AF37;
             color: white;
@@ -218,7 +220,7 @@
             font-size: 11px;
             display: inline-block;
         }
-        
+
         /* Pied de page */
         .footer {
             position: fixed;
@@ -232,21 +234,21 @@
             text-align: center;
             background-color: white;
         }
-        
+
         .footer-contact {
             margin-bottom: 5px;
         }
-        
+
         .footer-contact a {
             color: #D4AF37;
             text-decoration: none;
         }
-        
+
         .footer-legal {
             font-size: 9px;
             color: #999;
         }
-        
+
         /* Médias */
         .media-summary {
             background-color: #f8f9fa;
@@ -255,23 +257,23 @@
             margin-top: 10px;
             border-left: 4px solid #D4AF37;
         }
-        
+
         .media-count {
             display: flex;
             gap: 20px;
             margin-top: 10px;
         }
-        
+
         .media-item {
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        
+
         .media-icon {
             color: #D4AF37;
         }
-        
+
         /* Conditions et informations */
         .conditions {
             background-color: #fff9e6;
@@ -280,7 +282,7 @@
             margin-top: 20px;
             border-left: 3px solid #D4AF37;
         }
-        
+
         .info-important {
             background-color: #f0f9ff;
             padding: 15px;
@@ -288,45 +290,45 @@
             margin-top: 20px;
             border-left: 3px solid #3b82f6;
         }
-        
+
         /* Break pages */
         .page-break {
             page-break-before: always;
         }
-        
+
         /* Utilitaires */
         .text-center {
             text-align: center;
         }
-        
+
         .text-gold {
             color: #D4AF37;
         }
-        
+
         .text-bold {
             font-weight: bold;
         }
-        
+
         .mt-10 {
             margin-top: 10px;
         }
-        
+
         .mt-20 {
             margin-top: 20px;
         }
-        
+
         .mb-10 {
             margin-bottom: 10px;
         }
-        
+
         .mb-20 {
             margin-bottom: 20px;
         }
-        
+
         .p-15 {
             padding: 15px;
         }
-        
+
         /* Prix */
         .price-display {
             background-color: #f8f9fa;
@@ -336,18 +338,18 @@
             margin: 15px 0;
             border: 1px solid #dee2e6;
         }
-        
+
         .price-amount {
             font-size: 24px;
             font-weight: bold;
             color: #D4AF37;
         }
-        
+
         .price-label {
             font-size: 12px;
             color: #666;
         }
-        
+
         /* Certification */
         .certification-badge {
             display: inline-flex;
@@ -360,213 +362,216 @@
             font-size: 11px;
             font-weight: bold;
         }
-        
+
         /* Description */
         .description-content {
             line-height: 1.6;
             color: #555;
             text-align: justify;
         }
-        
+
         /* Grille */
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
-        
+
         /* Responsive */
         @media print {
             .no-print {
                 display: none;
             }
-            
+
             body {
                 font-size: 11px;
             }
-            
+
             .section-title {
                 font-size: 14px;
             }
         }
     </style>
 </head>
+
 <body>
     <!-- En-tête -->
     <div class="header">
         <div class="header-title">
-            <h1>DJOK PRESTIGE</h1>
-            <h2>Centre de Formation VTC Professionnel</h2>
+            <h1>{{ __('programme-pdf.header_company') }}</h1>
+            <h2>{{ __('programme-pdf.header_center') }}</h2>
         </div>
-        
+
         <div class="header-info">
             <table>
                 <tr>
-                    <td class="label">Référence :</td>
+                    <td class="label">{{ __('programme-pdf.reference') }}</td>
                     <td><strong>FORM-{{ $formation->id }}-{{ date('Y') }}</strong></td>
                 </tr>
                 <tr>
-                    <td class="label">Date de génération :</td>
+                    <td class="label">{{ __('programme-pdf.generation_date') }}</td>
                     <td>{{ $generationDate }}</td>
                 </tr>
                 <tr>
-                    <td class="label">Document :</td>
-                    <td><strong>Programme détaillé de formation</strong></td>
+                    <td class="label">{{ __('programme-pdf.document') }}</td>
+                    <td><strong>{{ __('programme-pdf.document_type') }}</strong></td>
                 </tr>
                 <tr>
-                    <td class="label">Document valide jusqu'au :</td>
+                    <td class="label">{{ __('programme-pdf.valid_until') }}</td>
                     <td>{{ now()->addDays(30)->format('d/m/Y') }}</td>
                 </tr>
             </table>
         </div>
     </div>
-    
+
     <!-- Titre et informations principales -->
     <div class="section">
         <div class="price-display">
-            <div class="price-amount">{{ number_format($formation->price, 0, ',', ' ') }} € TTC</div>
-            <div class="price-label">Prix de la formation</div>
+            <div class="price-amount">{{ number_format($formation->price, 0, ',', ' ') }} € {{ __('programme-pdf.ttc')
+                }}</div>
+            <div class="price-label">{{ __('programme-pdf.price_display') }}</div>
         </div>
-        
+
         <h1 style="font-size: 20px; color: #333; margin-bottom: 10px; text-align: center;">{{ $formation->title }}</h1>
-        
+
         @if($formation->description)
         <div class="description-content mt-10">
             {!! nl2br(htmlspecialchars($formation->description)) !!}
         </div>
         @endif
     </div>
-    
+
     <!-- Informations générales -->
     <div class="section">
-        <div class="section-title">Informations générales</div>
+        <div class="section-title">{{ __('programme-pdf.general_info') }}</div>
         <table class="info-table">
             <tr>
-                <th>Durée de la formation</th>
+                <th>{{ __('programme-pdf.duration') }}</th>
                 <td>
                     @if($formation->duree)
-                        {{ $formation->duree }}
+                    {{ $formation->duree }}
                     @else
-                        {{ $formation->duration_hours }} heures
-                        @if($formation->duration_hours >= 24)
-                            ({{ ceil($formation->duration_hours / 8) }} jours)
-                        @endif
+                    {{ $formation->duration_hours }} {{ __('programme-pdf.hours') }}
+                    @if($formation->duration_hours >= 24)
+                    ({{ ceil($formation->duration_hours / 8) }} {{ __('programme-pdf.days') }})
+                    @endif
                     @endif
                 </td>
             </tr>
             <tr>
-                <th>Format</th>
+                <th>{{ __('programme-pdf.format') }}</th>
                 <td>
                     @if($formation->format_affichage)
-                        {{ $formation->format_affichage }}
+                    {{ $formation->format_affichage }}
                     @else
-                        {{ $formation->type_formation == 'presentiel' ? 'Présentiel' : 'En ligne' }}
+                    {{ $formation->type_formation == 'presentiel' ? __('programme-pdf.presentiel') :
+                    __('programme-pdf.online') }}
                     @endif
                 </td>
             </tr>
             <tr>
-                <th>Catégorie</th>
+                <th>{{ __('programme-pdf.category') }}</th>
                 <td>
                     @if($formation->categorie == 'vtc_theorique')
-                        VTC Théorique
+                    {{ __('programme-pdf.categories.vtc_theorique') }}
                     @elseif($formation->categorie == 'vtc_pratique')
-                        VTC Pratique
+                    {{ __('programme-pdf.categories.vtc_pratique') }}
                     @elseif($formation->categorie == 'e_learning')
-                        E-learning
+                    {{ __('programme-pdf.categories.e_learning') }}
                     @elseif($formation->categorie == 'renouvellement')
-                        Renouvellement carte VTC
+                    {{ __('programme-pdf.categories.renouvellement') }}
                     @else
-                        {{ $formation->categorie }}
+                    {{ $formation->categorie }}
                     @endif
                 </td>
             </tr>
             <tr>
-                <th>Frais d'examen</th>
+                <th>{{ __('programme-pdf.exam_fees') }}</th>
                 <td>
                     @if($formation->frais_examen == 'Inclus')
-                        <span class="badge-inclus">Inclus</span>
+                    <span class="badge-inclus">{{ __('programme-pdf.badges.included') }}</span>
                     @elseif($formation->frais_examen == 'Non inclus')
-                        <span class="badge-noninclus">Non inclus</span>
+                    <span class="badge-noninclus">{{ __('programme-pdf.badges.not_included') }}</span>
                     @elseif($formation->frais_examen == 'Optionnel')
-                        <span class="badge-optionnel">Optionnel</span>
+                    <span class="badge-optionnel">{{ __('programme-pdf.badges.optional') }}</span>
                     @else
-                        {{ $formation->frais_examen ?? 'Non inclus' }}
+                    {{ $formation->frais_examen ?? __('programme-pdf.badges.not_included') }}
                     @endif
                 </td>
             </tr>
             <tr>
-                <th>Location véhicule</th>
+                <th>{{ __('programme-pdf.vehicle_rental') }}</th>
                 <td>
                     @if($formation->location_vehicule == 'Inclus')
-                        <span class="badge-inclus">Inclus</span>
+                    <span class="badge-inclus">{{ __('programme-pdf.badges.included') }}</span>
                     @elseif($formation->location_vehicule == 'Non inclus')
-                        <span class="badge-noninclus">Non inclus</span>
+                    <span class="badge-noninclus">{{ __('programme-pdf.badges.not_included') }}</span>
                     @elseif($formation->location_vehicule == 'Optionnel')
-                        <span class="badge-optionnel">Optionnel</span>
+                    <span class="badge-optionnel">{{ __('programme-pdf.badges.optional') }}</span>
                     @else
-                        {{ $formation->location_vehicule ?? 'Non inclus' }}
+                    {{ $formation->location_vehicule ?? __('programme-pdf.badges.not_included') }}
                     @endif
                 </td>
             </tr>
             <tr>
-                <th>Certification</th>
+                <th>{{ __('programme-pdf.certification') }}</th>
                 <td>
                     @if($formation->is_certified)
-                        <span class="certification-badge">
-                            <i class="fas fa-certificate"></i>
-                            Formation certifiée Qualiopi
-                        </span>
+                    <span class="certification-badge">
+                        {{ __('programme-pdf.certified_badge') }}
+                    </span>
                     @else
-                        Formation standard
+                    {{ __('programme-pdf.standard_formation') }}
                     @endif
                 </td>
             </tr>
             <tr>
-                <th>Financement CPF</th>
+                <th>{{ __('programme-pdf.cpf_funding') }}</th>
                 <td>
                     @if($formation->is_financeable_cpf)
-                        <span class="badge-inclus">Éligible au CPF</span>
+                    <span class="badge-inclus">{{ __('programme-pdf.cpf_eligible') }}</span>
                     @else
-                        <span class="badge-noninclus">Non éligible au CPF</span>
+                    <span class="badge-noninclus">{{ __('programme-pdf.cpf_not_eligible') }}</span>
                     @endif
                 </td>
             </tr>
             <tr>
-                <th>Statut</th>
+                <th>{{ __('programme-pdf.status') }}</th>
                 <td>
                     @if($formation->is_active)
-                        <span style="color: #10b981; font-weight: bold;">● Formation active</span>
+                    <span style="color: #10b981; font-weight: bold;">● {{ __('programme-pdf.active_formation') }}</span>
                     @else
-                        <span style="color: #ef4444; font-weight: bold;">● Formation inactive</span>
+                    <span style="color: #ef4444; font-weight: bold;">● {{ __('programme-pdf.inactive_formation')
+                        }}</span>
                     @endif
                 </td>
             </tr>
         </table>
     </div>
-    
+
     <!-- Programme détaillé -->
     @if(!empty($program))
     <div class="section">
-        <div class="section-title">Programme détaillé</div>
+        <div class="section-title">{{ __('programme-pdf.detailed_program') }}</div>
         <p class="mb-10" style="color: #555; font-style: italic;">
-            Le programme complet de formation, module par module :
+            {{ __('programme-pdf.program_description') }}
         </p>
         <ul class="programme-list">
             @foreach($program as $index => $item)
             <li class="programme-item">
-                <strong>Module {{ $index + 1 }} :</strong> {{ $item }}
+                <strong>{{ __('programme-pdf.module') }} {{ $index + 1 }} :</strong> {{ $item }}
             </li>
             @endforeach
         </ul>
     </div>
     @endif
-    
+
     <!-- Prérequis -->
     @if(!empty($requirements))
     <div class="section">
-        <div class="section-title">Prérequis & Conditions d'admission</div>
+        <div class="section-title">{{ __('programme-pdf.prerequisites') }}</div>
         <p class="mb-10" style="color: #555;">
-            Pour pouvoir suivre cette formation, vous devez remplir les conditions suivantes :
+            {{ __('programme-pdf.prerequisites_desc') }}
         </p>
         <ul class="prerequis-list">
             @foreach($requirements as $requirement)
@@ -575,13 +580,13 @@
         </ul>
     </div>
     @endif
-    
+
     <!-- Services inclus -->
     @if(!empty($includedServices))
     <div class="section">
-        <div class="section-title">Services inclus</div>
+        <div class="section-title">{{ __('programme-pdf.included_services') }}</div>
         <p class="mb-10" style="color: #555;">
-            Ce qui est inclus dans le prix de la formation :
+            {{ __('programme-pdf.included_services_desc') }}
         </p>
         <div class="services-grid">
             @foreach($includedServices as $service)
@@ -590,113 +595,119 @@
         </div>
     </div>
     @endif
-    
+
     <!-- Ressources pédagogiques -->
     <div class="section">
-        <div class="section-title">Ressources pédagogiques</div>
+        <div class="section-title">{{ __('programme-pdf.pedagogical_resources') }}</div>
         <div class="media-summary">
-            <p><strong>Contenu multimédia inclus :</strong></p>
+            <p><strong>{{ __('programme-pdf.multimedia_content') }}</strong></p>
             <div class="media-count">
                 @if($pdfCount > 0)
                 <div class="media-item">
-                    <span class="media-icon">📄</span>
-                    <span>{{ $pdfCount }} document(s) PDF</span>
+                    <span>{{ $pdfCount }} {{ __('programme-pdf.documents_pdf') }}</span>
                 </div>
                 @endif
                 @if($videoCount > 0)
                 <div class="media-item">
-                    <span class="media-icon">🎥</span>
-                    <span>{{ $videoCount }} vidéo(s) pédagogique(s)</span>
+                    <span>{{ $videoCount }} {{ __('programme-pdf.videos') }}</span>
                 </div>
                 @endif
             </div>
             <p class="mt-10" style="font-size: 11px; color: #666; font-style: italic;">
-                <i class="fas fa-info-circle"></i> L'accès aux ressources pédagogiques complètes est soumis à l'inscription et au paiement de la formation.
+                {{ __('programme-pdf.access_note') }}
             </p>
         </div>
     </div>
-    
+
     <!-- Modalités pratiques -->
     <div class="section">
-        <div class="section-title">Modalités pratiques</div>
+        <div class="section-title">{{ __('programme-pdf.practical_conditions') }}</div>
         <div class="grid-2">
             <div>
-                <h4 style="color: #333; margin-bottom: 10px; font-size: 14px;">📅 Organisation</h4>
+                <h4 style="color: #333; margin-bottom: 10px; font-size: 14px;">{{ __('programme-pdf.organization') }}
+                </h4>
                 <ul style="list-style: none; padding-left: 0;">
-                    <li style="margin-bottom: 8px;">• Formation disponible en présentiel ou en ligne</li>
-                    <li style="margin-bottom: 8px;">• Horaires flexibles selon la formule choisie</li>
-                    <li style="margin-bottom: 8px;">• Accompagnement personnalisé tout au long de la formation</li>
-                    <li>• Évaluation continue et finale</li>
+                    <li style="margin-bottom: 8px;">• {{ __('programme-pdf.organization_items.format_available') }}</li>
+                    <li style="margin-bottom: 8px;">• {{ __('programme-pdf.organization_items.flexible_schedule') }}
+                    </li>
+                    <li style="margin-bottom: 8px;">• {{ __('programme-pdf.organization_items.personal_support') }}</li>
+                    <li>• {{ __('programme-pdf.organization_items.continuous_evaluation') }}</li>
                 </ul>
             </div>
             <div>
-                <h4 style="color: #333; margin-bottom: 10px; font-size: 14px;">🎓 Validation</h4>
+                <h4 style="color: #333; margin-bottom: 10px; font-size: 14px;">{{ __('programme-pdf.validation') }}</h4>
                 <ul style="list-style: none; padding-left: 0;">
-                    <li style="margin-bottom: 8px;">• Attestation de formation à l'issue de la formation</li>
-                    <li style="margin-bottom: 8px;">• Certificat de réussite (si formation certifiée)</li>
-                    <li>• Accompagnement pour les démarches administratives</li>
+                    <li style="margin-bottom: 8px;">• {{ __('programme-pdf.validation_items.attestation') }}</li>
+                    <li style="margin-bottom: 8px;">• {{ __('programme-pdf.validation_items.certificate') }}</li>
+                    <li>• {{ __('programme-pdf.validation_items.administrative_assistance') }}</li>
                 </ul>
             </div>
         </div>
     </div>
-    
+
     <!-- Conditions et informations importantes -->
     <div class="conditions">
-        <div class="section-title" style="color: #d97706; border-color: #d97706;">⚠ Informations importantes</div>
+        <div class="section-title" style="color: #d97706; border-color: #d97706;">{{ __('programme-pdf.important_info')
+            }}</div>
         <p style="margin: 10px 0; font-weight: bold;">
-            Ce document est un programme indicatif. Le contenu exact de la formation peut être adapté en fonction :
+            {{ __('programme-pdf.important_title') }}
         </p>
         <ul style="margin: 10px 0; padding-left: 20px;">
-            <li style="margin-bottom: 5px;">Des besoins spécifiques des participants</li>
-            <li style="margin-bottom: 5px;">Des évolutions réglementaires en vigueur</li>
-            <li style="margin-bottom: 5px;">Des disponibilités des formateurs et des salles</li>
-            <li>Des adaptations pédagogiques nécessaires</li>
+            <li style="margin-bottom: 5px;">{{ __('programme-pdf.important_items.specific_needs') }}</li>
+            <li style="margin-bottom: 5px;">{{ __('programme-pdf.important_items.regulatory_changes') }}</li>
+            <li style="margin-bottom: 5px;">{{ __('programme-pdf.important_items.availability') }}</li>
+            <li>{{ __('programme-pdf.important_items.pedagogical_adaptations') }}</li>
         </ul>
         <p class="mt-10" style="font-size: 11px;">
-            Les tarifs indiqués sont valables à la date d'édition de ce document et peuvent être révisés.
+            {{ __('programme-pdf.prices_note') }}
         </p>
     </div>
-    
+
     <!-- Contact et inscriptions -->
     <div class="info-important">
-        <div class="section-title" style="color: #3b82f6; border-color: #3b82f6;">📞 Contact & Inscriptions</div>
+        <div class="section-title" style="color: #3b82f6; border-color: #3b82f6;">{{
+            __('programme-pdf.contact_registration') }}</div>
         <p style="margin: 10px 0;">
-            Pour plus d'informations ou pour vous inscrire, contactez-nous :
+            {{ __('programme-pdf.contact_desc') }}
         </p>
         <table style="width: 100%; margin: 15px 0;">
             <tr>
-                <td style="width: 30%; font-weight: bold;">Téléphone :</td>
-                <td><a href="tel:{{ $contactInfo['telephone'] }}" style="color: #3b82f6; text-decoration: none;">{{ $contactInfo['telephone'] }}</a></td>
+                <td style="width: 30%; font-weight: bold;">{{ __('programme-pdf.phone') }}</td>
+                <td><a href="tel:{{ $contactInfo['telephone'] }}" style="color: #3b82f6; text-decoration: none;">{{
+                        $contactInfo['telephone'] }}</a></td>
             </tr>
             <tr>
-                <td style="font-weight: bold;">Email :</td>
-                <td><a href="mailto:{{ $contactInfo['email'] }}" style="color: #3b82f6; text-decoration: none;">{{ $contactInfo['email'] }}</a></td>
+                <td style="font-weight: bold;">{{ __('programme-pdf.email') }}</td>
+                <td><a href="mailto:{{ $contactInfo['email'] }}" style="color: #3b82f6; text-decoration: none;">{{
+                        $contactInfo['email'] }}</a></td>
             </tr>
             <tr>
-                <td style="font-weight: bold;">Site web :</td>
-                <td><a href="{{ $contactInfo['site'] }}" style="color: #3b82f6; text-decoration: none;">{{ $contactInfo['site'] }}</a></td>
+                <td style="font-weight: bold;">{{ __('programme-pdf.website') }}</td>
+                <td><a href="{{ $contactInfo['site'] }}" style="color: #3b82f6; text-decoration: none;">{{
+                        $contactInfo['site'] }}</a></td>
             </tr>
             <tr>
-                <td style="font-weight: bold;">Adresse :</td>
+                <td style="font-weight: bold;">{{ __('programme-pdf.address') }}</td>
                 <td>{{ $contactInfo['adresse'] }}</td>
             </tr>
         </table>
         <p style="margin: 10px 0; font-size: 11px;">
-            <strong>Horaires d'ouverture :</strong> Lundi - Vendredi : 9h00 - 19h00 • Samedi : 9h00 - 13h00
+            <strong>{{ __('programme-pdf.opening_hours') }}</strong> {{ __('programme-pdf.hours_schedule') }}
         </p>
     </div>
-    
+
     <!-- Pied de page -->
     <div class="footer">
         <div class="footer-contact">
-            DJOK PRESTIGE Formation • {{ $contactInfo['adresse'] }} • 
-            <a href="tel:{{ $contactInfo['telephone'] }}">{{ $contactInfo['telephone'] }}</a> • 
+            {{ __('programme-pdf.footer_company') }} • {{ $contactInfo['adresse'] }} •
+            <a href="tel:{{ $contactInfo['telephone'] }}">{{ $contactInfo['telephone'] }}</a> •
             <a href="mailto:{{ $contactInfo['email'] }}">{{ $contactInfo['email'] }}</a>
         </div>
         <div class="footer-legal">
-            SIRET: 000 000 000 00000 • N° de déclaration d'activité: 00 00 00000 00 • 
-            Organisme de formation certifié Qualiopi • Document généré le {{ $generationDate }}
+            {{ __('programme-pdf.footer_legal') }} •
+            {{ __('programme-pdf.generated_on') }} {{ $generationDate }}
         </div>
     </div>
 </body>
+
 </html>

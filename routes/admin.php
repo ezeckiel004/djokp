@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\NewsletterController as AdminNewsletterController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
+use App\Http\Controllers\Admin\PaiementController;
 use App\Http\Controllers\Admin\ParticipantController as AdminParticipantController;
 use App\Http\Controllers\Admin\VehicleCategoryController as AdminVehicleCategoryController;
 use App\Http\Controllers\ProgrammePdfController;
@@ -43,6 +44,8 @@ Route::middleware(['auth', 'can:access-admin-dashboard'])->prefix('admin')->name
         ->name('inscriptions.update-status');
     Route::post('/inscriptions/{inscription}/transfer', [AdminInscriptionController::class, 'transfer'])
         ->name('inscriptions.transfer');
+    Route::post('/inscriptions/{inscription}/resend-email', [AdminInscriptionController::class, 'resendEmail'])
+        ->name('inscriptions.resend-email'); // NOUVELLE ROUTE
 
     // Gestion des formations
     Route::resource('formations', AdminFormationController::class);
@@ -169,21 +172,22 @@ Route::middleware(['auth', 'can:access-admin-dashboard'])->prefix('admin')->name
     )
         ->name('conciergerie-demandes.statistiques');
 
-    // Gestion des paiements
-    Route::get('/paiements', [AdminFormationController::class, 'paiementsIndex'])
-        ->name('paiements.index');
-    Route::get('/paiements/{paiement}', [AdminFormationController::class, 'paiementsShow'])
-        ->name('paiements.show');
-    Route::post('/paiements/{paiement}/refund', [AdminFormationController::class, 'paiementsRefund'])
-        ->name('paiements.refund');
+    // Gestion des paiements (UNIFIÉ) - Utilisez un seul contrôleur
+    Route::prefix('paiements')->name('paiements.')->group(function () {
+        Route::get('/', [PaiementController::class, 'index'])->name('index');
+        Route::get('/statistiques', [PaiementController::class, 'statistiques'])->name('statistiques');
+        Route::get('/export', [PaiementController::class, 'export'])->name('export');
+        Route::get('/{paiement}', [PaiementController::class, 'show'])->name('show');
+        Route::post('/{paiement}/refund', [PaiementController::class, 'refund'])->name('refund');
+    });
 
     // Statistiques et rapports
-    Route::get('/statistiques', [AdminFormationController::class, 'statistiques'])
-        ->name('statistiques');
-    Route::get('/utilisateurs', [AdminFormationController::class, 'utilisateurs'])
-        ->name('utilisateurs');
+    Route::get('/statistiques-globales', [AdminFormationController::class, 'statistiques'])
+        ->name('statistiques.globales');
+    Route::get('/utilisateurs-formations', [AdminFormationController::class, 'utilisateurs'])
+        ->name('utilisateurs.formations');
     Route::get('/inscriptions-admin', [AdminFormationController::class, 'inscriptions'])
-        ->name('inscriptions');
+        ->name('inscriptions.admin');
 
     // Gestion des participants aux formations
     Route::resource('participants', AdminParticipantController::class);

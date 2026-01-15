@@ -9,20 +9,42 @@
         <div class="flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">Gestion des paiements</h1>
-                <p class="text-gray-600 mt-1">Suivi des transactions e-learning</p>
+                <p class="text-gray-600 mt-1">Suivi des transactions multi-services</p>
             </div>
             <div class="flex space-x-3">
+                <!-- Bouton Statistiques -->
+                <a href="{{ route('admin.paiements.statistiques') }}"
+                    class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                    <i class="fas fa-chart-bar mr-2"></i>
+                    Statistiques
+                </a>
+
                 <!-- Filtres -->
                 <div class="flex space-x-2">
+                    <select id="serviceTypeFilter"
+                        class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        onchange="filterByServiceType(this.value)">
+                        <option value="">Tous les services</option>
+                        <option value="formation" {{ request('service_type')=='formation' ? 'selected' : '' }}>
+                            Formations</option>
+                        <option value="reservation" {{ request('service_type')=='reservation' ? 'selected' : '' }}>
+                            Réservations VTC</option>
+                        <option value="location" {{ request('service_type')=='location' ? 'selected' : '' }}>Locations
+                        </option>
+                        <option value="conciergerie" {{ request('service_type')=='conciergerie' ? 'selected' : '' }}>
+                            Conciergerie</option>
+                        <option value="formation_internationale" {{ request('service_type')=='formation_internationale'
+                            ? 'selected' : '' }}>Formations internationales</option>
+                    </select>
+
                     <select id="statusFilter"
                         class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        onchange="window.location.href='?status='+this.value">
+                        onchange="filterByStatus(this.value)">
                         <option value="">Tous les statuts</option>
                         <option value="paid" {{ request('status')=='paid' ? 'selected' : '' }}>Payés</option>
                         <option value="pending" {{ request('status')=='pending' ? 'selected' : '' }}>En attente</option>
                         <option value="canceled" {{ request('status')=='canceled' ? 'selected' : '' }}>Annulés</option>
-                        <option value="refunded" {{ request('status')=='refunded' ? 'selected' : '' }}>Remboursés
-                        </option>
+                        <option value="failed" {{ request('status')=='failed' ? 'selected' : '' }}>Échoués</option>
                     </select>
                 </div>
             </div>
@@ -100,10 +122,40 @@
         </div>
     </div>
 
+    <!-- Distribution par service -->
+    <div class="mb-8">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Répartition par service</h3>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                @foreach($statistiques['par_service'] as $serviceType => $count)
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-gray-900">{{ $count }}</div>
+                    <div class="text-sm text-gray-600">
+                        @if($serviceType === 'formation')
+                        Formations
+                        @elseif($serviceType === 'reservation')
+                        Réservations
+                        @elseif($serviceType === 'location')
+                        Locations
+                        @elseif($serviceType === 'conciergerie')
+                        Conciergerie
+                        @elseif($serviceType === 'formation_internationale')
+                        Form. Int.
+                        @else
+                        {{ $serviceType }}
+                        @endif
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
     <!-- Liste des paiements -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-200">
             <h2 class="text-lg font-semibold text-gray-900">Liste des transactions</h2>
+            <p class="text-sm text-gray-600 mt-1">{{ $paiements->total() }} transactions trouvées</p>
         </div>
 
         <div class="overflow-x-auto">
@@ -115,7 +167,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Client</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Formation</th>
+                            Service</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Montant</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -127,7 +179,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach($paiements as $paiement)
+                    @forelse($paiements as $paiement)
                     <tr class="hover:bg-gray-50 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="font-mono text-sm text-gray-900">{{ $paiement->reference }}</div>
@@ -135,8 +187,8 @@
                                 0, 10) }}...</div>
                         </td>
                         <td class="px-6 py-4">
-                            <div class="text-sm text-gray-900">{{ $paiement->customer_info['name'] ?? 'N/A' }}</div>
-                            <div class="text-xs text-gray-500">{{ $paiement->customer_info['email'] ?? 'N/A' }}</div>
+                            <div class="text-sm text-gray-900">{{ $paiement->customer_name }}</div>
+                            <div class="text-xs text-gray-500">{{ $paiement->customer_email ?? 'N/A' }}</div>
                             @if($paiement->user)
                             <div class="text-xs">
                                 <a href="{{ route('admin.users.show', $paiement->user_id) }}"
@@ -147,12 +199,27 @@
                             @endif
                         </td>
                         <td class="px-6 py-4">
-                            @if($paiement->formation)
-                            <div class="text-sm text-gray-900">{{ Str::limit($paiement->formation->title, 30) }}</div>
-                            <div class="text-xs text-gray-500">{{ $paiement->formation->type_formation === 'e_learning'
-                                ? 'E-learning' : 'Présentiel' }}</div>
-                            @else
-                            <div class="text-sm text-gray-500">Formation supprimée</div>
+                            <div class="flex items-center">
+                                <span
+                                    class="px-2 py-1 text-xs font-semibold rounded-full {{ $paiement->service_type_color }}">
+                                    {{ $paiement->formatted_service_type }}
+                                </span>
+                                <span class="ml-2 text-sm text-gray-900">
+                                    @if($paiement->isFormation() && $paiement->formation)
+                                    {{ Str::limit($paiement->formation->title, 25) }}
+                                    @elseif($paiement->isReservation() && $paiement->reservation)
+                                    {{ Str::limit($paiement->reservation->depart, 15) }} → {{
+                                    Str::limit($paiement->reservation->arrivee, 15) }}
+                                    @else
+                                    {{ Str::limit($paiement->service_name, 30) }}
+                                    @endif
+                                </span>
+                            </div>
+                            @if($paiement->isReservation() && $paiement->reservation)
+                            <div class="text-xs text-gray-500 mt-1">
+                                {{ $paiement->reservation->type_vehicule }} • {{ $paiement->reservation->passagers }}
+                                pers.
+                            </div>
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -165,7 +232,6 @@
                             'paid' => 'bg-green-100 text-green-800',
                             'pending' => 'bg-yellow-100 text-yellow-800',
                             'canceled' => 'bg-red-100 text-red-800',
-                            'refunded' => 'bg-purple-100 text-purple-800',
                             'failed' => 'bg-gray-100 text-gray-800',
                             ];
                             @endphp
@@ -177,8 +243,6 @@
                                 En attente
                                 @elseif($paiement->status === 'canceled')
                                 Annulé
-                                @elseif($paiement->status === 'refunded')
-                                Remboursé
                                 @elseif($paiement->status === 'failed')
                                 Échoué
                                 @else
@@ -191,22 +255,42 @@
                             <span class="text-xs">{{ $paiement->created_at->format('H:i') }}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="{{ route('admin.paiements.show', $paiement) }}"
-                                class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors mr-2">
-                                <i class="fas fa-eye mr-1"></i>
-                                Détails
-                            </a>
-                            @if($paiement->status === 'paid')
-                            <button
-                                onclick="openRefundModal('{{ $paiement->reference }}', '{{ $paiement->id }}', '{{ number_format($paiement->amount, 0, ',', ' ') }} €')"
-                                class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors">
-                                <i class="fas fa-undo mr-1"></i>
-                                Rembourser
-                            </button>
-                            @endif
+                            <div class="flex flex-col space-y-2">
+                                <a href="{{ route('admin.paiements.show', $paiement) }}"
+                                    class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors text-xs">
+                                    <i class="fas fa-eye mr-1"></i>
+                                    Détails
+                                </a>
+
+                                @if($paiement->isReservation() && $paiement->reservation)
+                                <a href="{{ route('admin.reservations.show', $paiement->reservation_id) }}"
+                                    class="inline-flex items-center px-3 py-1.5 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors text-xs">
+                                    <i class="fas fa-car mr-1"></i>
+                                    Réservation
+                                </a>
+                                @endif
+
+                                @if($paiement->isFormation() && $paiement->formation)
+                                <a href="{{ route('admin.formations.show', $paiement->service_id) }}"
+                                    class="inline-flex items-center px-3 py-1.5 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors text-xs">
+                                    <i class="fas fa-graduation-cap mr-1"></i>
+                                    Formation
+                                </a>
+                                @endif
+                            </div>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                            <div class="flex flex-col items-center">
+                                <i class="fas fa-receipt text-4xl text-gray-300 mb-4"></i>
+                                <p class="text-lg font-medium text-gray-900">Aucun paiement trouvé</p>
+                                <p class="text-gray-600 mt-1">Aucune transaction n'a été enregistrée pour le moment.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -219,91 +303,32 @@
         @endif
     </div>
 </div>
-
-<!-- Modal de remboursement global -->
-<div id="globalRefundModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-xl bg-white">
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Confirmer le remboursement</h3>
-            <button type="button" onclick="closeRefundModal()" class="text-gray-400 hover:text-gray-500">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-
-        <div class="mb-4">
-            <p class="text-gray-700">Rembourser le paiement <span id="refundReference" class="font-semibold"></span> ?
-            </p>
-            <p class="text-sm text-gray-600 mt-1">Montant : <span id="refundAmount" class="font-semibold"></span></p>
-        </div>
-
-        <form id="refundForm" method="POST">
-            @csrf
-            @method('POST')
-
-            <div class="mb-4">
-                <label for="refundReason" class="block text-sm font-medium text-gray-700 mb-2">Raison du remboursement
-                    (optionnel)</label>
-                <textarea name="reason" id="refundReason" rows="3"
-                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Raison du remboursement..."></textarea>
-            </div>
-
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                <div class="flex items-center">
-                    <i class="fas fa-exclamation-triangle text-yellow-600 mr-2"></i>
-                    <p class="text-sm text-yellow-800">
-                        <strong>Attention :</strong> Cette action est irréversible. Le client sera remboursé via Stripe.
-                    </p>
-                </div>
-            </div>
-
-            <div class="flex justify-end space-x-3">
-                <button type="button" onclick="closeRefundModal()"
-                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                    Annuler
-                </button>
-                <button type="submit"
-                    class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                    Confirmer le remboursement
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
 @endsection
 
 @section('scripts')
 <script>
-    function openRefundModal(reference, paiementId, amount) {
-        document.getElementById('refundReference').textContent = reference;
-        document.getElementById('refundAmount').textContent = amount;
-        document.getElementById('refundForm').action = `/admin/paiements/${paiementId}/refund`;
-        document.getElementById('globalRefundModal').classList.remove('hidden');
-    }
-
-    function closeRefundModal() {
-        document.getElementById('globalRefundModal').classList.add('hidden');
-    }
-
-    // Fermer le modal si on clique en dehors
-    document.getElementById('globalRefundModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeRefundModal();
-        }
-    });
-
-    // Filtrer par statut
-    document.getElementById('statusFilter').addEventListener('change', function() {
-        const status = this.value;
+    function filterByServiceType(serviceType) {
         const url = new URL(window.location.href);
-
+        
+        if (serviceType) {
+            url.searchParams.set('service_type', serviceType);
+        } else {
+            url.searchParams.delete('service_type');
+        }
+        
+        window.location.href = url.toString();
+    }
+    
+    function filterByStatus(status) {
+        const url = new URL(window.location.href);
+        
         if (status) {
             url.searchParams.set('status', status);
         } else {
             url.searchParams.delete('status');
         }
-
+        
         window.location.href = url.toString();
-    });
+    }
 </script>
 @endsection

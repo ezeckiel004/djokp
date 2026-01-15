@@ -10,6 +10,8 @@ use App\Http\Controllers\FormationInternationaleController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\App;
@@ -131,6 +133,21 @@ Route::get('/newsletter/track/click/{campaign}/{subscription}/{token}', function
     abort(404);
 })->name('newsletter.track.click');
 
+
+// Routes pour les PDF légaux/certifications
+Route::get('/pdf/arrete-modificatif-07-11-2025', function () {
+    $path = public_path('arrt modificatif du 07-11-2025.pdf');
+
+    if (!file_exists($path)) {
+        abort(404, 'Fichier PDF non trouvé');
+    }
+
+    return response()->file($path, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'inline; filename="arrete-modificatif-07-11-2025.pdf"'
+    ]);
+})->name('pdf.arrete-modificatif');
+
 // Contact
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
@@ -139,6 +156,13 @@ Route::get('/cgv', fn() => view('cgv'))->name('cgv');
 Route::get('/cgu', fn() => view('cgu'))->name('cgu');
 Route::get('/rgpd', fn() => view('rgpd'))->name('rgpd');
 Route::get('/mentions-legales', fn() => view('mentions-legales'))->name('mentions-legales');
+
+// ==============================================
+// PAIEMENTS UNIFIÉS - Routes publiques
+// ==============================================
+Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
+Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
+Route::post('/stripe/webhook', [PaymentController::class, 'webhook'])->name('stripe.webhook');
 
 // Dans routes/web.php, ajoutez cette route
 Route::get('/conciergerie/suivi/{reference}', [\App\Http\Controllers\Client\ConciergerieController::class, 'suivi'])
@@ -169,10 +193,15 @@ Route::middleware(['auth'])->group(function () {
         ->name('formation.acheter.elearning');
     Route::post('/formation/{id}/create-payment-session', [FormationController::class, 'createPaymentSession'])
         ->name('formation.create.payment.session');
-    Route::get('/formation/payment/success', [FormationController::class, 'paymentSuccess'])
-        ->name('formation.payment.success');
-    Route::get('/formation/payment/cancel', [FormationController::class, 'paymentCancel'])
-        ->name('formation.payment.cancel');
+
+    // Routes de redirection pour les formations (vers PaymentController unifié)
+    Route::get('/formation/payment/success', function (Illuminate\Http\Request $request) {
+        return redirect()->route('payment.success', ['session_id' => $request->get('session_id')]);
+    })->name('formation.payment.success');
+
+    Route::get('/formation/payment/cancel', function () {
+        return redirect()->route('payment.cancel');
+    })->name('formation.payment.cancel');
 });
 
 // ==============================================
@@ -187,13 +216,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('formations.check-slugs');
 });
 
-// ==============================================
-// WEBHOOK STRIPE (sans CSRF)
-// ==============================================
-Route::post('/stripe/webhook', [FormationController::class, 'webhook'])
-    ->name('stripe.webhook');
-
-Route::post('/change-language', function (Request $request) {
+Route::post('/change-language', function (Illuminate\Http\Request $request) {
     $locale = $request->input('locale');
 
     if (in_array($locale, ['fr', 'en', 'es'])) {
@@ -250,6 +273,14 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Changement de langue
+Route::post('/language/switch', [LanguageController::class, 'switch'])
+    ->name('language.switch');
+
+// Page de sélection de langue (optionnelle)
+Route::get('/language', [LanguageController::class, 'index'])
+    ->name('language.index');
 
 /*
 |--------------------------------------------------------------------------

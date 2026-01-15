@@ -17,8 +17,11 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
+    public function boot()
     {
-        //
+        // Partager la locale avec toutes les vues
+        view()->composer('*', function ($view) {
+            $view->with('currentLocale', app()->getLocale());
+        });
     }
 }

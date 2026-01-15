@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Conciergerie - Arriver & Vivre en France | DJOK PRESTIGE')
+@section('title', __('conciergerie.title'))
 
 @section('content')
 <!-- Message de succès - Style sobre -->
@@ -15,22 +15,22 @@
                     </div>
                 </div>
                 <div class="ml-3">
-                    <h3 class="text-lg font-semibold text-white">Demande envoyée avec succès !</h3>
+                    <h3 class="text-lg font-semibold text-white">{{ __('conciergerie.success_title') }}</h3>
                     <div class="mt-1 text-green-100">
                         <p>{{ session('success') }}</p>
                         @if(session('email'))
                         <p class="text-sm mt-1">
-                            Un email de confirmation a été envoyé à <strong>{{ session('email') }}</strong>
+                            {!! __('conciergerie.confirmation_email', ['email' => session('email')]) !!}
                         </p>
                         @endif
                         <p class="text-sm mt-1">
-                            Notre équipe vous contactera dans les plus brefs délais.
+                            {{ __('conciergerie.contact_soon') }}
                         </p>
                     </div>
                 </div>
             </div>
             <button type="button" onclick="document.getElementById('success-alert').remove();"
-                class="text-green-300 hover:text-white">
+                class="text-green-300 hover:text-white" aria-label="{{ __('conciergerie.close_alert') }}">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -53,32 +53,30 @@
 <header class="relative min-h-screen flex items-center" style="background: #000;">
     <div class="absolute inset-0 bg-black">
         <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-            alt="Conciergerie Arriver en France" class="w-full h-full object-cover opacity-40">
+            alt="{{ __('conciergerie.hero_title') }}" class="w-full h-full object-cover opacity-40">
         <div class="absolute inset-0" style="background: rgba(0, 0, 0, 0.7);"></div>
     </div>
 
     <div class="container mx-auto px-4 md:px-6 py-20 relative z-10">
         <div class="max-w-5xl mx-auto text-center">
             <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-8" style="color: var(--gold);">
-                Arriver & Vivre en France avec DJOK PRESTIGE
+                {{ __('conciergerie.hero_title') }}
             </h1>
 
             <p class="text-lg md:text-xl text-gray-300 mb-12">
-                Votre arrivée en France, sans stress. DJOK PRESTIGE s'occupe de tout : transfert aéroport, hébergement,
-                véhicule, guide, et assistance administrative légère. Vous vous concentrez sur l'essentiel (formation,
-                business, séjour), on gère le reste.
+                {{ __('conciergerie.hero_description') }}
             </p>
 
             <!-- Boutons - Style sobre -->
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
                 <a href="#devis" class="w-full sm:w-auto px-8 py-3 font-semibold text-center transition duration-300"
                     style="background: var(--gold); color: black;">
-                    Demander un devis conciergerie
+                    {{ __('conciergerie.request_quote') }}
                 </a>
                 <a href="#contact"
                     class="w-full sm:w-auto px-8 py-3 font-semibold text-center border transition duration-300"
                     style="border-color: var(--gold); color: var(--gold);">
-                    Être rappelé en 10 minutes
+                    {{ __('conciergerie.call_back') }}
                 </a>
             </div>
         </div>
@@ -86,7 +84,8 @@
 
     <!-- Scroll Indicator -->
     <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <a href="#services" class="text-white transition duration-300 hover:text-var(--gold)">
+        <a href="#services" class="text-white transition duration-300 hover:text-var(--gold)"
+            aria-label="{{ __('conciergerie.scroll_down') }}">
             <i class="text-xl fas fa-chevron-down"></i>
         </a>
     </div>
@@ -96,27 +95,20 @@
 <section id="services" class="py-16" style="background: #000;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Nos services (à la carte)</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                __('conciergerie.services_title') }}</h2>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach([
-            ['Transferts aéroports & gares', 'fas fa-plane-arrival', 'Accueil pancarte nominative, suivi vol/train,
-            attente incluse.'],
-            ['Location de voiture', 'fas fa-car', 'Économique, business, prestige, électrique – avec ou sans
-            chauffeur.'],
-            ['Hébergement', 'fas fa-hotel', 'Hôtel 3★ à 5★, appart-hôtel, appartements meublés (séjours 1 semaine à 6
-            mois).'],
-            ['Guide touristique privé', 'fas fa-map-marked-alt', 'Circuits Paris, Versailles, Mont-Saint-Michel,
-            châteaux de la Loire, Côte d\'Azur.'],
-            ['Conciergerie de vie', 'fas fa-concierge-bell', 'Carte SIM, pass transport, ouverture compte en ligne,
-            assurance voyage.'],
-            ['Assistance installation légère', 'fas fa-hands-helping', 'Rendez-vous médical, orientation administrative,
-            accompagnement campus/école.'],
-            ['Business concierge', 'fas fa-briefcase', 'Salles de réunion, interprète, chauffeur à la journée, visites
-            de sites / salons pro.'],
-            ['VIP & événementiel', 'fas fa-crown', 'Accès lounge, fast-track, photographes, sécurité discrète (sur
-            devis).']
+            ['service_transfers', 'fas fa-plane-arrival', 'service_transfers_desc'],
+            ['service_car_rental', 'fas fa-car', 'service_car_rental_desc'],
+            ['service_accommodation', 'fas fa-hotel', 'service_accommodation_desc'],
+            ['service_guide', 'fas fa-map-marked-alt', 'service_guide_desc'],
+            ['service_concierge', 'fas fa-concierge-bell', 'service_concierge_desc'],
+            ['service_assistance', 'fas fa-hands-helping', 'service_assistance_desc'],
+            ['service_business', 'fas fa-briefcase', 'service_business_desc'],
+            ['service_vip', 'fas fa-crown', 'service_vip_desc']
             ] as $service)
             <div class="p-6" style="background: #111; border: 1px solid #333;">
                 <div class="flex items-start">
@@ -127,8 +119,9 @@
                         </div>
                     </div>
                     <div class="ml-4">
-                        <h4 class="text-lg font-bold mb-2" style="color: white;">{{ $service[0] }}</h4>
-                        <p class="text-gray-400">{{ $service[2] }}</p>
+                        <h4 class="text-lg font-bold mb-2" style="color: white;">{{ __('conciergerie.' . $service[0]) }}
+                        </h4>
+                        <p class="text-gray-400">{{ __('conciergerie.' . $service[2]) }}</p>
                     </div>
                 </div>
             </div>
@@ -141,56 +134,37 @@
 <section id="packs" class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Packs Conciergerie</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                __('conciergerie.packs_title') }}</h2>
             <p class="text-gray-400 max-w-3xl mx-auto">
-                Des solutions complètes adaptées à chaque type de séjour en France
+                {{ __('conciergerie.packs_description') }}
             </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach([
-            ['Arrivée Essentielle', 'Séjour court (2–5 jours)', '390 €', [
-            'Transfert aéroport',
-            '2 nuits hôtel 3★',
-            'Carte SIM',
-            'Support WhatsApp'
-            ]],
-            ['Formation Sereine', 'Stagiaires / étudiants', '1 490 €', [
-            'Transfert',
-            'Appartement meublé 1 mois',
-            'Carte SIM',
-            'Pass transport',
-            'RDV d\'accueil'
-            ]],
-            ['Affaires Business', 'Entrepreneurs / B2B', '890 €', [
-            'Chauffeur 1 jour',
-            'Hôtel 4★',
-            'Salle réunion 1/2 jour',
-            'Interprète 2h'
-            ]],
-            ['Famille Confort', 'Familles 3–6 personnes', '1 190 €', [
-            'Van + siège bébé',
-            'Appartement 2 chambres',
-            'Panier d\'arrivée',
-            'Guide 1/2 journée'
-            ]]
+            ['pack_essential', 'pack_essential_desc', 'pack_essential_price', 'pack_essential_items'],
+            ['pack_training', 'pack_training_desc', 'pack_training_price', 'pack_training_items'],
+            ['pack_business', 'pack_business_desc', 'pack_business_price', 'pack_business_items'],
+            ['pack_family', 'pack_family_desc', 'pack_family_price', 'pack_family_items']
             ] as $pack)
             <div class="p-6" style="background: #1a1a1a; border: 1px solid #333;">
-                <h3 class="text-xl font-bold mb-2" style="color: white;">{{ $pack[0] }}</h3>
-                <p class="text-gray-400 mb-4">{{ $pack[1] }}</p>
+                <h3 class="text-xl font-bold mb-2" style="color: white;">{{ __('conciergerie.' . $pack[0]) }}</h3>
+                <p class="text-gray-400 mb-4">{{ __('conciergerie.' . $pack[1]) }}</p>
                 <ul class="space-y-2 mb-6">
-                    @foreach($pack[3] as $item)
+                    @foreach(__('conciergerie.' . $pack[3]) as $item)
                     <li class="flex items-start">
                         <i class="fas fa-check mt-1 mr-3" style="color: var(--gold);"></i>
                         <span style="color: #ddd;">{{ $item }}</span>
                     </li>
                     @endforeach
                 </ul>
-                <div class="text-2xl font-bold mb-4" style="color: var(--gold);">À partir de {{ $pack[2] }}</div>
+                <div class="text-2xl font-bold mb-4" style="color: var(--gold);">{{ __('conciergerie.' . $pack[2]) }}
+                </div>
                 <a href="#devis"
                     class="inline-flex items-center justify-center w-full px-4 py-3 font-semibold rounded transition duration-300"
                     style="background: var(--gold); color: black;">
-                    Choisir ce pack
+                    {{ __('conciergerie.choose_pack') }}
                 </a>
             </div>
             @endforeach
@@ -202,14 +176,15 @@
 <section class="py-16" style="background: #000;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Tarifs Prévisionnels</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                __('conciergerie.pricing_title') }}</h2>
             <p class="text-gray-400 max-w-3xl mx-auto">
-                Estimation transparente des coûts pour vous aider à planifier sereinement votre budget
+                {{ __('conciergerie.pricing_description') }}
             </p>
             <div class="inline-flex items-center justify-center gap-3 mt-6 p-3 rounded"
                 style="background: rgba(var(--gold-rgb), 0.1);">
                 <i class="fas fa-info-circle" style="color: var(--gold);"></i>
-                <span class="font-medium" style="color: var(--gold);">Tarifs indicatifs à partir de</span>
+                <span class="font-medium" style="color: var(--gold);">{{ __('conciergerie.indicative_prices') }}</span>
             </div>
         </div>
 
@@ -217,36 +192,39 @@
             <table class="w-full">
                 <thead style="background: #1a1a1a;">
                     <tr>
-                        <th class="py-4 px-6 text-left font-semibold" style="color: var(--gold);">Service</th>
-                        <th class="py-4 px-6 text-left font-semibold" style="color: var(--gold);">Description</th>
-                        <th class="py-4 px-6 text-center font-semibold" style="color: var(--gold);">Tarif</th>
-                        <th class="py-4 px-6 text-center font-semibold" style="color: var(--gold);">Période</th>
+                        <th class="py-4 px-6 text-left font-semibold" style="color: var(--gold);">{{
+                            __('conciergerie.service') }}</th>
+                        <th class="py-4 px-6 text-left font-semibold" style="color: var(--gold);">{{
+                            __('conciergerie.description') }}</th>
+                        <th class="py-4 px-6 text-center font-semibold" style="color: var(--gold);">{{
+                            __('conciergerie.price') }}</th>
+                        <th class="py-4 px-6 text-center font-semibold" style="color: var(--gold);">{{
+                            __('conciergerie.period') }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach([
-                    ['Transfert Aéroport', 'Accueil avec pancarte nominative, suivi vol en temps réel', '65 €', 'Par
-                    trajet'],
-                    ['Location Voiture Éco', 'Clio, 208, Citadine - Assurance incluse', '49 €', 'Par jour'],
-                    ['Location Voiture Prestige', 'Classe E, BMW Série 5, Tesla Model 3', '149 €', 'Par jour'],
-                    ['Chauffeur Privé', 'Service 8h avec véhicule business, professionnel bilingue', '350 €', 'Par
-                    journée'],
-                    ['Hôtel 3★', 'Chambre double standard, petit-déjeuner inclus', '110 €', 'Par nuit'],
-                    ['Appartement Studio', 'Meublé, équipé, wifi fibre, ménage inclus', '1 250 €', 'Par mois'],
-                    ['Guide Paris Essentiel', 'Visite 4h des monuments, guide diplômé', '190 €', 'Par visite'],
-                    ['Pack Installation Starter', 'Carte SIM + Pass Navigo + RDV d\'accueil personnalisé', '99 €',
-                    'Forfait unique'],
-                    ['Assistance Administrative', 'Accompagnement démarches, prise de RDV', '75 €', 'Par heure'],
-                    ['Interprète', 'Traduction FR/EN/AR/ES, secteur médical ou professionnel', '45 €', 'Par heure']
+                    ['transfer_airport', 'transfer_airport_desc', 'transfer_airport_price', 'per_trip'],
+                    ['car_eco', 'car_eco_desc', 'car_eco_price', 'per_day'],
+                    ['car_prestige', 'car_prestige_desc', 'car_prestige_price', 'per_day'],
+                    ['private_driver', 'private_driver_desc', 'private_driver_price', 'per_day'],
+                    ['hotel_3', 'hotel_3_desc', 'hotel_3_price', 'per_night'],
+                    ['apartment_studio', 'apartment_studio_desc', 'apartment_studio_price', 'per_month'],
+                    ['guide_paris', 'guide_paris_desc', 'guide_paris_price', 'per_visit'],
+                    ['pack_starter', 'pack_starter_desc', 'pack_starter_price', 'one_time'],
+                    ['admin_assistance', 'admin_assistance_desc', 'admin_assistance_price', 'per_hour'],
+                    ['interpreter', 'interpreter_desc', 'interpreter_price', 'per_hour']
                     ] as $row)
                     <tr class="border-t" style="border-color: #333;">
-                        <td class="py-4 px-6 font-semibold" style="color: white;">{{ $row[0] }}</td>
-                        <td class="py-4 px-6" style="color: #aaa;">{{ $row[1] }}</td>
-                        <td class="py-4 px-6 text-center font-bold" style="color: var(--gold);">{{ $row[2] }}</td>
+                        <td class="py-4 px-6 font-semibold" style="color: white;">{{ __('conciergerie.' . $row[0]) }}
+                        </td>
+                        <td class="py-4 px-6" style="color: #aaa;">{{ __('conciergerie.' . $row[1]) }}</td>
+                        <td class="py-4 px-6 text-center font-bold" style="color: var(--gold);">{{ __('conciergerie.' .
+                            $row[2]) }}</td>
                         <td class="py-4 px-6 text-center">
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-sm"
                                 style="background: #222; color: #ccc;">
-                                {{ $row[3] }}
+                                {{ __('conciergerie.' . $row[3]) }}
                             </span>
                         </td>
                     </tr>
@@ -265,11 +243,9 @@
                     </div>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-2" style="color: white;">Informations importantes</h4>
+                    <h4 class="font-bold mb-2" style="color: white;">{{ __('conciergerie.important_info') }}</h4>
                     <p class="text-gray-400">
-                        Ces tarifs sont indicatifs et peuvent varier selon la saison, la durée,
-                        les options choisies et la disponibilité. Les prix définitifs seront
-                        confirmés dans votre devis personnalisé.
+                        {{ __('conciergerie.pricing_note') }}
                     </p>
                 </div>
             </div>
@@ -278,19 +254,17 @@
         <!-- Cartes informatives -->
         <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             @foreach([
-            ['Pas de frais cachés', 'fas fa-percentage', 'Tous nos tarifs incluent TVA et frais de service. Aucun
-            supplément surprise.'],
-            ['Garantie meilleur prix', 'fas fa-handshake', 'Nous garantissons les prix les plus compétitifs pour des
-            services équivalents.'],
-            ['Devis sous 24h', 'fas fa-clock', 'Recevez votre devis personnalisé en moins de 24 heures ouvrées.']
+            ['no_hidden_fees', 'fas fa-percentage', 'no_hidden_fees_desc'],
+            ['price_guarantee', 'fas fa-handshake', 'price_guarantee_desc'],
+            ['quote_24h', 'fas fa-clock', 'quote_24h_desc']
             ] as $card)
             <div class="p-6 rounded" style="background: #111; border: 1px solid #333;">
                 <div class="w-12 h-12 flex items-center justify-center rounded mb-4"
                     style="background: rgba(var(--gold-rgb), 0.1);">
                     <i class="{{ $card[1] }}" style="color: var(--gold);"></i>
                 </div>
-                <h4 class="font-bold mb-2" style="color: white;">{{ $card[0] }}</h4>
-                <p class="text-gray-400">{{ $card[2] }}</p>
+                <h4 class="font-bold mb-2" style="color: white;">{{ __('conciergerie.' . $card[0]) }}</h4>
+                <p class="text-gray-400">{{ __('conciergerie.' . $card[2]) }}</p>
             </div>
             @endforeach
         </div>
@@ -301,42 +275,43 @@
 <section class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Location de voiture (avec/sans
-                chauffeur)</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                __('conciergerie.car_rental_title') }}</h2>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             @foreach([
-            ['Éco', 'Clio, 208', '49 €/jour'],
-            ['Business', 'Passat, Classe C', '89 €/jour'],
-            ['Prestige', 'Classe E, BMW Série 5, Tesla Model 3', '149 €/jour'],
-            ['Van 7 places', 'Classe V', '179 €/jour']
+            ['eco_category', 'eco_models', 'eco_price'],
+            ['business_category', 'business_models', 'business_price'],
+            ['prestige_category', 'prestige_models', 'prestige_price'],
+            ['van_category', 'van_models', 'van_price']
             ] as $vehicle)
             <div class="p-6 text-center" style="background: #1a1a1a; border: 1px solid #333;">
-                <h3 class="text-lg font-bold mb-2" style="color: white;">{{ $vehicle[0] }}</h3>
-                <p class="text-gray-400 mb-4">{{ $vehicle[1] }}</p>
-                <div class="text-xl font-bold mb-6" style="color: var(--gold);">Dès {{ $vehicle[2] }}</div>
+                <h3 class="text-lg font-bold mb-2" style="color: white;">{{ __('conciergerie.' . $vehicle[0]) }}</h3>
+                <p class="text-gray-400 mb-4">{{ __('conciergerie.' . $vehicle[1]) }}</p>
+                <div class="text-xl font-bold mb-6" style="color: var(--gold);">{{ __('conciergerie.' . $vehicle[2]) }}
+                </div>
                 <a href="{{ route('location') }}"
                     class="inline-flex items-center justify-center w-full px-4 py-3 font-semibold rounded transition duration-300"
                     style="background: var(--gold); color: black;">
-                    Réserver
+                    {{ __('conciergerie.book_now') }}
                 </a>
             </div>
             @endforeach
         </div>
 
         <div class="mt-8 p-6 rounded" style="background: #1a1a1a; border: 1px solid #333;">
-            <h3 class="text-lg font-bold mb-4" style="color: white;">Options disponibles :</h3>
+            <h3 class="text-lg font-bold mb-4" style="color: white;">{{ __('conciergerie.options_title') }}</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 @foreach([
-                ['GPS', 'fas fa-map-marker-alt'],
-                ['Siège bébé', 'fas fa-baby'],
-                ['Conducteur additionnel', 'fas fa-user-plus'],
-                ['Recharge électrique', 'fas fa-charging-station']
+                ['option_gps', 'fas fa-map-marker-alt'],
+                ['option_baby_seat', 'fas fa-baby'],
+                ['option_additional_driver', 'fas fa-user-plus'],
+                ['option_charging', 'fas fa-charging-station']
                 ] as $option)
                 <div class="flex items-center">
                     <i class="{{ $option[1] }} mr-3" style="color: var(--gold);"></i>
-                    <span style="color: #ddd;">{{ $option[0] }}</span>
+                    <span style="color: #ddd;">{{ __('conciergerie.' . $option[0]) }}</span>
                 </div>
                 @endforeach
             </div>
@@ -348,25 +323,25 @@
 <section class="py-16" style="background: #000;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Hébergements (réseau
-                partenaires)</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                __('conciergerie.accommodation_title') }}</h2>
             <p class="text-gray-400 max-w-3xl mx-auto">
-                Hôtels 3★, 4★, 5★ (Paris, Lyon, Marseille, Bordeaux, Lille, Nice, Cannes). Apparts meublés (court /
-                moyen séjour) : cuisine équipée, linge, Wi-Fi, ménage. Appart-hôtels : services hôteliers + kitchenette,
-                idéal formation 2–12 semaines.
+                {{ __('conciergerie.accommodation_description') }}
             </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             @foreach([
-            ['Hôtel 3★ Paris 15e', 'Centre ville, accès transports', '110 €/nuit'],
-            ['Appart meublé Studio Paris', 'Équipé, wifi, proche métro', '1 250 €/mois'],
-            ['2 pièces proche La Défense', 'Pour professionnels, 2 chambres', '1 850 €/mois']
+            ['hotel_paris', 'hotel_paris_desc', 'hotel_paris_price'],
+            ['apartment_studio_paris', 'apartment_studio_paris_desc', 'apartment_studio_paris_price'],
+            ['apartment_2rooms', 'apartment_2rooms_desc', 'apartment_2rooms_price']
             ] as $hebergement)
             <div class="p-6" style="background: #111; border: 1px solid #333;">
-                <h3 class="text-lg font-bold mb-2" style="color: white;">{{ $hebergement[0] }}</h3>
-                <p class="text-gray-400 mb-4">{{ $hebergement[1] }}</p>
-                <div class="text-xl font-bold" style="color: var(--gold);">Dès {{ $hebergement[2] }}</div>
+                <h3 class="text-lg font-bold mb-2" style="color: white;">{{ __('conciergerie.' . $hebergement[0]) }}
+                </h3>
+                <p class="text-gray-400 mb-4">{{ __('conciergerie.' . $hebergement[1]) }}</p>
+                <div class="text-xl font-bold" style="color: var(--gold);">{{ __('conciergerie.' . $hebergement[2]) }}
+                </div>
             </div>
             @endforeach
         </div>
@@ -377,25 +352,26 @@
 <section class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Guides & expériences privées
-            </h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                __('conciergerie.guides_title') }}</h2>
             <p class="text-gray-400 max-w-3xl mx-auto">
-                Guides FR/EN/AR/PT, accès coupe-file selon sites (billets en sus).
+                {{ __('conciergerie.guides_description') }}
             </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach([
-            ['Paris essentiel 4h', 'Tour Eiffel, Louvre, Opéra, Champs-Élysées', '190 €'],
-            ['Versailles & jardins', '1/2 journée', '240 €'],
-            ['Châteaux de la Loire', 'Journée', '490 €'],
-            ['Bordeaux vins', 'Journée, dégustations', '520 €'],
-            ['Côte d\'Azur', 'Nice–Cannes–Monaco, journée', '540 €']
+            ['experience_paris', 'experience_paris_desc', 'experience_paris_price'],
+            ['experience_versailles', 'experience_versailles_desc', 'experience_versailles_price'],
+            ['experience_loire', 'experience_loire_desc', 'experience_loire_price'],
+            ['experience_bordeaux', 'experience_bordeaux_desc', 'experience_bordeaux_price'],
+            ['experience_cotedazur', 'experience_cotedazur_desc', 'experience_cotedazur_price']
             ] as $experience)
             <div class="p-6" style="background: #1a1a1a; border: 1px solid #333;">
-                <h3 class="text-lg font-bold mb-2" style="color: white;">{{ $experience[0] }}</h3>
-                <p class="text-gray-400 mb-4">{{ $experience[1] }}</p>
-                <div class="text-xl font-bold" style="color: var(--gold);">Dès {{ $experience[2] }}</div>
+                <h3 class="text-lg font-bold mb-2" style="color: white;">{{ __('conciergerie.' . $experience[0]) }}</h3>
+                <p class="text-gray-400 mb-4">{{ __('conciergerie.' . $experience[1]) }}</p>
+                <div class="text-xl font-bold" style="color: var(--gold);">{{ __('conciergerie.' . $experience[2]) }}
+                </div>
             </div>
             @endforeach
         </div>
@@ -406,38 +382,27 @@
 <section class="py-16" style="background: #000;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="text-center mb-12">
-            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">Packs "installation douce"</h2>
+            <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{
+                __('conciergerie.installation_packs_title') }}</h2>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             @foreach([
-            ['Starter', '99 €', [
-            'Carte SIM',
-            'Pass Navigo',
-            'RDV d\'accueil'
-            ]],
-            ['Study', '179 €', [
-            'Tout le pack Starter +',
-            'Attestation hébergement',
-            'RDV assurance santé'
-            ]],
-            ['Pro', '290 €', [
-            'Tout le pack Study +',
-            'Assistance ouverture compte en ligne',
-            'Salle réunion 2h'
-            ]]
+            ['pack_starter_name', 'pack_starter_price', 'pack_starter_items'],
+            ['pack_study_name', 'pack_study_price', 'pack_study_items'],
+            ['pack_pro_name', 'pack_pro_price', 'pack_pro_items']
             ] as $pack)
             <div class="p-6" style="background: #111; border: 1px solid #333;">
-                <h3 class="text-xl font-bold mb-4" style="color: white;">{{ $pack[0] }}</h3>
+                <h3 class="text-xl font-bold mb-4" style="color: white;">{{ __('conciergerie.' . $pack[0]) }}</h3>
                 <ul class="space-y-3 mb-6">
-                    @foreach($pack[2] as $item)
+                    @foreach(__('conciergerie.' . $pack[2]) as $item)
                     <li class="flex items-start">
                         <i class="fas fa-check mt-1 mr-3" style="color: var(--gold);"></i>
                         <span style="color: #ddd;">{{ $item }}</span>
                     </li>
                     @endforeach
                 </ul>
-                <div class="text-2xl font-bold" style="color: var(--gold);">{{ $pack[1] }}</div>
+                <div class="text-2xl font-bold" style="color: var(--gold);">{{ __('conciergerie.' . $pack[1]) }}</div>
             </div>
             @endforeach
         </div>
@@ -448,8 +413,8 @@
 <section id="devis" class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="max-w-4xl mx-auto p-6 md:p-8" style="background: #1a1a1a; border: 1px solid #333;">
-            <h2 class="text-2xl md:text-3xl font-bold text-center mb-8" style="color: var(--gold);">Demander un devis
-                conciergerie personnalisé</h2>
+            <h2 class="text-2xl md:text-3xl font-bold text-center mb-8" style="color: var(--gold);">{{
+                __('conciergerie.quote_title') }}</h2>
 
             @if(session('success'))
             <div class="p-4 mb-6" style="background: #064e3b; border: 1px solid #047857;">
@@ -459,7 +424,7 @@
                         <i class="fas fa-check-circle text-white"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-white">Demande envoyée</h4>
+                        <h4 class="font-bold text-white">{{ __('conciergerie.request_sent') }}</h4>
                         <p class="text-green-100">{{ session('success') }}</p>
                     </div>
                 </div>
@@ -474,7 +439,7 @@
                         <i class="fas fa-exclamation-triangle text-white"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-white">Veuillez corriger les erreurs suivantes :</h4>
+                        <h4 class="font-bold text-white">{{ __('conciergerie.error_correction') }}</h4>
                         <ul class="text-red-100 list-disc list-inside mt-1">
                             @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -491,22 +456,24 @@
                 <div class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Nom complet *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">{{ __('conciergerie.full_name')
+                                }}</label>
                             <input type="text" name="nom" required
                                 class="w-full px-4 py-3 rounded @error('nom') border-red-500 @enderror"
                                 style="background: #111; border: 1px solid #444; color: white;"
-                                placeholder="Votre nom et prénom" value="{{ old('nom') }}">
+                                placeholder="{{ __('conciergerie.full_name_placeholder') }}" value="{{ old('nom') }}">
                             @error('nom')
                             <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Email *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">{{ __('conciergerie.email')
+                                }}</label>
                             <input type="email" name="email" required
                                 class="w-full px-4 py-3 rounded @error('email') border-red-500 @enderror"
                                 style="background: #111; border: 1px solid #444; color: white;"
-                                placeholder="votre@email.com" value="{{ old('email') }}">
+                                placeholder="{{ __('conciergerie.email_placeholder') }}" value="{{ old('email') }}">
                             @error('email')
                             <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
@@ -515,30 +482,32 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Téléphone *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">{{ __('conciergerie.phone')
+                                }}</label>
                             <input type="tel" name="telephone" required
                                 class="w-full px-4 py-3 rounded @error('telephone') border-red-500 @enderror"
                                 style="background: #111; border: 1px solid #444; color: white;"
-                                placeholder="06 12 34 56 78" value="{{ old('telephone') }}">
+                                placeholder="{{ __('conciergerie.phone_placeholder') }}" value="{{ old('telephone') }}">
                             @error('telephone')
                             <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Motif du voyage *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                __('conciergerie.travel_reason') }}</label>
                             <select name="motif_voyage" required
                                 class="w-full px-4 py-3 rounded @error('motif_voyage') border-red-500 @enderror"
                                 style="background: #111; border: 1px solid #444; color: white;">
-                                <option value="" style="color: #666;">Sélectionnez un motif</option>
+                                <option value="" style="color: #666;">{{ __('conciergerie.select_reason') }}</option>
                                 @foreach([
-                                'tourisme' => 'Tourisme',
-                                'affaires' => 'Affaires / Business',
-                                'formation' => 'Formation / Études',
-                                'installation' => 'Installation en France',
-                                'familial' => 'Visite familiale',
-                                'evenementiel' => 'Événementiel',
-                                'autre' => 'Autre'
+                                'tourisme' => __('conciergerie.tourism'),
+                                'affaires' => __('conciergerie.business'),
+                                'formation' => __('conciergerie.training'),
+                                'installation' => __('conciergerie.settlement'),
+                                'familial' => __('conciergerie.family'),
+                                'evenementiel' => __('conciergerie.events'),
+                                'autre' => __('conciergerie.other')
                                 ] as $value => $label)
                                 <option value="{{ $value }}" {{ old('motif_voyage')==$value ? 'selected' : '' }}
                                     style="color: white;">{{ $label }}</option>
@@ -552,7 +521,8 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Date d'arrivée *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                __('conciergerie.arrival_date') }}</label>
                             <input type="date" name="date_arrivee" required
                                 class="w-full px-4 py-3 rounded @error('date_arrivee') border-red-500 @enderror"
                                 style="background: #111; border: 1px solid #444; color: white;"
@@ -563,19 +533,20 @@
                         </div>
 
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Durée du séjour *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                __('conciergerie.stay_duration') }}</label>
                             <select name="duree_sejour" required
                                 class="w-full px-4 py-3 rounded @error('duree_sejour') border-red-500 @enderror"
                                 style="background: #111; border: 1px solid #444; color: white;">
-                                <option value="" style="color: #666;">Sélectionnez la durée</option>
+                                <option value="" style="color: #666;">{{ __('conciergerie.select_duration') }}</option>
                                 @foreach([
-                                '1-3' => '1-3 jours',
-                                '4-7' => '4-7 jours',
-                                '1-2' => '1-2 semaines',
-                                '3-4' => '3-4 semaines',
-                                '1-3' => '1-3 mois',
-                                '3-6' => '3-6 mois',
-                                '6+' => 'Plus de 6 mois'
+                                '1-3' => __('conciergerie.duration_1_3'),
+                                '4-7' => __('conciergerie.duration_4_7'),
+                                '1-2' => __('conciergerie.duration_1_2_weeks'),
+                                '3-4' => __('conciergerie.duration_3_4_weeks'),
+                                '1-3' => __('conciergerie.duration_1_3_months'),
+                                '3-6' => __('conciergerie.duration_3_6_months'),
+                                '6+' => __('conciergerie.duration_6_plus')
                                 ] as $value => $label)
                                 <option value="{{ $value }}" {{ old('duree_sejour')==$value ? 'selected' : '' }}
                                     style="color: white;">{{ $label }}</option>
@@ -589,17 +560,18 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Nombre de personnes *</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                                __('conciergerie.people_count') }}</label>
                             <select name="nombre_personnes" required
                                 class="w-full px-4 py-3 rounded @error('nombre_personnes') border-red-500 @enderror"
                                 style="background: #111; border: 1px solid #444; color: white;">
-                                <option value="" style="color: #666;">Sélectionnez</option>
+                                <option value="" style="color: #666;">{{ __('conciergerie.select_people') }}</option>
                                 @foreach([
-                                '1' => '1 personne',
-                                '2' => '2 personnes',
-                                '3-4' => '3-4 personnes',
-                                '5-6' => '5-6 personnes',
-                                '7+' => 'Plus de 6 personnes'
+                                '1' => __('conciergerie.1_person'),
+                                '2' => __('conciergerie.2_people'),
+                                '3-4' => __('conciergerie.3_4_people'),
+                                '5-6' => __('conciergerie.5_6_people'),
+                                '7+' => __('conciergerie.7_plus_people')
                                 ] as $value => $label)
                                 <option value="{{ $value }}" {{ old('nombre_personnes')==$value ? 'selected' : '' }}
                                     style="color: white;">{{ $label }}</option>
@@ -611,18 +583,19 @@
                         </div>
 
                         <div>
-                            <label class="block mb-2 font-medium" style="color: #ddd;">Budget estimé (en €)</label>
+                            <label class="block mb-2 font-medium" style="color: #ddd;">{{ __('conciergerie.budget')
+                                }}</label>
                             <select name="budget"
                                 class="w-full px-4 py-3 rounded @error('budget') border-red-500 @enderror"
                                 style="background: #111; border: 1px solid #444; color: white;">
-                                <option value="" style="color: #666;">Sélectionnez une fourchette</option>
+                                <option value="" style="color: #666;">{{ __('conciergerie.select_budget') }}</option>
                                 @foreach([
-                                '500-1000' => '500 - 1 000 €',
-                                '1000-2000' => '1 000 - 2 000 €',
-                                '2000-5000' => '2 000 - 5 000 €',
-                                '5000-10000' => '5 000 - 10 000 €',
-                                '10000+' => 'Plus de 10 000 €',
-                                'sur_devis' => 'Sur devis'
+                                '500-1000' => __('conciergerie.500_1000'),
+                                '1000-2000' => __('conciergerie.1000_2000'),
+                                '2000-5000' => __('conciergerie.2000_5000'),
+                                '5000-10000' => __('conciergerie.5000_10000'),
+                                '10000+' => __('conciergerie.10000_plus'),
+                                'sur_devis' => __('conciergerie.quote_based')
                                 ] as $value => $label)
                                 <option value="{{ $value }}" {{ old('budget')==$value ? 'selected' : '' }}
                                     style="color: white;">{{ $label }}</option>
@@ -635,16 +608,16 @@
                     </div>
 
                     <div>
-                        <label class="block mb-2 font-medium" style="color: #ddd;">Type d'accompagnement souhaité
-                            *</label>
+                        <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                            __('conciergerie.accompaniment_type') }}</label>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             @php
                             $oldType = old('type_accompagnement');
                             @endphp
                             @foreach([
-                            'chauffeur' => ['Avec chauffeur', 'Service VTC/Chauffeur privé'],
-                            'location' => ['Location de voiture', 'Sans chauffeur'],
-                            'mixte' => ['Mixte', 'Chauffeur + location']
+                            'chauffeur' => ['with_driver', 'with_driver_desc'],
+                            'location' => ['car_rental_only', 'car_rental_only_desc'],
+                            'mixte' => ['mixed', 'mixed_desc']
                             ] as $value => $labels)
                             <div class="flex items-center p-4 rounded cursor-pointer"
                                 style="background: #111; border: 1px solid #444;">
@@ -652,8 +625,10 @@
                                     value="{{ $value }}" class="mr-3" {{ $oldType==$value ? 'checked' : '' }}
                                     onchange="showRedirectionInfo('{{ $value }}')">
                                 <label for="accomp_{{ $value }}" class="cursor-pointer">
-                                    <span class="font-medium" style="color: white;">{{ $labels[0] }}</span>
-                                    <p class="text-sm mt-1" style="color: #aaa;">{{ $labels[1] }}</p>
+                                    <span class="font-medium" style="color: white;">{{ __('conciergerie.' . $labels[0])
+                                        }}</span>
+                                    <p class="text-sm mt-1" style="color: #aaa;">{{ __('conciergerie.' . $labels[1]) }}
+                                    </p>
                                 </label>
                             </div>
                             @endforeach
@@ -674,30 +649,32 @@
                     </div>
 
                     <div>
-                        <label class="block mb-2 font-medium" style="color: #ddd;">Services souhaités *</label>
+                        <label class="block mb-2 font-medium" style="color: #ddd;">{{
+                            __('conciergerie.services_desired') }}</label>
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                             @php
                             $oldServices = old('services', []);
                             @endphp
                             @foreach([
-                            'Transfert aéroport/gare',
-                            'Location voiture',
-                            'Hébergement',
-                            'Guide touristique',
-                            'Assistance administrative',
-                            'Services business',
-                            'Installation/logement',
-                            'Courses arrivée',
-                            'Interprète/traduction',
-                            'Billets spectacles',
-                            'Réservation restaurants',
-                            'Service ménage'
+                            'service_transfer_airport',
+                            'service_car_rental_check',
+                            'service_accommodation_check',
+                            'service_tourist_guide',
+                            'service_admin_assistance',
+                            'service_business_check',
+                            'service_settlement',
+                            'service_arrival_shopping',
+                            'service_interpreter',
+                            'service_tickets',
+                            'service_restaurants',
+                            'service_cleaning'
                             ] as $service)
                             <label class="flex items-center p-2 rounded cursor-pointer"
                                 style="background: #111; border: 1px solid #444;">
-                                <input type="checkbox" name="services[]" value="{{ $service }}" class="mr-2 rounded"
-                                    style="border-color: #666;" {{ in_array($service, $oldServices) ? 'checked' : '' }}>
-                                <span class="text-sm" style="color: #ddd;">{{ $service }}</span>
+                                <input type="checkbox" name="services[]" value="{{ __('conciergerie.' . $service) }}"
+                                    class="mr-2 rounded" style="border-color: #666;" {{ in_array(__('conciergerie.' .
+                                    $service), $oldServices) ? 'checked' : '' }}>
+                                <span class="text-sm" style="color: #ddd;">{{ __('conciergerie.' . $service) }}</span>
                             </label>
                             @endforeach
                         </div>
@@ -707,12 +684,12 @@
                     </div>
 
                     <div>
-                        <label class="block mb-2 font-medium" style="color: #ddd;">Message / Besoins spécifiques
-                            *</label>
+                        <label class="block mb-2 font-medium" style="color: #ddd;">{{ __('conciergerie.message')
+                            }}</label>
                         <textarea name="message" rows="5" required
                             class="w-full px-4 py-3 rounded @error('message') border-red-500 @enderror"
                             style="background: #111; border: 1px solid #444; color: white;"
-                            placeholder="Décrivez vos besoins en détail, vos attentes particulières, vos contraintes...">{{ old('message') }}</textarea>
+                            placeholder="{{ __('conciergerie.message_placeholder') }}">{{ old('message') }}</textarea>
                         @error('message')
                         <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                         @enderror
@@ -725,18 +702,18 @@
                             style="background: var(--gold); color: black;">
                             <span id="btn-text" class="flex items-center justify-center">
                                 <i class="fas fa-paper-plane mr-3"></i>
-                                Envoyer ma demande de devis
+                                {{ __('conciergerie.submit_quote') }}
                             </span>
                             <span id="btn-loading" class="hidden flex items-center justify-center">
                                 <i class="fas fa-spinner fa-spin mr-3"></i>
-                                Traitement en cours...
+                                {{ __('conciergerie.processing') }}
                             </span>
                         </button>
                     </div>
 
                     <p class="text-center text-sm mt-4" style="color: #888;">
                         <i class="fas fa-shield-alt mr-2"></i>
-                        Votre demande sera traitée sous 24h maximum. Nous vous enverrons un devis personnalisé.
+                        {{ __('conciergerie.processing_note') }}
                     </p>
                 </div>
             </form>
@@ -750,7 +727,7 @@
                         style="background: var(--gold);">
                         <i class="fas fa-phone-alt text-black"></i>
                     </div>
-                    <h3 class="text-lg font-bold mb-2" style="color: white;">Téléphone</h3>
+                    <h3 class="text-lg font-bold mb-2" style="color: white;">{{ __('conciergerie.phone_label') }}</h3>
                     <a href="tel:0176380017" class="font-semibold hover:text-yellow-300" style="color: var(--gold);">01
                         76 38 00 17</a>
                 </div>
@@ -760,8 +737,9 @@
                         style="background: #25D366;">
                         <i class="fab fa-whatsapp text-white"></i>
                     </div>
-                    <h3 class="text-lg font-bold mb-2" style="color: white;">WhatsApp</h3>
-                    <p class="font-semibold" style="color: #86efac;">Disponible 24h/24</p>
+                    <h3 class="text-lg font-bold mb-2" style="color: white;">{{ __('conciergerie.whatsapp_label') }}
+                    </h3>
+                    <p class="font-semibold" style="color: #86efac;">{{ __('conciergerie.whatsapp_available') }}</p>
                 </div>
 
                 <div class="text-center p-6" style="background: #1a1a1a; border: 1px solid #333;">
@@ -769,7 +747,7 @@
                         style="background: var(--gold);">
                         <i class="fas fa-envelope text-black"></i>
                     </div>
-                    <h3 class="text-lg font-bold mb-2" style="color: white;">Email</h3>
+                    <h3 class="text-lg font-bold mb-2" style="color: white;">{{ __('conciergerie.email_label') }}</h3>
                     <a href="mailto:conciergerie@djokprestige.com" class="font-semibold hover:text-yellow-300"
                         style="color: var(--gold);">
                         conciergerie@djokprestige.com
@@ -866,20 +844,20 @@
 
         switch(type) {
             case 'chauffeur':
-                textSpan.textContent = 'Pour un service avec chauffeur, consultez notre page';
-                link.textContent = 'VTC & Transport';
+                textSpan.textContent = "{{ __('conciergerie.redirection_driver') }}";
+                link.textContent = "{{ __('conciergerie.vtc_transport') }}";
                 link.href = "{{ route('vtc-transport') }}";
                 link.target = '_blank';
                 break;
             case 'location':
-                textSpan.textContent = 'Pour louer un véhicule sans chauffeur, visitez notre page';
-                link.textContent = 'Location de voiture';
+                textSpan.textContent = "{{ __('conciergerie.redirection_rental') }}";
+                link.textContent = "{{ __('conciergerie.car_rental_page') }}";
                 link.href = "{{ route('location') }}";
                 link.target = '_blank';
                 break;
             case 'mixte':
-                textSpan.textContent = 'Pour combiner chauffeur et location, nous vous conseillons de consulter nos deux pages :';
-                link.textContent = 'VTC & Location';
+                textSpan.textContent = "{{ __('conciergerie.redirection_mixed') }}";
+                link.textContent = "{{ __('conciergerie.vtc_rental') }}";
                 link.href = "#";
                 link.target = '_blank';
                 link.onclick = function(e) {

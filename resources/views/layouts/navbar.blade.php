@@ -3,16 +3,33 @@
     <!-- Top -->
     <div class="header-top">
         <div class="phone">
-            <i class="fa-solid fa-phone"></i> 06.99.16.44.55
+            <i class="fa-solid fa-phone"></i> {{ __('navbar.phone') }}
         </div>
         <div class="social-top">
             <i class="fa-brands fa-facebook-f"></i>
             <i class="fa-brands fa-instagram"></i>
             <i class="fa-brands fa-snapchat"></i>
-            <!-- X personnalisé au lieu de Font Awesome -->
             <span class="custom-x-icon">𝕏</span>
             <i class="fa-brands fa-tiktok"></i>
 
+            <!-- Sélecteur de langue -->
+            <div class="language-selector">
+                <form action="{{ route('language.switch') }}" method="POST" id="language-form">
+                    @csrf
+                    <select name="locale" id="language-switcher" class="language-select">
+                        <option value="fr" {{ app()->getLocale() == 'fr' ? 'selected' : '' }}>
+                            🇫🇷 FR
+                        </option>
+                        <option value="en" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>
+                            🇬🇧 EN
+                        </option>
+                        <option value="es" {{ app()->getLocale() == 'es' ? 'selected' : '' }}>
+                            🇪🇸 ES
+                        </option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down language-selector-icon"></i>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -25,20 +42,24 @@
 
     <!-- Desktop Navigation -->
     <nav class="desktop-nav">
-        <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">ACCUEIL</a>
-        <a href="{{ route('about') }}" class="{{ request()->is('about') ? 'active' : '' }}">A PROPOS</a>
+        <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">
+            {{ __('navbar.home') }}
+        </a>
+        <a href="{{ route('about') }}" class="{{ request()->is('about') ? 'active' : '' }}">
+            {{ __('navbar.about') }}
+        </a>
 
         <!-- Formations Dropdown -->
         <div class="dropdown">
             <a href="#" class="dropdown-toggle {{ request()->is('formation*') ? 'active' : '' }}">
-                FORMATIONS <i class="fa-solid fa-chevron-down ml-1"></i>
+                {{ __('navbar.training') }} <i class="fa-solid fa-chevron-down ml-1"></i>
             </a>
             <div class="dropdown-menu">
                 <a href="{{ route('formation') }}" class="dropdown-item">
-                    Formation VTC
+                    {{ __('navbar.vtc_training') }}
                 </a>
                 <a href="{{ route('formation.international') }}" class="dropdown-item">
-                    Formation Internationale
+                    {{ __('navbar.international_training') }}
                 </a>
             </div>
         </div>
@@ -47,23 +68,27 @@
         <div class="dropdown">
             <a href="#"
                 class="dropdown-toggle {{ request()->is('reservation') || request()->is('location') || request()->is('conciergerie') ? 'active' : '' }}">
-                NOS SERVICES <i class="fa-solid fa-chevron-down ml-1"></i>
+                {{ __('navbar.services') }} <i class="fa-solid fa-chevron-down ml-1"></i>
             </a>
             <div class="dropdown-menu">
                 <a href="{{ route('reservation') }}" class="dropdown-item">
-                    VTC & Transport
+                    {{ __('navbar.vtc_transport') }}
                 </a>
                 <a href="{{ route('location') }}" class="dropdown-item">
-                    Location de Voitures
+                    {{ __('navbar.car_rental') }}
                 </a>
                 <a href="{{ route('conciergerie') }}" class="dropdown-item">
-                    Conciergerie
+                    {{ __('navbar.concierge') }}
                 </a>
             </div>
         </div>
 
-        <a href="{{ route('contact') }}" class="{{ request()->is('contact') ? 'active' : '' }}">NOUS CONTACTER</a>
-        <a href="{{ route('blog') }}" class="{{ request()->is('blog*') ? 'active' : '' }}">BLOG</a>
+        <a href="{{ route('contact') }}" class="{{ request()->is('contact') ? 'active' : '' }}">
+            {{ __('navbar.contact') }}
+        </a>
+        <a href="{{ route('blog') }}" class="{{ request()->is('blog*') ? 'active' : '' }}">
+            {{ __('navbar.blog') }}
+        </a>
     </nav>
 
     <!-- Auth -->
@@ -72,12 +97,12 @@
         <div class="auth-links">
             @auth
             <a href="{{ url('/user/dashboard') }}" class="dashboard-link">
-                <i class="fa-solid fa-tachometer-alt"></i> DASHBOARD
+                <i class="fa-solid fa-tachometer-alt"></i> {{ __('navbar.dashboard') }}
             </a>
             @else
             @if (Route::has('register'))
             <a href="{{ route('espaceclient') }}" class="client-btn">
-                <i class="fa-solid fa-user-shield"></i> ESPACE CLIENT
+                <i class="fa-solid fa-user-shield"></i> {{ __('navbar.client_space') }}
             </a>
             @endif
             @endauth
@@ -86,7 +111,7 @@
     </div>
 
     <!-- Mobile Menu Button -->
-    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu mobile">
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="{{ __('navbar.mobile_menu') }}">
         <i class="fa-solid fa-bars"></i>
     </button>
 
@@ -98,51 +123,76 @@
                 <i class="fa-brands fa-facebook-f"></i>
                 <i class="fa-brands fa-instagram"></i>
                 <i class="fa-brands fa-snapchat"></i>
-                <!-- X personnalisé pour mobile -->
                 <span class="custom-x-icon">𝕏</span>
                 <i class="fa-brands fa-tiktok"></i>
-
             </div>
 
-            <a href="{{ url('/') }}" class="mobile-link">ACCUEIL</a>
-            <a href="{{ route('about') }}" class="mobile-link">A PROPOS</a>
+            <!-- Sélecteur de langue mobile -->
+            <div class="mobile-language-selector">
+                <form action="{{ route('language.switch') }}" method="POST">
+                    @csrf
+                    <select name="locale" class="language-select-mobile">
+                        <option value="fr" {{ app()->getLocale() == 'fr' ? 'selected' : '' }}>
+                            🇫🇷 Français
+                        </option>
+                        <option value="en" {{ app()->getLocale() == 'en' ? 'selected' : '' }}>
+                            🇬🇧 English
+                        </option>
+                        <option value="es" {{ app()->getLocale() == 'es' ? 'selected' : '' }}>
+                            🇪🇸 Español
+                        </option>
+                    </select>
+                </form>
+            </div>
+
+            <a href="{{ url('/') }}" class="mobile-link">{{ __('navbar.home') }}</a>
+            <a href="{{ route('about') }}" class="mobile-link">{{ __('navbar.about') }}</a>
 
             <!-- Formations Mobile -->
             <div class="mobile-dropdown">
                 <button class="mobile-dropdown-btn" data-target="formations-dropdown">
-                    FORMATIONS <i class="fa-solid fa-chevron-down"></i>
+                    {{ __('navbar.training') }} <i class="fa-solid fa-chevron-down"></i>
                 </button>
                 <div class="mobile-dropdown-content" id="formations-dropdown">
-                    <a href="{{ route('formation') }}" class="mobile-sub-link">Formation VTC</a>
-                    <a href="{{ route('formation.international') }}" class="mobile-sub-link">Formation
-                        Internationale</a>
+                    <a href="{{ route('formation') }}" class="mobile-sub-link">
+                        {{ __('navbar.vtc_training') }}
+                    </a>
+                    <a href="{{ route('formation.international') }}" class="mobile-sub-link">
+                        {{ __('navbar.international_training') }}
+                    </a>
                 </div>
             </div>
 
             <!-- Services Mobile -->
             <div class="mobile-dropdown">
                 <button class="mobile-dropdown-btn" data-target="services-dropdown">
-                    NOS SERVICES <i class="fa-solid fa-chevron-down"></i>
+                    {{ __('navbar.services') }} <i class="fa-solid fa-chevron-down"></i>
                 </button>
                 <div class="mobile-dropdown-content" id="services-dropdown">
-                    <a href="{{ route('reservation') }}" class="mobile-sub-link">VTC & Transport</a>
-                    <a href="{{ route('location') }}" class="mobile-sub-link">Location de Voitures</a>
-                    <a href="{{ route('conciergerie') }}" class="mobile-sub-link">Conciergerie</a>
+                    <a href="{{ route('reservation') }}" class="mobile-sub-link">
+                        {{ __('navbar.vtc_transport') }}
+                    </a>
+                    <a href="{{ route('location') }}" class="mobile-sub-link">
+                        {{ __('navbar.car_rental') }}
+                    </a>
+                    <a href="{{ route('conciergerie') }}" class="mobile-sub-link">
+                        {{ __('navbar.concierge') }}
+                    </a>
                 </div>
             </div>
 
-            <a href="{{ route('contact') }}" class="mobile-link">NOUS CONTACTER</a>
-            <a href="{{ route('blog') }}" class="mobile-link">BLOG</a>
+            <a href="{{ route('contact') }}" class="mobile-link">{{ __('navbar.contact') }}</a>
+            <a href="{{ route('blog') }}" class="mobile-link">{{ __('navbar.blog') }}</a>
 
             <!-- Auth Mobile -->
             <div class="mobile-auth">
                 @auth
                 <a href="{{ url('/user/dashboard') }}" class="mobile-dashboard">
-                    <i class="fa-solid fa-tachometer-alt"></i> DASHBOARD
+                    <i class="fa-solid fa-tachometer-alt"></i> {{ __('navbar.dashboard') }}
                 </a>
                 @else
                 <a href="{{ route('espaceclient') }}" class="mobile-client-btn">
-                    <i class="fa-solid fa-user-shield"></i> ESPACE CLIENT
+                    <i class="fa-solid fa-user-shield"></i> {{ __('navbar.client_space') }}
                 </a>
                 @endauth
             </div>
@@ -150,7 +200,7 @@
             <!-- Contact Mobile -->
             <div class="mobile-contact">
                 <div class="mobile-phone">
-                    <i class="fa-solid fa-phone text-yellow-600"></i> 06.99.16.44.55
+                    <i class="fa-solid fa-phone text-yellow-600"></i> {{ __('navbar.phone') }}
                 </div>
             </div>
         </div>
@@ -238,12 +288,60 @@
         transform: translateY(-1px);
     }
 
+    /* Sélecteur de langue */
+    .language-selector {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        margin-left: 10px;
+    }
+
+    .language-select {
+        background: transparent;
+        color: #caa24d;
+        border: 1px solid #caa24d;
+        border-radius: 4px;
+        padding: 6px 30px 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        outline: none;
+        min-width: 80px;
+        transition: all 0.3s ease;
+    }
+
+    .language-select:hover {
+        background: rgba(202, 162, 77, 0.1);
+    }
+
+    .language-select:focus {
+        box-shadow: 0 0 0 2px rgba(202, 162, 77, 0.3);
+    }
+
+    .language-select option {
+        background: #000;
+        color: #fff;
+        padding: 10px;
+    }
+
+    .language-selector-icon {
+        position: absolute;
+        right: 10px;
+        color: #caa24d;
+        font-size: 10px;
+        pointer-events: none;
+    }
+
     /* Mobile Social Icons */
     .mobile-social-top {
         display: flex;
         justify-content: center;
+        align-items: center;
         gap: 20px;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
         padding-bottom: 20px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
@@ -270,6 +368,37 @@
     .mobile-social-top .custom-x-icon {
         font-size: 22px !important;
         font-weight: 600;
+    }
+
+    /* Sélecteur de langue mobile */
+    .mobile-language-selector {
+        width: 100%;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .mobile-language-selector select {
+        width: 100%;
+        max-width: 200px;
+        margin: 0 auto;
+        background: transparent;
+        color: #caa24d;
+        border: 1px solid #caa24d;
+        border-radius: 4px;
+        padding: 10px 15px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        outline: none;
+    }
+
+    .mobile-language-selector select option {
+        background: #000;
+        color: #fff;
+        padding: 10px;
     }
 
     /* Logo Container */
@@ -657,7 +786,7 @@
 
         .desktop-nav,
         .auth-section,
-        .social-top {
+        .language-selector {
             display: none;
         }
 
@@ -687,6 +816,10 @@
 
         .mobile-social-top {
             display: flex;
+        }
+
+        .mobile-language-selector {
+            display: block;
         }
     }
 
@@ -754,94 +887,110 @@
         .mobile-social-top .custom-x-icon {
             font-size: 16px;
         }
+
+        .mobile-language-selector select {
+            font-size: 13px;
+            padding: 8px 12px;
+        }
     }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-    // Éléments du DOM
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const mobileMenuIcon = mobileMenuBtn.querySelector('i');
+        // Éléments du DOM
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuIcon = mobileMenuBtn.querySelector('i');
 
-    // Variables pour les dropdowns desktop
-    let dropdownCloseTimeout = null;
-    const dropdowns = document.querySelectorAll('.dropdown');
-    const dropdownMenus = document.querySelectorAll('.dropdown-menu');
-
-    // Ouvrir/fermer le menu mobile
-    mobileMenuBtn.addEventListener('click', function() {
-        const isMenuOpen = mobileMenu.classList.contains('active');
-
-        if (isMenuOpen) {
-            // Fermer le menu
-            mobileMenu.classList.remove('active');
-            mobileMenuIcon.classList.remove('fa-times');
-            mobileMenuIcon.classList.add('fa-bars');
-            document.body.style.overflow = ''; // Réactiver le défilement
-        } else {
-            // Ouvrir le menu
-            mobileMenu.classList.add('active');
-            mobileMenuIcon.classList.remove('fa-bars');
-            mobileMenuIcon.classList.add('fa-times');
-            document.body.style.overflow = 'hidden'; // Bloquer le défilement
-        }
-    });
-
-    // Fermer le menu mobile en cliquant sur un lien
-    const mobileLinks = document.querySelectorAll('.mobile-link, .mobile-sub-link, .mobile-dashboard, .mobile-client-btn');
-    mobileLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            mobileMenu.classList.remove('active');
-            mobileMenuIcon.classList.remove('fa-times');
-            mobileMenuIcon.classList.add('fa-bars');
-            document.body.style.overflow = '';
-        });
-    });
-
-    // Gérer les dropdowns mobiles
-    const mobileDropdownBtns = document.querySelectorAll('.mobile-dropdown-btn');
-    mobileDropdownBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const targetId = this.getAttribute('data-target');
-            const dropdownContent = document.getElementById(targetId);
-
-            // Fermer tous les autres dropdowns
-            mobileDropdownBtns.forEach(otherBtn => {
-                if (otherBtn !== btn) {
-                    const otherTargetId = otherBtn.getAttribute('data-target');
-                    const otherContent = document.getElementById(otherTargetId);
-                    otherContent.classList.remove('active');
-                    otherBtn.classList.remove('active');
-                }
+        // Gestion du changement de langue desktop
+        const languageSwitcher = document.getElementById('language-switcher');
+        if (languageSwitcher) {
+            languageSwitcher.addEventListener('change', function() {
+                this.closest('form').submit();
             });
+        }
 
-            // Basculer le dropdown actuel
-            dropdownContent.classList.toggle('active');
-            this.classList.toggle('active');
-        });
-    });
+        // Gestion du changement de langue mobile
+        const mobileLanguageSelect = document.querySelector('.language-select-mobile');
+        if (mobileLanguageSelect) {
+            mobileLanguageSelect.addEventListener('change', function() {
+                this.closest('form').submit();
+            });
+        }
 
-    // Gestion des icônes sociales (clics)
-    const socialIcons = document.querySelectorAll('.social-top i, .social-top .custom-x-icon, .mobile-social-top i, .mobile-social-top .custom-x-icon');
-    socialIcons.forEach(icon => {
-        icon.addEventListener('click', function() {
-            let url = '#';
+        // Ouvrir/fermer le menu mobile
+        mobileMenuBtn.addEventListener('click', function() {
+            const isMenuOpen = mobileMenu.classList.contains('active');
 
-            if (this.classList.contains('fa-facebook-f')) {
-                url = 'https://web.facebook.com/djokPrestige?_rdc=1&_rdr#';
-            } else if (this.classList.contains('fa-instagram')) {
-                url = 'https://www.instagram.com/djok_prestige/';
-            } else if (this.classList.contains('fa-snapchat')) {
-                url = 'https://www.snapchat.com/@djok_transp2020?share_id=om-FcniDZNw&locale=fr-FR+';
-            } else if (this.classList.contains('custom-x-icon') || this.classList.contains('fa-x-twitter')) {
-                url = 'https://x.com/DjokPrestige?t=7WuNufsxSxAQPmdmzO1DUQ';
-            } else if (this.classList.contains('fa-tiktok')) {
-                url = 'https://www.tiktok.com/@djok.prestige?_t=8jFWYGHFI36&_r=1';
+            if (isMenuOpen) {
+                // Fermer le menu
+                mobileMenu.classList.remove('active');
+                mobileMenuIcon.classList.remove('fa-times');
+                mobileMenuIcon.classList.add('fa-bars');
+                document.body.style.overflow = '';
+            } else {
+                // Ouvrir le menu
+                mobileMenu.classList.add('active');
+                mobileMenuIcon.classList.remove('fa-bars');
+                mobileMenuIcon.classList.add('fa-times');
+                document.body.style.overflow = 'hidden';
             }
+        });
 
-            window.open(url, '_blank');
+        // Fermer le menu mobile en cliquant sur un lien
+        const mobileLinks = document.querySelectorAll('.mobile-link, .mobile-sub-link, .mobile-dashboard, .mobile-client-btn');
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                mobileMenu.classList.remove('active');
+                mobileMenuIcon.classList.remove('fa-times');
+                mobileMenuIcon.classList.add('fa-bars');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Gérer les dropdowns mobiles
+        const mobileDropdownBtns = document.querySelectorAll('.mobile-dropdown-btn');
+        mobileDropdownBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const dropdownContent = document.getElementById(targetId);
+
+                // Fermer tous les autres dropdowns
+                mobileDropdownBtns.forEach(otherBtn => {
+                    if (otherBtn !== btn) {
+                        const otherTargetId = otherBtn.getAttribute('data-target');
+                        const otherContent = document.getElementById(otherTargetId);
+                        otherContent.classList.remove('active');
+                        otherBtn.classList.remove('active');
+                    }
+                });
+
+                // Basculer le dropdown actuel
+                dropdownContent.classList.toggle('active');
+                this.classList.toggle('active');
+            });
+        });
+
+        // Gestion des icônes sociales (clics)
+        const socialIcons = document.querySelectorAll('.social-top i, .social-top .custom-x-icon, .mobile-social-top i, .mobile-social-top .custom-x-icon');
+        socialIcons.forEach(icon => {
+            icon.addEventListener('click', function() {
+                let url = '#';
+
+                if (this.classList.contains('fa-facebook-f')) {
+                    url = 'https://web.facebook.com/djokPrestige?_rdc=1&_rdr#';
+                } else if (this.classList.contains('fa-instagram')) {
+                    url = 'https://www.instagram.com/djok_prestige/';
+                } else if (this.classList.contains('fa-snapchat')) {
+                    url = 'https://www.snapchat.com/@djok_transp2020?share_id=om-FcniDZNw&locale=fr-FR+';
+                } else if (this.classList.contains('custom-x-icon') || this.classList.contains('fa-x-twitter')) {
+                    url = 'https://x.com/DjokPrestige?t=7WuNufsxSxAQPmdmzO1DUQ';
+                } else if (this.classList.contains('fa-tiktok')) {
+                    url = 'https://www.tiktok.com/@djokprestige?_r=1&_t=ZN-932NFlRHD9i';
+                }
+
+                window.open(url, '_blank');
+            });
         });
     });
-});
 </script>
