@@ -15,7 +15,7 @@ return [
 
     // Categories
     'category_location' => 'Car Rental',
-    'category_vtc' => 'VTC Transport',
+    'category_vtc-transport' => 'VTC Transport',
     'category_conciergerie' => 'Concierge',
     'category_formation' => 'Training',
 
@@ -23,6 +23,8 @@ return [
     'featured_articles' => 'Featured Articles',
     'all_articles' => 'All Articles',
     'explore_themes' => 'Explore our Themes',
+
+
 
     // Articles
     'read_article' => 'Read article',

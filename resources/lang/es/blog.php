@@ -15,7 +15,7 @@ return [
 
     // Categorías
     'category_location' => 'Alquiler',
-    'category_vtc' => 'Transporte VTC',
+    'category_vtc-transport' => 'Transporte VTC',
     'category_conciergerie' => 'Conserjería',
     'category_formation' => 'Formación',
 
@@ -36,6 +36,8 @@ return [
     'vtc_subtitle' => 'Transporte de alta gama',
     'conciergerie_subtitle' => 'Servicios a medida',
     'formation_subtitle' => 'Experiencia certificada',
+
+
 
     // Paginación
     'previous' => 'Anterior',

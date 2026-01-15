@@ -15,7 +15,7 @@ return [
 
     // Catégories
     'category_location' => 'Location',
-    'category_vtc' => 'VTC Transport',
+    'category_vtc-transport' => 'VTC Transport',
     'category_conciergerie' => 'Conciergerie',
     'category_formation' => 'Formation',
 
@@ -61,6 +61,8 @@ return [
     'scroll_down' => 'Défiler vers le bas',
     'search_articles' => 'Rechercher des articles',
     'filter_by_category' => 'Filtrer par catégorie',
+
+
 
     // Messages vides
     'no_articles' => 'Aucun article disponible',
