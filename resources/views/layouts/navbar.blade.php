@@ -207,6 +207,17 @@
     </div>
 </header>
 
+<!-- Bannière défilante (SÉPARÉE du header pour éviter toute collision) -->
+<div class="scrolling-banner-container">
+    <div class="scrolling-banner">
+        <div class="scrolling-content">
+            <span>{{ __('banner.scrolling_text') }}</span>
+            <span>{{ __('banner.scrolling_text') }}</span>
+            <span>{{ __('banner.scrolling_text') }}</span>
+        </div>
+    </div>
+</div>
+
 <style>
     /* Base Styles */
     * {
@@ -224,6 +235,63 @@
         position: relative;
         width: 100%;
         z-index: 1000;
+        /* Supprime le margin-bottom pour laisser la bannière en dessous */
+    }
+
+    /* Bannière défilante - SÉPARÉE COMPLÈTEMENT du header */
+    .scrolling-banner-container {
+        width: 100%;
+        position: relative;
+        z-index: 998;
+        /* Plus bas que le header */
+        margin-top: 0;
+        /* Collée en dessous du header */
+    }
+
+    .scrolling-banner {
+        background: #e6b85c;
+        color: #000;
+        height: 32px;
+        /* Hauteur légèrement augmentée pour meilleure lisibilité */
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        /* Aucun positionnement relatif ou absolu qui pourrait causer des conflits */
+    }
+
+    .scrolling-content {
+        display: flex;
+        white-space: nowrap;
+        animation: scroll-left 25s linear infinite;
+        font-weight: 600;
+        font-size: 13px;
+        letter-spacing: 0.3px;
+        padding: 0 20px;
+        align-items: center;
+    }
+
+    .scrolling-content span {
+        padding-right: 40px;
+        display: inline-block;
+        line-height: 1;
+    }
+
+    @keyframes scroll-left {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(-33.33%);
+        }
+    }
+
+    /* Pause l'animation au survol */
+    .scrolling-banner:hover .scrolling-content {
+        animation-play-state: paused;
     }
 
     /* Header Top */
@@ -526,11 +594,12 @@
         padding-left: 25px;
     }
 
-    /* Auth Section */
+    /* Auth Section - Position bien en bas */
     .auth-section {
         position: absolute;
         right: 50px;
-        bottom: 15px;
+        bottom: 20px;
+        /* Position basse pour aligner avec le bas du header */
         display: flex;
         align-items: center;
         z-index: 1001;
@@ -779,6 +848,15 @@
 
         .auth-section {
             right: 30px;
+            bottom: 18px;
+        }
+
+        .scrolling-content {
+            font-size: 12px;
+        }
+
+        .scrolling-banner {
+            height: 30px;
         }
     }
 
@@ -796,6 +874,7 @@
 
         .header {
             padding: 15px;
+            margin-bottom: 0;
         }
 
         .logo-container {
@@ -820,6 +899,16 @@
 
         .mobile-language-selector {
             display: block;
+        }
+
+        /* Afficher la bannière sur mobile */
+        .scrolling-banner {
+            height: 28px;
+        }
+
+        .scrolling-content {
+            font-size: 11px;
+            animation-duration: 20s;
         }
     }
 
@@ -851,6 +940,14 @@
         .mobile-social-top i,
         .mobile-social-top .custom-x-icon {
             font-size: 18px;
+        }
+
+        .scrolling-banner {
+            height: 26px;
+        }
+
+        .scrolling-content {
+            font-size: 10px;
         }
     }
 
@@ -891,6 +988,15 @@
         .mobile-language-selector select {
             font-size: 13px;
             padding: 8px 12px;
+        }
+
+        .scrolling-banner {
+            height: 24px;
+        }
+
+        .scrolling-content {
+            font-size: 9px;
+            animation-duration: 18s;
         }
     }
 </style>
