@@ -14,6 +14,7 @@ use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ElearningController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 
@@ -27,7 +28,36 @@ Route::get('/', fn() => view('welcome'))->name('home');
 
 Route::get('/about', fn() => view('about'))->name('about');
 
+// ==============================================
+// E-LEARNING - Routes CORRIGÉES
+// ==============================================
+
+// Route pour la liste des forfaits e-learning
+Route::get('/formation/elearning', [ElearningController::class, 'index'])->name('elearning.index');
+
+// Routes d'achat e-learning
+Route::get('/elearning/forfait/{forfaitSlug}', [ElearningController::class, 'acheter'])->name('elearning.acheter');
+Route::post('/elearning/forfait/{forfaitSlug}/paiement', [ElearningController::class, 'processPayment'])->name('elearning.process-payment');
+
+// CORRECTION : Route pour le succès du paiement e-learning (nom de méthode corrigé)
+Route::get('/elearning/paiement/success', [ElearningController::class, 'paymentSuccess'])->name('elearning.payment.success');
+
+
+// Salle virtuelle e-learning
+Route::get('/elearning/salle', [ElearningController::class, 'salle'])->name('elearning.salle');
+Route::post('/elearning/login', [ElearningController::class, 'login'])->name('elearning.login');
+Route::get('/elearning/virtual-room', [ElearningController::class, 'virtualRoom'])->name('elearning.virtual-room');
+Route::get('/elearning/logout', [ElearningController::class, 'logout'])->name('elearning.logout');
+
+// Contenu e-learning
+Route::get('/elearning/cours/{coursId}', [ElearningController::class, 'showCours'])->name('elearning.cours.show');
+Route::post('/elearning/cours/{coursId}/complete', [ElearningController::class, 'completeCours'])->name('elearning.cours.complete');
+Route::get('/elearning/qcm/{qcmId}', [ElearningController::class, 'showQcm'])->name('elearning.qcm.show');
+Route::post('/elearning/qcm/{qcmId}/submit', [ElearningController::class, 'submitQcm'])->name('elearning.qcm.submit');
+
+// ==============================================
 // Formations
+// ==============================================
 Route::get('/formation', [FormationController::class, 'index'])->name('formation');
 Route::get('/formation/{slug}', [FormationController::class, 'show'])->name('formation.show');
 
@@ -133,7 +163,6 @@ Route::get('/newsletter/track/click/{campaign}/{subscription}/{token}', function
     abort(404);
 })->name('newsletter.track.click');
 
-
 // Routes pour les PDF légaux/certifications
 Route::get('/pdf/arrete-modificatif-07-11-2025', function () {
     $path = public_path('arrt modificatif du 07-11-2025.pdf');
@@ -161,10 +190,11 @@ Route::get('/mentions-legales', fn() => view('mentions-legales'))->name('mention
 // PAIEMENTS UNIFIÉS - Routes publiques
 // ==============================================
 Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
+Route::get('/payment/confirmation/{reference}', [PaymentController::class, 'confirmation'])->name('payment.confirmation');
 Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
 Route::post('/stripe/webhook', [PaymentController::class, 'webhook'])->name('stripe.webhook');
 
-// Dans routes/web.php, ajoutez cette route
+// Route de suivi conciergerie
 Route::get('/conciergerie/suivi/{reference}', [\App\Http\Controllers\Client\ConciergerieController::class, 'suivi'])
     ->name('conciergerie.suivi');
 
@@ -173,10 +203,8 @@ Route::get('/conciergerie/suivi/{reference}', [\App\Http\Controllers\Client\Conc
 // ==============================================
 Route::get('/mes-formations', function () {
     if (auth()->check()) {
-        // Rediriger vers l'espace client
         return redirect()->route('client.formations.index');
     }
-    // Si non connecté, rediriger vers la page de login
     return redirect()->route('login');
 })->name('formations.mes-formations-redirect');
 
@@ -248,9 +276,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         $user = auth()->user();
 
-        // Vérifier si l'utilisateur vient d'un paiement réussi
         if (session('success')) {
-            // Conserver le message de succès pour le dashboard client
             session()->keep(['success']);
         }
 
@@ -261,7 +287,6 @@ Route::middleware('auth')->group(function () {
         } elseif ($user->hasRole('formateur')) {
             return redirect()->route('formateur.dashboard');
         } else {
-            // Par défaut, rediriger vers le dashboard client
             return redirect()->route('client.dashboard');
         }
     })->name('dashboard');

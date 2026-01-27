@@ -12,6 +12,8 @@ use App\Models\Formation;
 use App\Models\User;
 use App\Models\UserFormation;
 use App\Models\Participant;
+use App\Models\ElearningForfait;
+use App\Models\ElearningAcces;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -181,32 +183,70 @@ class PaymentService
             'stripe_session_id' => $session->id,
             'stripe_payment_intent_id' => $session->payment_intent,
             'stripe_response' => $session->toArray(),
-            'customer_info' => [
+            'customer_info' => json_encode([
                 'email' => $session->customer_email,
                 'name' => $session->customer_details->name ?? null,
-            ],
+            ]),
+            'service_details' => json_encode($metadata),
             'paid_at' => now(),
+            'service_id' => null, // Toujours initialiser à null
         ];
 
-        // Ajouter l'ID du service spécifique
+        // Spécifique à chaque type de service
         switch ($serviceType) {
             case 'formation':
                 if (isset($metadata['formation_id'])) {
                     $paiementData['service_id'] = $metadata['formation_id'];
-                    // Charger la formation pour récupérer les détails
                     $formation = Formation::find($metadata['formation_id']);
                     if ($formation) {
-                        $paiementData['service_details'] = [
-                            'service_name' => 'Formation e-learning: ' . $formation->title,
-                            'description' => 'Accès 12 mois à la formation "' . $formation->title . '"',
+                        $paiementData['service_details'] = json_encode(array_merge($metadata, [
+                            'service_name' => 'Formation: ' . $formation->title,
+                            'description' => $formation->description,
                             'formation_data' => $formation->toArray(),
-                        ];
+                        ]));
                     }
                 }
                 break;
+
+            case 'elearning':
+                if (isset($metadata['forfait_id'])) {
+                    // Utiliser elearning_forfait_id au lieu de service_id
+                    $paiementData['elearning_forfait_id'] = $metadata['forfait_id'];
+                    $forfait = ElearningForfait::find($metadata['forfait_id']);
+                    if ($forfait) {
+                        $paiementData['service_details'] = json_encode(array_merge($metadata, [
+                            'forfait_id' => $forfait->id,
+                            'forfait_name' => $forfait->name,
+                            'forfait_slug' => $forfait->slug,
+                            'service_name' => 'Forfait E-learning: ' . $forfait->name,
+                            'description' => $forfait->description ?? 'Accès à la plateforme e-learning',
+                            'forfait_data' => $forfait->toArray(),
+                        ]));
+                    }
+                }
+                break;
+
             case 'reservation':
                 if (isset($metadata['reservation_id'])) {
                     $paiementData['reservation_id'] = $metadata['reservation_id'];
+                }
+                break;
+
+            case 'location':
+                if (isset($metadata['location_id'])) {
+                    $paiementData['location_id'] = $metadata['location_id'];
+                }
+                break;
+
+            case 'conciergerie':
+                if (isset($metadata['conciergerie_id'])) {
+                    $paiementData['conciergerie_id'] = $metadata['conciergerie_id'];
+                }
+                break;
+
+            case 'formation_internationale':
+                if (isset($metadata['formation_internationale_id'])) {
+                    $paiementData['formation_internationale_id'] = $metadata['formation_internationale_id'];
                 }
                 break;
         }
@@ -253,6 +293,9 @@ class PaymentService
                 case 'formation_internationale':
                     $this->processFormationInternationalePayment($paiement);
                     break;
+                case 'elearning':
+                    $this->processElearningPayment($paiement);
+                    break;
                 default:
                     Log::warning('Type de service non traité: ' . $paiement->service_type);
             }
@@ -265,6 +308,138 @@ class PaymentService
         }
 
         Log::info('=== FIN processService ===');
+    }
+
+    /**
+     * Traiter un paiement pour e-learning
+     */
+    protected function processElearningPayment(Paiement $paiement)
+    {
+        Log::info('=== DÉBUT processElearningPayment ===');
+
+        try {
+            // Utiliser elearning_forfait_id directement
+            $forfaitId = $paiement->elearning_forfait_id;
+
+            if (!$forfaitId) {
+                Log::error('E-learning forfait ID manquant dans le paiement');
+                return;
+            }
+
+            $forfait = ElearningForfait::find($forfaitId);
+
+            if (!$forfait) {
+                Log::error('Forfait non trouvé: ' . $forfaitId);
+                return;
+            }
+
+            Log::info('Forfait trouvé:', [
+                'id' => $forfait->id,
+                'name' => $forfait->name,
+                'slug' => $forfait->slug,
+            ]);
+
+            // Créer l'accès e-learning
+            $this->createElearningAccessFromPayment($paiement, $forfait, $paiement->service_details);
+
+            Log::info('=== FIN processElearningPayment - Succès ===');
+        } catch (\Exception $e) {
+            Log::error('Erreur traitement paiement e-learning: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Créer un accès e-learning depuis un paiement
+     */
+    protected function createElearningAccessFromPayment(Paiement $paiement, $forfait, $metadata)
+    {
+        Log::info('Création accès e-learning depuis paiement');
+
+        // Récupérer les informations client
+        $customerInfo = is_array($paiement->customer_info)
+            ? $paiement->customer_info
+            : json_decode($paiement->customer_info, true);
+
+        $metadata = is_array($metadata)
+            ? $metadata
+            : json_decode($metadata, true);
+
+        $email = $customerInfo['email'] ?? $metadata['customer_email'] ?? null;
+        $nom = $customerInfo['name'] ?? $metadata['customer_nom'] ?? 'Client';
+        $prenom = $metadata['customer_prenom'] ?? '';
+        $telephone = $metadata['customer_telephone'] ?? null;
+
+        if (!$email) {
+            Log::error('Email client manquant pour créer l\'accès e-learning');
+            return;
+        }
+
+        // Séparer nom et prénom si nécessaire
+        if (empty($prenom) && strpos($nom, ' ') !== false) {
+            $parts = explode(' ', $nom, 2);
+            $prenom = $parts[0] ?? '';
+            $nom = $parts[1] ?? $nom;
+        }
+
+        // Générer les codes d'accès
+        $accessCode = Str::upper(Str::random(10));
+        $virtualRoomCode = 'ROOM-' . Str::upper(Str::random(8));
+
+        // Dates d'accès
+        $accessStart = now();
+        $accessEnd = now()->addDays($forfait->duration_days);
+
+        // Créer l'accès
+        $acces = ElearningAcces::create([
+            'forfait_id' => $forfait->id,
+            'paiement_id' => $paiement->id,
+            'email' => $email,
+            'nom' => $nom,
+            'prenom' => $prenom,
+            'telephone' => $telephone,
+            'access_code' => $accessCode,
+            'virtual_room_code' => $virtualRoomCode,
+            'access_start' => $accessStart,
+            'access_end' => $accessEnd,
+            'total_cours' => 0,
+            'status' => 'active',
+        ]);
+
+        Log::info('Accès e-learning créé:', [
+            'acces_id' => $acces->id,
+            'access_code' => $accessCode,
+            'virtual_room_code' => $virtualRoomCode,
+            'email' => $email,
+        ]);
+
+        // Envoyer l'email avec les codes d'accès
+        $this->sendElearningAccessEmail($acces);
+
+        // Mettre à jour le paiement avec l'ID de l'accès
+        $paiement->update([
+            'service_details' => json_encode(array_merge($metadata, [
+                'acces_id' => $acces->id,
+                'access_code' => $accessCode,
+                'virtual_room_code' => $virtualRoomCode,
+                'access_created_at' => now()->format('Y-m-d H:i:s'),
+            ]))
+        ]);
+
+        Log::info('Paiement mis à jour avec les infos d\'accès');
+    }
+
+    /**
+     * Envoyer l'email d'accès e-learning
+     */
+    protected function sendElearningAccessEmail(ElearningAcces $acces)
+    {
+        try {
+            Mail::to($acces->email)->send(new \App\Mail\ElearningAccessMail($acces));
+            Log::info('Email d\'accès e-learning envoyé à: ' . $acces->email);
+        } catch (\Exception $e) {
+            Log::error('Erreur envoi email e-learning: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -549,9 +724,14 @@ class PaymentService
 
                 Log::info('Paiement marqué comme remboursé: ' . $paiement->reference);
 
-                // Si c'est une formation, révoquer l'accès
-                if ($paiement->isFormation()) {
-                    $this->revokeFormationAccess($paiement);
+                // Révoquer l'accès selon le type de service
+                switch ($paiement->service_type) {
+                    case 'formation':
+                        $this->revokeFormationAccess($paiement);
+                        break;
+                    case 'elearning':
+                        $this->revokeElearningAccess($paiement);
+                        break;
                 }
             }
         } catch (\Exception $e) {
@@ -576,6 +756,24 @@ class PaymentService
             Log::info('Accès formation révoqué pour le paiement: ' . $paiement->reference);
         } catch (\Exception $e) {
             Log::error('Erreur révocation accès formation: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Révoquer l'accès e-learning
+     */
+    private function revokeElearningAccess(Paiement $paiement)
+    {
+        try {
+            // Trouver et désactiver l'accès e-learning
+            $acces = ElearningAcces::where('paiement_id', $paiement->id)->first();
+
+            if ($acces) {
+                $acces->update(['status' => 'revoked']);
+                Log::info('Accès e-learning révoqué: ' . $acces->id);
+            }
+        } catch (\Exception $e) {
+            Log::error('Erreur révocation accès e-learning: ' . $e->getMessage());
         }
     }
 

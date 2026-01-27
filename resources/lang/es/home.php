@@ -130,7 +130,7 @@ return [
     'prefectoral_detail' => 'Reconocimiento de las autoridades públicas',
 
     'datadock' => 'CPF',
-    'datadock_description' => 'Listado DataDock para financiación de formaciones',
+    'datadock_description' => 'Solicitud de acreditación en curso',
     'datadock_detail' => 'Financiación facilitada para nuestros aprendices',
 
     // Sección Testimonios

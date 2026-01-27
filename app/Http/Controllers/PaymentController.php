@@ -48,6 +48,7 @@ class PaymentController extends Controller
                 'reference' => $paiement->reference,
                 'service_type' => $paiement->service_type,
                 'amount' => $paiement->amount,
+                'elearning_forfait_id' => $paiement->elearning_forfait_id,
             ]);
 
             // Rediriger vers la page appropriée
@@ -122,7 +123,7 @@ class PaymentController extends Controller
                 ], 400);
             }
 
-            // Calculer le prix (vous devez adapter cette partie)
+            // Calculer le prix
             $amount = $reservation->total_amount ?? 0;
 
             if ($amount <= 0) {
@@ -204,6 +205,11 @@ class PaymentController extends Controller
      */
     protected function redirectToServicePage(Paiement $paiement)
     {
+        Log::info('=== DÉBUT redirectToServicePage ===');
+        Log::info('Service Type: ' . $paiement->service_type);
+        Log::info('Paiement ID: ' . $paiement->id);
+        Log::info('E-learning forfait ID: ' . $paiement->elearning_forfait_id);
+
         $successMessage = 'Merci pour votre paiement de ' .
             number_format($paiement->amount, 2, ',', ' ') . ' €. ' .
             'Votre transaction a été confirmée.';
@@ -230,8 +236,23 @@ class PaymentController extends Controller
                     ->with('success', $successMessage)
                     ->with('payment_completed', true);
 
+            case 'elearning':
+                Log::info('Redirection pour e-learning');
+                $sessionId = $paiement->stripe_session_id;
+
+                if ($sessionId) {
+                    Log::info('Session ID trouvé, redirection vers page de succès e-learning');
+                    return redirect()->to(route('elearning.payment.success') . '?session_id=' . $sessionId)
+                        ->with('success', 'Votre achat e-learning a été confirmé ! Vous recevrez vos codes d\'accès par email.');
+                }
+
+                Log::warning('Aucun session_id trouvé, fallback vers index e-learning');
+                return redirect()->route('elearning.index')
+                    ->with('success', 'Votre achat e-learning a été confirmé !');
+
             default:
-                return redirect()->route('payment.confirmation', $paiement->reference)
+                Log::info('Service type non spécifié, redirection vers home');
+                return redirect()->route('home')
                     ->with('success', $successMessage);
         }
     }

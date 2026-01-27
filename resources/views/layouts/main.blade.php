@@ -144,6 +144,7 @@
             height: 60px;
             backdrop-filter: blur(10px);
             position: relative;
+            text-decoration: none;
         }
 
         .certification-btn:hover {
@@ -310,13 +311,14 @@
 
     <!-- Bouton flottant unique - Caché sur mobile avec hidden md:flex -->
     <div class="floating-buttons-container hidden md:flex">
-        <!-- Bouton Certification unique -->
-        <button class="certification-btn" title="{{ trans('main.certification_button_title') }}">
+        <!-- Bouton Certification unique avec lien PDF -->
+        <a href="{{ route('pdf.arrete-modificatif') }}" target="_blank" class="certification-btn"
+            title="{{ trans('main.certification_button_title') }}">
             <i class="fas fa-download"></i>
             <div class="certification-text" id="certificationText">
                 {{ trans('main.certification_text') }}
             </div>
-        </button>
+        </a>
     </div>
 
     <script>
@@ -376,18 +378,21 @@
                 let clickTimer;
 
                 certificationBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
+                    // Pour éviter les conflits avec le lien, on ne fait rien sur simple clic
+                    // Le double clic est juste pour l'affichage du texte
+
                     clickCount++;
 
                     if (clickCount === 1) {
                         // Premier clic - on attend le second
                         clickTimer = setTimeout(function() {
-                            // Si un seul clic - RIEN (alerte enlevée)
+                            // Si un seul clic - rien (le lien s'ouvre)
                             clickCount = 0;
                         }, 300); // Délai pour double clic
                     } else if (clickCount === 2) {
                         // Double clic - afficher/masquer le texte
                         clearTimeout(clickTimer);
+                        e.preventDefault(); // Empêcher l'ouverture du lien sur double clic
                         toggleTextVisibility();
                         clickCount = 0;
                     }

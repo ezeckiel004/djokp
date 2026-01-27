@@ -17,6 +17,7 @@ class Paiement extends Model
         'location_id',
         'conciergerie_id',
         'formation_internationale_id',
+        'elearning_forfait_id',
         'reference',
         'amount',
         'currency',
@@ -48,6 +49,14 @@ class Paiement extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relation avec le forfait e-learning
+     */
+    public function elearningForfait()
+    {
+        return $this->belongsTo(ElearningForfait::class, 'elearning_forfait_id');
     }
 
     /**
@@ -124,6 +133,8 @@ class Paiement extends Model
                 return $this->conciergerie;
             case 'formation_internationale':
                 return $this->formationInternationale;
+            case 'elearning': // <-- AJOUTEZ CETTE LIGNE
+                return $this->elearningForfait;
             default:
                 return null;
         }

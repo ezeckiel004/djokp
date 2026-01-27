@@ -114,11 +114,13 @@
 </section>
 
 <!-- Histoire Section - Style sobre -->
+<!-- Histoire Section - Style sobre -->
 <section id="histoire" class="py-16" style="background: #111;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-12">
-                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{ __('about.history_title') }}</h2>
+                <h2 class="text-2xl md:text-3xl font-bold mb-4" style="color: var(--gold);">{{ __('about.history_title')
+                    }}</h2>
                 <p class="text-lg text-gray-300 max-w-3xl mx-auto">
                     {{ __('about.history_subtitle') }}
                 </p>
@@ -190,45 +192,106 @@
                     </div>
                 </div>
 
-                <!-- Stats -->
+                <!-- Valeurs Qualitatives -->
                 <div class="p-8" style="background: #1a1a1a; border: 1px solid #333;">
                     <div class="flex flex-col items-center justify-center h-full">
                         <div class="w-28 h-28 flex items-center justify-center rounded-full mb-8"
                             style="background: rgba(202, 162, 77, 0.1);">
-                            <i class="text-5xl fas fa-chart-line" style="color: var(--gold);"></i>
+                            <i class="text-5xl fas fa-medal" style="color: var(--gold);"></i>
                         </div>
-                        <h3 class="text-2xl font-bold mb-6 text-center" style="color: white;">{{ __('about.growth_title') }}</h3>
-                        <p class="text-gray-300 text-center mb-8">
-                            {{ __('about.growth_description') }}
+                        <h3 class="text-2xl font-bold mb-6 text-center" style="color: white;">{{
+                            __('about.commitment_title') }}</h3>
+                        <p class="text-gray-300 text-center mb-8 max-w-xl">
+                            {{ __('about.commitment_description') }}
                         </p>
 
-                        <div class="grid grid-cols-2 gap-6 w-full max-w-sm">
-                            <!-- Clients satisfaits -->
-                            <div class="text-center p-5 transition-all duration-300 hover:scale-105"
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 w-full">
+                            <!-- Accompagnement personnalisé -->
+                            <div class="p-5 md:p-6 transition-all duration-300 hover:scale-105 flex flex-col h-full"
                                 style="background: #111; border: 1px solid #333;">
-                                <div class="text-3xl font-bold mb-2" style="color: var(--gold);">5000+</div>
-                                <div class="text-sm text-gray-400">{{ __('about.satisfied_clients') }}</div>
+                                <div class="flex items-start h-full">
+                                    <div class="flex-shrink-0 mr-4">
+                                        <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg"
+                                            style="background: var(--gold);">
+                                            <i class="fas fa-user-friends text-black text-base md:text-lg"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 overflow-hidden">
+                                        <h4 class="text-base md:text-lg font-bold mb-2 leading-tight"
+                                            style="color: white;">
+                                            {{ __('about.commitment_personalized') }}
+                                        </h4>
+                                        <p class="text-xs md:text-sm text-gray-400 break-words">
+                                            {{ __('about.commitment_personalized_desc') }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Formations dispensées -->
-                            <div class="text-center p-5 transition-all duration-300 hover:scale-105"
+                            <!-- Formations certifiées -->
+                            <div class="p-5 md:p-6 transition-all duration-300 hover:scale-105 flex flex-col h-full"
                                 style="background: #111; border: 1px solid #333;">
-                                <div class="text-3xl font-bold mb-2" style="color: var(--gold);">500+</div>
-                                <div class="text-sm text-gray-400">{{ __('about.trainings_delivered') }}</div>
+                                <div class="flex items-start h-full">
+                                    <div class="flex-shrink-0 mr-4">
+                                        <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg"
+                                            style="background: var(--gold);">
+                                            <i class="fas fa-certificate text-black text-base md:text-lg"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 overflow-hidden">
+                                        <h4 class="text-base md:text-lg font-bold mb-2 leading-tight"
+                                            style="color: white;">
+                                            {{ __('about.commitment_certified') }}
+                                        </h4>
+                                        <p class="text-xs md:text-sm text-gray-400 break-words">
+                                            {{ __('about.commitment_certified_desc') }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Projets en Afrique -->
-                            <div class="text-center p-5 transition-all duration-300 hover:scale-105"
+                            <!-- Engagement qualité -->
+                            <div class="p-5 md:p-6 transition-all duration-300 hover:scale-105 flex flex-col h-full"
                                 style="background: #111; border: 1px solid #333;">
-                                <div class="text-3xl font-bold mb-2" style="color: var(--gold);">50+</div>
-                                <div class="text-sm text-gray-400">{{ __('about.africa_projects') }}</div>
+                                <div class="flex items-start h-full">
+                                    <div class="flex-shrink-0 mr-4">
+                                        <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg"
+                                            style="background: var(--gold);">
+                                            <i class="fas fa-star text-black text-base md:text-lg"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 overflow-hidden">
+                                        <h4 class="text-base md:text-lg font-bold mb-2 leading-tight"
+                                            style="color: white;">
+                                            {{ __('about.commitment_quality') }}
+                                        </h4>
+                                        <p class="text-xs md:text-sm text-gray-400 break-words">
+                                            {{ __('about.commitment_quality_desc') }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
 
-                            <!-- Taux de satisfaction -->
-                            <div class="text-center p-5 transition-all duration-300 hover:scale-105"
+                            <!-- Satisfaction au cœur -->
+                            <div class="p-5 md:p-6 transition-all duration-300 hover:scale-105 flex flex-col h-full"
                                 style="background: #111; border: 1px solid #333;">
-                                <div class="text-3xl font-bold mb-2" style="color: var(--gold);">99%</div>
-                                <div class="text-sm text-gray-400">{{ __('about.satisfaction_rate') }}</div>
+                                <div class="flex items-start h-full">
+                                    <div class="flex-shrink-0 mr-4">
+                                        <div class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-lg"
+                                            style="background: var(--gold);">
+                                            <i class="fas fa-heart text-black text-base md:text-lg"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 overflow-hidden">
+                                        <h4 class="text-base md:text-lg font-bold mb-2 leading-tight"
+                                            style="color: white;">
+                                            {{ __('about.commitment_satisfaction') }}
+                                        </h4>
+                                        <p class="text-xs md:text-sm text-gray-400 break-words">
+                                            {{ __('about.commitment_satisfaction_desc') }}
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -239,7 +302,7 @@
 </section>
 
 <!-- Équipe Section - Style sobre -->
-<section class="py-16" style="background: #000;">
+{{-- <section class="py-16" style="background: #000;">
     <div class="container mx-auto px-4 md:px-6">
         <div class="max-w-6xl mx-auto">
             <div class="text-center mb-12">
@@ -308,7 +371,7 @@
             </div>
         </div>
     </div>
-</section>
+</section> --}}
 
 <!-- Vision Section - Style sobre -->
 <section class="py-16" style="background: #111;">
@@ -517,6 +580,48 @@
             font-size: 1rem;
         }
     }
+
+/* Force le wrap des mots longs */
+.break-words {
+word-wrap: break-word;
+overflow-wrap: break-word;
+}
+
+/* Assure une hauteur uniforme pour toutes les cartes */
+.h-full {
+height: 100%;
+}
+
+/* Ajustements pour les grands écrans */
+@media (min-width: 1536px) {
+.max-w-6xl {
+max-width: 72rem;
+}
+
+.gap-4 {
+gap: 1.5rem;
+}
+
+.p-5 {
+padding: 1.5rem;
+}
+}
+
+/* Pour les très petits écrans */
+@media (max-width: 640px) {
+.text-base {
+font-size: 0.875rem;
+}
+
+.text-xs {
+font-size: 0.75rem;
+}
+
+.mr-4 {
+margin-right: 0.75rem;
+}
+}
+
 </style>
 
 <script>

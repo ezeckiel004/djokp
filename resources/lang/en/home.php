@@ -130,7 +130,7 @@ return [
     'prefectoral_detail' => 'Recognition by public authorities',
 
     'datadock' => 'CPF',
-    'datadock_description' => 'DataDock listing for training funding',
+    'datadock_description' => 'Accreditation application in progress',
     'datadock_detail' => 'Simplified funding for our trainees',
 
     // Testimonials Section

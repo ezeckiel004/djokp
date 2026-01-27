@@ -6,6 +6,7 @@ return [
     'training' => 'FORMATIONS',
     'vtc_training' => 'Formation VTC',
     'international_training' => 'Formation Internationale',
+    'elearning_training' => 'Formation E-learning',
     'services' => 'NOS SERVICES',
     'vtc_transport' => 'VTC & Transport',
     'car_rental' => 'Location de Voitures',

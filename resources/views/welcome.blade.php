@@ -510,17 +510,27 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Card 1 - Qualiopi -->
-                <div class="p-8 text-center transition-all duration-300 hover:scale-105 hover:shadow-xl"
-                    style="background: #111; border: 1px solid #333;">
-                    <div class="w-20 h-20 flex items-center justify-center rounded-full mx-auto mb-6 overflow-hidden transition-all duration-300 hover:scale-110 hover:rotate-12"
-                        style="background: var(--gold);">
-                        <img src="{{ asset('ac1.WEBP') }}" alt="Qualiopi Certification"
-                            class="object-cover w-full h-full rounded-full">
+                <a href="{{ route('pdf.arrete-modificatif') }}" target="_blank" class="block no-underline">
+                    <div class="p-8 text-center transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer"
+                        style="background: #111; border: 1px solid #333;">
+                        <div class="w-20 h-20 flex items-center justify-center rounded-full mx-auto mb-6 overflow-hidden transition-all duration-300 hover:scale-110 hover:rotate-12"
+                            style="background: var(--gold);">
+                            <img src="{{ asset('ac1.WEBP') }}" alt="Qualiopi Certification"
+                                class="object-cover w-full h-full rounded-full">
+                        </div>
+                        <h3 class="text-xl font-bold mb-4" style="color: white;">{{ __('home.qualiopi') }}</h3>
+                        <p class="text-gray-400 mb-3">{{ __('home.qualiopi_description') }}</p>
+                        <p class="text-sm text-gray-500">{{ __('home.qualiopi_detail') }}</p>
+                        <div class="mt-4 text-sm text-var(--gold) flex items-center justify-center">
+                            <i class="fas fa-file-pdf mr-2"></i>
+                            <span>{{ __('home.view_arrete_pdf') }}</span>
+                        </div>
+                        <div class="mt-1 text-xs text-gray-500">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            {{ __('home.pdf_label') }}
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold mb-4" style="color: white;">{{ __('home.qualiopi') }}</h3>
-                    <p class="text-gray-400 mb-3">{{ __('home.qualiopi_description') }}</p>
-                    <p class="text-sm text-gray-500">{{ __('home.qualiopi_detail') }}</p>
-                </div>
+                </a>
 
                 <!-- Card 2 - Préfectoral (avec lien PDF) -->
                 <a href="{{ route('pdf.arrete-modificatif') }}" target="_blank" class="block no-underline">
@@ -546,17 +556,27 @@
                 </a>
 
                 <!-- Card 3 - Datadock -->
-                <div class="p-8 text-center transition-all duration-300 hover:scale-105 hover:shadow-xl"
-                    style="background: #111; border: 1px solid #333;">
-                    <div class="w-20 h-20 flex items-center justify-center rounded-full mx-auto mb-6 overflow-hidden transition-all duration-300 hover:scale-110 hover:rotate-12"
-                        style="background: var(--gold);">
-                        <img src="{{ asset('ac3.JPG') }}" alt="Datadock Certification"
-                            class="object-cover w-full h-full rounded-full">
+                <a href="{{ route('pdf.arrete-modificatif') }}" target="_blank" class="block no-underline">
+                    <div class="p-8 text-center transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer"
+                        style="background: #111; border: 1px solid #333;">
+                        <div class="w-20 h-20 flex items-center justify-center rounded-full mx-auto mb-6 overflow-hidden transition-all duration-300 hover:scale-110 hover:rotate-12"
+                            style="background: var(--gold);">
+                            <img src="{{ asset('ac3.JPG') }}" alt="Datadock Certification"
+                                class="object-cover w-full h-full rounded-full">
+                        </div>
+                        <h3 class="text-xl font-bold mb-4" style="color: white;">{{ __('home.datadock') }}</h3>
+                        <p class="text-gray-400 mb-3">{{ __('home.datadock_description') }}</p>
+                        <p class="text-sm text-gray-500">{{ __('home.datadock_detail') }}</p>
+                        <div class="mt-4 text-sm text-var(--gold) flex items-center justify-center">
+                            <i class="fas fa-file-pdf mr-2"></i>
+                            <span>{{ __('home.view_arrete_pdf') }}</span>
+                        </div>
+                        <div class="mt-1 text-xs text-gray-500">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            {{ __('home.pdf_label') }}
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold mb-4" style="color: white;">{{ __('home.datadock') }}</h3>
-                    <p class="text-gray-400 mb-3">{{ __('home.datadock_description') }}</p>
-                    <p class="text-sm text-gray-500">{{ __('home.datadock_detail') }}</p>
-                </div>
+                </a>
             </div>
         </div>
     </div>

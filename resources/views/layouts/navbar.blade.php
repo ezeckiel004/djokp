@@ -61,27 +61,22 @@
                 <a href="{{ route('formation.international') }}" class="dropdown-item">
                     {{ __('navbar.international_training') }}
                 </a>
+                <a href="{{ route('elearning.index') }}" class="dropdown-item">
+                    {{ __('navbar.elearning_training') }}
+                </a>
             </div>
         </div>
 
-        <!-- Services Dropdown -->
-        <div class="dropdown">
-            <a href="#"
-                class="dropdown-toggle {{ request()->is('reservation') || request()->is('location') || request()->is('conciergerie') ? 'active' : '' }}">
-                {{ __('navbar.services') }} <i class="fa-solid fa-chevron-down ml-1"></i>
-            </a>
-            <div class="dropdown-menu">
-                <a href="{{ route('reservation') }}" class="dropdown-item">
-                    {{ __('navbar.vtc_transport') }}
-                </a>
-                <a href="{{ route('location') }}" class="dropdown-item">
-                    {{ __('navbar.car_rental') }}
-                </a>
-                <a href="{{ route('conciergerie') }}" class="dropdown-item">
-                    {{ __('navbar.concierge') }}
-                </a>
-            </div>
-        </div>
+        <!-- Services directs dans le menu -->
+        <a href="{{ route('reservation') }}" class="{{ request()->is('reservation') ? 'active' : '' }}">
+            {{ __('navbar.vtc_transport') }}
+        </a>
+        <a href="{{ route('location') }}" class="{{ request()->is('location') ? 'active' : '' }}">
+            {{ __('navbar.car_rental') }}
+        </a>
+        <a href="{{ route('conciergerie') }}" class="{{ request()->is('conciergerie') ? 'active' : '' }}">
+            {{ __('navbar.concierge') }}
+        </a>
 
         <a href="{{ route('contact') }}" class="{{ request()->is('contact') ? 'active' : '' }}">
             {{ __('navbar.contact') }}
@@ -160,26 +155,16 @@
                     <a href="{{ route('formation.international') }}" class="mobile-sub-link">
                         {{ __('navbar.international_training') }}
                     </a>
+                    <a href="{{ route('elearning.index') }}" class="mobile-sub-link">
+                        {{ __('navbar.elearning_training') }}
+                    </a>
                 </div>
             </div>
 
-            <!-- Services Mobile -->
-            <div class="mobile-dropdown">
-                <button class="mobile-dropdown-btn" data-target="services-dropdown">
-                    {{ __('navbar.services') }} <i class="fa-solid fa-chevron-down"></i>
-                </button>
-                <div class="mobile-dropdown-content" id="services-dropdown">
-                    <a href="{{ route('reservation') }}" class="mobile-sub-link">
-                        {{ __('navbar.vtc_transport') }}
-                    </a>
-                    <a href="{{ route('location') }}" class="mobile-sub-link">
-                        {{ __('navbar.car_rental') }}
-                    </a>
-                    <a href="{{ route('conciergerie') }}" class="mobile-sub-link">
-                        {{ __('navbar.concierge') }}
-                    </a>
-                </div>
-            </div>
+            <!-- Services directs dans le menu mobile -->
+            <a href="{{ route('reservation') }}" class="mobile-link">{{ __('navbar.vtc_transport') }}</a>
+            <a href="{{ route('location') }}" class="mobile-link">{{ __('navbar.car_rental') }}</a>
+            <a href="{{ route('conciergerie') }}" class="mobile-link">{{ __('navbar.concierge') }}</a>
 
             <a href="{{ route('contact') }}" class="mobile-link">{{ __('navbar.contact') }}</a>
             <a href="{{ route('blog') }}" class="mobile-link">{{ __('navbar.blog') }}</a>
@@ -497,10 +482,13 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 35px;
+        gap: 25px;
+        /* Réduit de 35px à 25px pour accommoder plus d'éléments */
         margin-top: 10px;
         position: relative;
         z-index: 1001;
+        flex-wrap: wrap;
+        /* Permet le retour à la ligne sur petits écrans */
     }
 
     .desktop-nav a {
@@ -841,6 +829,12 @@
     }
 
     /* Responsive */
+    @media (max-width: 1200px) {
+        .desktop-nav {
+            gap: 22px;
+        }
+    }
+
     @media (max-width: 1024px) {
         .header {
             padding: 15px 30px;
@@ -851,12 +845,30 @@
             bottom: 18px;
         }
 
+        .desktop-nav {
+            gap: 18px;
+        }
+
+        .desktop-nav a {
+            font-size: 12px;
+        }
+
         .scrolling-content {
             font-size: 12px;
         }
 
         .scrolling-banner {
             height: 30px;
+        }
+    }
+
+    @media (max-width: 900px) {
+        .desktop-nav {
+            gap: 15px;
+        }
+
+        .desktop-nav a {
+            font-size: 11px;
         }
     }
 
@@ -997,6 +1009,19 @@
         .scrolling-content {
             font-size: 9px;
             animation-duration: 18s;
+        }
+    }
+
+    /* Pour les écrans très larges */
+    @media (min-width: 1400px) {
+        .desktop-nav {
+            gap: 30px;
+        }
+    }
+
+    @media (min-width: 1600px) {
+        .desktop-nav {
+            gap: 35px;
         }
     }
 </style>

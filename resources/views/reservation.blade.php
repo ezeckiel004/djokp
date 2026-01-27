@@ -976,12 +976,26 @@
                         </div>
 
                         <div class="mt-6 pt-6" style="border-top: 1px solid #333;">
-                            <h4 class="font-semibold mb-3">{{ trans('reservation.payment_methods') }}</h4>
-                            <div class="flex items-center space-x-4">
-                                <i class="fas fa-credit-card text-gray-300"></i>
-                                <i class="fab fa-cc-visa text-gray-300"></i>
-                                <i class="fab fa-cc-mastercard text-gray-300"></i>
-                                <i class="fas fa-money-bill-wave text-gray-300"></i>
+                            <h4 class="font-semibold mb-3">
+                                {{ trans('reservation.payment_methods') }}
+                            </h4>
+
+                            <div class="flex items-center gap-4">
+                                <!-- CB - Carte Bancaire -->
+                                <img src="https://th.bing.com/th/id/OIP.yzt6QuqyUyZTJ28KOYmQUgHaE3?w=212&h=180&c=7&r=0&o=7&pid=1.7&rm=3" alt="Carte Bancaire (CB)"
+                                    class="h-8 w-auto object-contain">
+
+                                <!-- VISA -->
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa"
+                                    class="h-8 w-auto object-contain">
+
+                                <!-- MASTERCARD -->
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard"
+                                    class="h-8 w-auto object-contain">
+
+                                <!-- AMERICAN EXPRESS -->
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg" alt="American Express"
+                                    class="h-8 w-auto object-contain">
                             </div>
                         </div>
                     </div>
@@ -1005,7 +1019,7 @@
     function updateStartDate() {
         const date = document.querySelector('input[name="date"]').value;
         const time = document.querySelector('input[name="heure"]').value;
-        
+
         if (date && time) {
             const startDateTime = `${date} ${time}:00`;
             document.getElementById('start_date_hidden').value = startDateTime;
@@ -1091,7 +1105,7 @@
                     if (this.value === 'pay_now') {
                         document.getElementById('submit-quote').style.display = 'none';
                         document.getElementById('submit-payment-main').style.display = 'block';
-                        
+
                         // Mettre à jour le texte du bouton
                         const priceText = currentPriceTTC.toFixed(2).replace('.', ',') + ' €';
                         document.getElementById('payment-amount-main').textContent = priceText;
@@ -1432,10 +1446,10 @@
                 document.querySelectorAll('.payment-option').forEach(opt => {
                     opt.classList.remove('selected');
                 });
-                
+
                 // Sélectionner l'option cliquée
                 this.classList.add('selected');
-                
+
                 // Cocher le radio button associé
                 const radio = this.querySelector('input[type="radio"]');
                 if (radio) {
@@ -1464,10 +1478,10 @@
             form.addEventListener('submit', function(e) {
                 // Mettre à jour start_date avant soumission
                 updateStartDate();
-                
+
                 // Vérifier l'option de paiement sélectionnée
                 const selectedOption = document.querySelector('input[name="payment_option"]:checked');
-                
+
                 if (!selectedOption) {
                     e.preventDefault();
                     alert('Veuillez sélectionner une option de paiement');
@@ -1483,13 +1497,13 @@
                 // Validation standard
                 if (!validatePaymentForm()) {
                     e.preventDefault();
-                    
+
                     // Réactiver le bouton si validation échoue
                     if (selectedOption.value === 'pay_now') {
                         document.getElementById('submit-payment-main').disabled = false;
                         document.getElementById('payment-processing').style.display = 'none';
                     }
-                    
+
                     // Scroll to first error
                     const firstError = form.querySelector('.error');
                     if (firstError) {
@@ -1517,7 +1531,7 @@
                             triggerPriceCalculation();
                         }
                     }
-                    
+
                     // Pour date et heure, mettre à jour start_date
                     if (this.name === 'date' || this.name === 'heure') {
                         updateStartDate();
@@ -1549,7 +1563,7 @@
 
     function validatePaymentForm() {
         let isValid = true;
-        
+
         // Validation des champs requis
         const requiredFields = document.querySelectorAll('#reservation-form .required-field');
         requiredFields.forEach(field => {

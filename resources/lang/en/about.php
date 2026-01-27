@@ -38,9 +38,9 @@ return [
     'timeline_2021_desc' => 'Opening of the center with official VTC certification',
 
     'timeline_2022' => '2022',
-    'timeline_2022_title' => 'Africa Expansion',
-    'timeline_2022_desc' => 'Launch of entrepreneurial support',
-
+    // Modifiez ces lignes :
+    'timeline_2022_title' => 'International Expansion',
+    'timeline_2022_desc' => 'Launch of an entrepreneurial support program aimed at companies wishing to develop their skills and strengthen their performance in an international context.',
     'timeline_2024' => '2024',
     'timeline_2024_title' => 'Sector Leader',
     'timeline_2024_desc' => 'Over 500 clients successfully supported',
@@ -96,4 +96,16 @@ return [
 
     // Accessibility
     'scroll_down' => 'Scroll down',
+
+    // Commitment Section
+    'commitment_title' => 'Our Commitment',
+    'commitment_description' => 'Quality services with special attention to support and customer satisfaction',
+    'commitment_personalized' => 'Personalized Support',
+    'commitment_personalized_desc' => 'Pathways tailored to the needs of each learner',
+    'commitment_certified' => 'Certified Training',
+    'commitment_certified_desc' => 'Programs compliant with professional requirements',
+    'commitment_quality' => 'Quality Commitment',
+    'commitment_quality_desc' => 'A structured approach meeting Qualiopi standards',
+    'commitment_satisfaction' => 'Satisfaction at Heart',
+    'commitment_satisfaction_desc' => 'Continuously improved methods thanks to learner feedback',
 ];

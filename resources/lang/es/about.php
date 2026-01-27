@@ -38,9 +38,9 @@ return [
     'timeline_2021_desc' => 'Apertura del centro con certificación oficial VTC',
 
     'timeline_2022' => '2022',
-    'timeline_2022_title' => 'Expansión África',
-    'timeline_2022_desc' => 'Lanzamiento del acompañamiento empresarial',
-
+    // Modifiez ces lignes :
+    'timeline_2022_title' => 'Expansión Internacional',
+    'timeline_2022_desc' => 'Lanzamiento de un programa de acompañamiento empresarial destinado a empresas que desean desarrollar sus competencias y fortalecer su rendimiento en un contexto internacional.',
     'timeline_2024' => '2024',
     'timeline_2024_title' => 'Líder del Sector',
     'timeline_2024_desc' => 'Más de 500 clientes acompañados con éxito',
@@ -96,4 +96,16 @@ return [
 
     // Accesibilidad
     'scroll_down' => 'Desplazarse hacia abajo',
+
+    // Sección Compromiso
+    'commitment_title' => 'Nuestro Compromiso',
+    'commitment_description' => 'Servicios de calidad con especial atención al acompañamiento y satisfacción del cliente',
+    'commitment_personalized' => 'Acompañamiento personalizado',
+    'commitment_personalized_desc' => 'Recorridos adaptados a las necesidades de cada alumno',
+    'commitment_certified' => 'Formaciones certificadas',
+    'commitment_certified_desc' => 'Programas conformes a los requisitos de la profesión',
+    'commitment_quality' => 'Compromiso de calidad',
+    'commitment_quality_desc' => 'Un enfoque estructurado que cumple con los estándares Qualiopi',
+    'commitment_satisfaction' => 'Satisfacción en el corazón',
+    'commitment_satisfaction_desc' => 'Métodos mejorados continuamente gracias a los comentarios de los estudiantes',
 ];

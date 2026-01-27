@@ -19,12 +19,63 @@ use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\Admin\PaiementController;
 use App\Http\Controllers\Admin\ParticipantController as AdminParticipantController;
 use App\Http\Controllers\Admin\VehicleCategoryController as AdminVehicleCategoryController;
+use App\Http\Controllers\Admin\AdminElearningController;
 use App\Http\Controllers\ProgrammePdfController;
 
 Route::middleware(['auth', 'can:access-admin-dashboard'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/statistics', [StatisticsController::class, 'index'])->name('statistics');
+
+    // ==============================================
+    // E-LEARNING - NOUVEAU
+    // ==============================================
+    Route::prefix('elearning')->name('elearning.')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [AdminElearningController::class, 'dashboard'])->name('dashboard');
+        Route::get('/statistiques', [AdminElearningController::class, 'statistics'])->name('statistics');
+
+        // Forfaits
+        Route::get('/forfaits', [AdminElearningController::class, 'forfaits'])->name('forfaits');
+        Route::get('/forfaits/create', [AdminElearningController::class, 'createForfait'])->name('forfaits.create');
+        Route::post('/forfaits', [AdminElearningController::class, 'storeForfait'])->name('forfaits.store');
+        Route::get('/forfaits/{id}/edit', [AdminElearningController::class, 'editForfait'])->name('forfaits.edit');
+        Route::put('/forfaits/{id}', [AdminElearningController::class, 'updateForfait'])->name('forfaits.update');
+        Route::delete('/forfaits/{id}', [AdminElearningController::class, 'destroyForfait'])->name('forfaits.destroy');
+
+        // Accès
+        Route::get('/acces', [AdminElearningController::class, 'acces'])->name('acces');
+        Route::get('/acces/{id}', [AdminElearningController::class, 'showAcces'])->name('acces.show');
+        Route::post('/acces/{id}/suspend', [AdminElearningController::class, 'suspendAcces'])->name('acces.suspend');
+        Route::post('/acces/{id}/activate', [AdminElearningController::class, 'activateAcces'])->name('acces.activate');
+        Route::delete('/acces/{id}', [AdminElearningController::class, 'destroyAcces'])->name('acces.destroy'); // NOUVEAU
+        Route::post('/acces/{id}/upload-certification', [AdminElearningController::class, 'uploadCertification'])->name('acces.upload-certification');
+
+        // Détails QCM pour un accès spécifique
+        Route::get('/acces/{acces}/qcm/{qcm}/details', [AdminElearningController::class, 'showQcmDetails'])
+            ->name('acces.qcm-details');
+
+        // Cours
+        Route::get('/cours', [AdminElearningController::class, 'cours'])->name('cours');
+        Route::get('/cours/create', [AdminElearningController::class, 'createCours'])->name('cours.create');
+        Route::post('/cours', [AdminElearningController::class, 'storeCours'])->name('cours.store');
+        Route::get('/cours/{id}/edit', [AdminElearningController::class, 'editCours'])->name('cours.edit');
+        Route::put('/cours/{id}', [AdminElearningController::class, 'updateCours'])->name('cours.update');
+        Route::delete('/cours/{id}', [AdminElearningController::class, 'destroyCours'])->name('cours.destroy');
+
+        // QCM
+        Route::get('/qcms', [AdminElearningController::class, 'qcms'])->name('qcms');
+        Route::get('/qcms/create', [AdminElearningController::class, 'createQcm'])->name('qcms.create');
+        Route::post('/qcms', [AdminElearningController::class, 'storeQcm'])->name('qcms.store');
+        Route::get('/qcms/{id}', [AdminElearningController::class, 'show'])->name('qcms.show');
+        Route::get('/qcms/{id}/edit', [AdminElearningController::class, 'editQcm'])->name('qcms.edit');
+        Route::put('/qcms/{id}', [AdminElearningController::class, 'updateQcm'])->name('qcms.update');
+        Route::delete('/qcms/{id}', [AdminElearningController::class, 'destroyQcm'])->name('qcms.destroy');
+
+        // Sessions actives
+        Route::get('/sessions/actives', [AdminElearningController::class, 'activeSessions'])->name('sessions.active');
+        Route::post('/sessions/{id}/force-logout', [AdminElearningController::class, 'forceLogout'])->name('sessions.force-logout');
+    });
 
     // Gestion des services
     Route::resource('services', AdminServiceController::class);
@@ -45,7 +96,7 @@ Route::middleware(['auth', 'can:access-admin-dashboard'])->prefix('admin')->name
     Route::post('/inscriptions/{inscription}/transfer', [AdminInscriptionController::class, 'transfer'])
         ->name('inscriptions.transfer');
     Route::post('/inscriptions/{inscription}/resend-email', [AdminInscriptionController::class, 'resendEmail'])
-        ->name('inscriptions.resend-email'); // NOUVELLE ROUTE
+        ->name('inscriptions.resend-email');
 
     // Gestion des formations
     Route::resource('formations', AdminFormationController::class);
@@ -172,7 +223,7 @@ Route::middleware(['auth', 'can:access-admin-dashboard'])->prefix('admin')->name
     )
         ->name('conciergerie-demandes.statistiques');
 
-    // Gestion des paiements (UNIFIÉ) - Utilisez un seul contrôleur
+    // Gestion des paiements (UNIFIÉ)
     Route::prefix('paiements')->name('paiements.')->group(function () {
         Route::get('/', [PaiementController::class, 'index'])->name('index');
         Route::get('/statistiques', [PaiementController::class, 'statistiques'])->name('statistiques');

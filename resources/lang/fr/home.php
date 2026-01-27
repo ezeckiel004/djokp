@@ -130,7 +130,7 @@ return [
     'prefectoral_detail' => 'Reconnaissance des autorités publiques',
 
     'datadock' => 'CPF',
-    'datadock_description' => 'Référencement DataDock pour le financement des formations',
+    'datadock_description' => 'Demande d’agrément en cours',
     'datadock_detail' => 'Financement facilité pour nos stagiaires',
 
     // Section Avis Clients

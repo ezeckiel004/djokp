@@ -38,9 +38,9 @@ return [
     'timeline_2021_desc' => 'Ouverture du centre avec certification officielle VTC',
 
     'timeline_2022' => '2022',
-    'timeline_2022_title' => 'Expansion Afrique',
-    'timeline_2022_desc' => 'Lancement de l\'accompagnement entrepreneurial',
-
+    // Modifiez ces lignes :
+    'timeline_2022_title' => 'Expansion Internationale',
+    'timeline_2022_desc' => 'Lancement d\'un programme d\'accompagnement entrepreneurial destiné aux entreprises souhaitant développer leurs compétences et renforcer leur performance dans un contexte international.',
     'timeline_2024' => '2024',
     'timeline_2024_title' => 'Leader du Secteur',
     'timeline_2024_desc' => 'Plus de 500 clients accompagnés avec succès',
@@ -96,4 +96,16 @@ return [
 
     // Accessibilité
     'scroll_down' => 'Défiler vers le bas',
+
+    // Engagement Section
+    'commitment_title' => 'Notre Engagement',
+    'commitment_description' => 'Des services de qualité avec une attention particulière à l\'accompagnement et à la satisfaction client',
+    'commitment_personalized' => 'Accompagnement personnalisé',
+    'commitment_personalized_desc' => 'Des parcours adaptés aux besoins de chaque apprenant',
+    'commitment_certified' => 'Formations certifiées',
+    'commitment_certified_desc' => 'Des programmes conformes aux exigences de la profession',
+    'commitment_quality' => 'Engagement qualité',
+    'commitment_quality_desc' => 'Une démarche structurée répondant aux standards Qualiopi',
+    'commitment_satisfaction' => 'Satisfaction au cœur',
+    'commitment_satisfaction_desc' => 'Des méthodes améliorées en continu grâce aux retours des stagiaires',
 ];
